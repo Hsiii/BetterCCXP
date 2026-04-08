@@ -53,11 +53,6 @@
   attachAndApply();
 
   function attachAndApply() {
-    if (isLandingPage(document)) {
-      simplifyLandingPage(document);
-      return;
-    }
-
     const frames = findFrames();
 
     if (!frames.top || !frames.nav || !frames.main) {
