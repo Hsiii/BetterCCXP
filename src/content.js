@@ -122,9 +122,6 @@
     const announcementTable = findAnnouncementTable(targetDocument);
     const utilityLinks = findUtilityLinksTable(targetDocument);
     const serviceLink = findServiceLink(targetDocument);
-    const calendarTable = findCalendarTable(targetDocument);
-    const sealTable = targetDocument.querySelector("#twcaseal")?.closest("table");
-
     if (!loginForm || !tabNavigation || tabContents.length === 0) {
       retry();
       return;
@@ -251,8 +248,7 @@
       }
 
       .better-ccxp-landing-links table,
-      .better-ccxp-landing-notices table,
-      .better-ccxp-landing-calendar table {
+      .better-ccxp-landing-notices table {
         width: 100% !important;
       }
 
@@ -300,14 +296,8 @@
         text-align: right;
       }
 
-      .better-ccxp-landing-notices td,
-      .better-ccxp-landing-calendar td {
+      .better-ccxp-landing-notices td {
         word-break: break-word;
-      }
-
-      .better-ccxp-landing-seal {
-        padding-top: var(--better-ccxp-spacing-sm);
-        border-top: 1px solid var(--better-ccxp-border);
       }
     `;
     targetDocument.head.appendChild(style);
@@ -321,22 +311,12 @@
     const linksSection = createLandingSection(targetDocument, "better-ccxp-landing-links");
     const tabsSection = createLandingSection(targetDocument, "better-ccxp-landing-tabs");
     const noticesSection = createLandingSection(targetDocument, "better-ccxp-landing-notices");
-    const calendarSection = createLandingSection(targetDocument, "better-ccxp-landing-calendar");
-    const sealSection = createLandingSection(targetDocument, "better-ccxp-landing-seal");
 
     if (languageLinks) {
       langSection.appendChild(languageLinks);
     }
 
     loginSection.appendChild(loginForm);
-
-    if (calendarTable) {
-      calendarSection.appendChild(calendarTable);
-    }
-
-    if (sealTable) {
-      sealSection.appendChild(sealTable);
-    }
 
     topSection.appendChild(langSection);
     topSection.appendChild(loginSection);
@@ -362,14 +342,6 @@
     if (announcementTable) {
       noticesSection.appendChild(announcementTable);
       shell.appendChild(noticesSection);
-    }
-
-    if (calendarSection.childElementCount > 0) {
-      shell.appendChild(calendarSection);
-    }
-
-    if (sealSection.childElementCount > 0) {
-      shell.appendChild(sealSection);
     }
 
     targetDocument.body.replaceChildren(shell);
@@ -400,17 +372,6 @@
   function findServiceLink(targetDocument) {
     const anchor = targetDocument.querySelector("a[href*='inquire_cpr.html']");
     return anchor ? anchor.closest("div") : null;
-  }
-
-  function findCalendarTable(targetNode) {
-    const calendarFrame = targetNode.querySelector("iframe[src*='calendar/cal.php']");
-
-    if (!calendarFrame) {
-      return null;
-    }
-
-    return Array.from(targetNode.querySelectorAll("table"))
-      .find((table) => table.contains(calendarFrame) && ["月曆", "Calendar"].some((text) => table.textContent.includes(text)));
   }
 
   function attachFrameListener(frame, callback) {
