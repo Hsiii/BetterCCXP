@@ -304,7 +304,7 @@
         .better-ccxp-link-list {
           display: flex;
           flex-direction: column;
-          gap: 8px;
+          gap: 0;
           min-width: 0;
         }
 
@@ -343,13 +343,13 @@
         .better-ccxp-sidebar-secondary-list {
           display: flex;
           flex-direction: column;
-          gap: 8px;
+          gap: 0;
         }
 
         .better-ccxp-section {
           display: flex;
           flex-direction: column;
-          gap: 8px;
+          gap: 0;
         }
 
         .better-ccxp-section-label {
