@@ -252,6 +252,21 @@
         width: 100% !important;
       }
 
+      .better-ccxp-landing-notices table[width],
+      .better-ccxp-landing-notices td[width],
+      .better-ccxp-landing-notices th[width] {
+        width: auto !important;
+      }
+
+      .better-ccxp-landing-notices table {
+        table-layout: fixed;
+      }
+
+      .better-ccxp-landing-notices td:first-child,
+      .better-ccxp-landing-notices th:first-child {
+        width: 8rem !important;
+      }
+
       .better-ccxp-landing-links table[background],
       .better-ccxp-landing-links [background] {
         background: none !important;
