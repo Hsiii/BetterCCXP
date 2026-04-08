@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Better CCXP",
   "version": "0.1.0",
-  "description": "Simplifies the NTHU CCXP entry header on the main inquiry page.",
+  "description": "A minimalism theme plugin for NTHU CCXP.",
   "content_scripts": [
     {
       "matches": [

@@ -2,7 +2,7 @@
   "name": "better-ccxp",
   "private": true,
   "version": "0.1.0",
-  "description": "Chrome extension for simplifying the NTHU CCXP entry header.",
+  "description": "A minimalism theme plugin for NTHU CCXP.",
   "scripts": {
     "build": "node scripts/build.mjs"
   }
