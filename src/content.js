@@ -115,14 +115,14 @@
       return;
     }
 
-    const loginForm = targetDocument.querySelector("form[name='form1'][action*='pre_select_entry.php']");
+    const loginSourceCell = findLoginSourceCell(targetDocument);
     const tabNavigation = targetDocument.querySelector(".tab");
     const tabContents = Array.from(targetDocument.querySelectorAll(".tabcontent"));
     const languageLinks = targetDocument.querySelector("ul.links");
     const announcementTable = findAnnouncementTable(targetDocument);
     const utilityLinks = findUtilityLinksTable(targetDocument);
     const serviceLink = findServiceLink(targetDocument);
-    if (!loginForm || !tabNavigation || tabContents.length === 0) {
+    if (!loginSourceCell || !tabNavigation || tabContents.length === 0) {
       retry();
       return;
     }
@@ -341,7 +341,9 @@
       langSection.appendChild(languageLinks);
     }
 
-    loginSection.appendChild(loginForm);
+    moveChildNodes(loginSourceCell, loginSection);
+    removeNode(findCalendarTable(loginSection));
+    removeNode(loginSection.querySelector("#twcaseal")?.closest("table"));
 
     topSection.appendChild(langSection);
     topSection.appendChild(loginSection);
@@ -377,6 +379,34 @@
     const section = targetDocument.createElement("section");
     section.className = `better-ccxp-landing-section ${className}`;
     return section;
+  }
+
+  function moveChildNodes(sourceNode, targetNode) {
+    while (sourceNode.firstChild) {
+      targetNode.appendChild(sourceNode.firstChild);
+    }
+  }
+
+  function removeNode(node) {
+    if (node && node.parentNode) {
+      node.parentNode.removeChild(node);
+    }
+  }
+
+  function findLoginSourceCell(targetDocument) {
+    return Array.from(targetDocument.querySelectorAll("td"))
+      .find((cell) => cell.querySelector("form[name='form1'][action*='pre_select_entry.php']"));
+  }
+
+  function findCalendarTable(targetNode) {
+    const calendarFrame = targetNode.querySelector("iframe[src*='calendar/cal.php']");
+
+    if (!calendarFrame) {
+      return null;
+    }
+
+    return Array.from(targetNode.querySelectorAll("table"))
+      .find((table) => table.contains(calendarFrame) && ["月曆", "Calendar"].some((text) => table.textContent.includes(text)));
   }
 
   function findAnnouncementTable(targetDocument) {
