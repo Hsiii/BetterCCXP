@@ -345,6 +345,12 @@
           color: inherit;
         }
 
+        .better-ccxp-row-marker {
+          color: currentColor;
+          font: inherit;
+          line-height: 1;
+        }
+
         .better-ccxp-row-label {
           min-width: 0;
           white-space: normal;
@@ -874,6 +880,10 @@
 
     const leading = targetDocument.createElement("span");
     leading.className = "better-ccxp-row-leading";
+    const marker = targetDocument.createElement("span");
+    marker.className = "better-ccxp-row-marker";
+    marker.textContent = "-";
+    leading.appendChild(marker);
     button.appendChild(leading);
 
     const label = targetDocument.createElement("span");
