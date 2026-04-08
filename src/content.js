@@ -6,6 +6,7 @@
     colorLegacyRedText: "#b85c68",
     colorBg: "#ffffff",
     colorSurface: "#ffffff",
+    colorSidebarSurface: "#f5f5f5",
     colorSurfaceMuted: "#f7f3fa",
     colorBorder: "rgba(103, 37, 125, 0.14)",
     colorText: "#221728",
@@ -176,7 +177,7 @@
           gap: 0;
           overflow-y: auto;
           overflow-x: hidden;
-          background: transparent;
+          background: var(--better-ccxp-sidebar-surface);
         }
 
         .better-ccxp-sidebar-brand {
@@ -471,6 +472,7 @@
         --better-ccxp-legacy-red-text: ${TOKENS.colorLegacyRedText};
         --better-ccxp-bg: ${TOKENS.colorBg};
         --better-ccxp-surface: ${TOKENS.colorSurface};
+        --better-ccxp-sidebar-surface: ${TOKENS.colorSidebarSurface};
         --better-ccxp-surface-muted: ${TOKENS.colorSurfaceMuted};
         --better-ccxp-border: ${TOKENS.colorBorder};
         --better-ccxp-text: ${TOKENS.colorText};
