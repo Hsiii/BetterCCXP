@@ -364,7 +364,7 @@
         }
 
         .better-ccxp-link-list {
-          padding-left: 24px;
+          padding-left: 0;
         }
 
         .better-ccxp-link-icon {
