@@ -282,8 +282,7 @@
           background: var(--better-ccxp-surface);
         }
 
-        .better-ccxp-sidebar-primary-title,
-        .better-ccxp-sidebar-secondary-title {
+        .better-ccxp-sidebar-primary-title {
           color: var(--better-ccxp-text-muted);
           font-size: 11px;
           font-weight: 800;
@@ -423,7 +422,6 @@
         </aside>
         <section class="better-ccxp-sidebar-secondary">
           <div class="better-ccxp-sidebar-secondary-header">
-            <div class="better-ccxp-sidebar-secondary-title">${STRINGS.linksSection}</div>
             <div class="better-ccxp-sidebar-secondary-heading"></div>
           </div>
           <div class="better-ccxp-sidebar-secondary-list"></div>
@@ -698,9 +696,7 @@
       secondaryList.innerHTML = "";
 
       if (activeGroup.directLinks.length > 0) {
-        secondaryList.appendChild(
-          createSection(navFrame, STRINGS.linksSection, activeGroup.directLinks)
-        );
+        secondaryList.appendChild(createSection(navFrame, "", activeGroup.directLinks));
       }
 
       activeGroup.sections.forEach((section) => {
@@ -718,11 +714,12 @@
   function createSection(targetDocument, label, links) {
     const section = targetDocument.createElement("section");
     section.className = "better-ccxp-section";
-
-    const sectionLabel = targetDocument.createElement("div");
-    sectionLabel.className = "better-ccxp-section-label";
-    sectionLabel.textContent = label;
-    section.appendChild(sectionLabel);
+    if (label) {
+      const sectionLabel = targetDocument.createElement("div");
+      sectionLabel.className = "better-ccxp-section-label";
+      sectionLabel.textContent = label;
+      section.appendChild(sectionLabel);
+    }
 
     const linkList = targetDocument.createElement("div");
     linkList.className = "better-ccxp-link-list";
