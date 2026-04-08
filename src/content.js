@@ -1,15 +1,15 @@
 (function bootstrapBetterCcxp() {
   const TOKENS = {
     colorPrimary: "#7c2d92",
-    colorPrimaryStrong: "#5e1f71",
     colorAccent: "#d7a8e4",
+    colorLegacyBlueText: "#2e4978",
+    colorLegacyRedText: "#b85c68",
     colorBg: "#ffffff",
     colorSurface: "#ffffff",
     colorSurfaceMuted: "#f7f3fa",
     colorBorder: "rgba(103, 37, 125, 0.14)",
     colorText: "#221728",
     colorTextMuted: "#6c5a74",
-    colorShadow: "rgba(65, 21, 81, 0.12)",
     spacingXs: "6px",
     spacingSm: "10px",
     spacingMd: "16px",
@@ -18,6 +18,15 @@
     radiusMd: "14px",
     radiusLg: "20px",
     fontSans: "\"Noto Sans TC\", \"PingFang TC\", \"Microsoft JhengHei\", sans-serif",
+    fontWeightRegular: "400",
+    fontWeightStrong: "700",
+    fontWeightHeavy: "800",
+    fontSizeCaption: "12px",
+    fontSizeNav: "13px",
+    fontSizeUtility: "14px",
+    fontSizeBody: "15px",
+    fontSizePageTitle: "26px",
+    fontSizeDisplay: "30px",
     sidebarClass: "better-ccxp-sidebar-shell",
     headerClass: "better-ccxp-header-shell",
     mainClass: "better-ccxp-main-skin"
@@ -26,8 +35,6 @@
   const STRINGS = {
     appTitle: "NTHU 校務資訊系統",
     appSubtitle: "Better CCXP",
-    linksSection: "常用入口",
-    shortcutsGroup: "快捷",
     emptyGroup: "此分類暫無可顯示項目"
   };
 
@@ -35,8 +42,6 @@
   const RETRY_DELAY_MS = 250;
   const FRAMESET_COLUMNS = "360,*";
   const FRAMESET_ROWS = "108,*";
-  const NAV_TREE_DATA_ID = "better-ccxp-nav-tree-data";
-  const NAV_BRIDGE_ATTR = "data-better-ccxp-nav-bridge";
 
   let attempts = 0;
 
@@ -155,20 +160,17 @@
         }
 
         .better-ccxp-header-kicker {
-          color: var(--better-ccxp-text-muted);
-          font-size: 12px;
-          font-weight: 700;
+          color: var(--better-ccxp-type-caption-color);
+          font: var(--better-ccxp-type-caption);
           letter-spacing: 0.14em;
           text-transform: uppercase;
         }
 
         .better-ccxp-header-title {
           margin-top: 4px;
-          color: var(--better-ccxp-text);
-          font-size: 30px;
-          font-weight: 800;
+          color: var(--better-ccxp-type-display-color);
+          font: var(--better-ccxp-type-display);
           letter-spacing: 0.03em;
-          line-height: 1.1;
         }
 
         .better-ccxp-header-links {
@@ -182,13 +184,15 @@
         .better-ccxp-header-links a,
         .better-ccxp-header-links span,
         .better-ccxp-header-links label {
-          color: var(--better-ccxp-primary) !important;
-          font-size: 14px !important;
-          font-weight: 700;
+          color: var(--better-ccxp-type-utility-color) !important;
+          font: var(--better-ccxp-type-utility);
           text-decoration: none;
         }
 
         .better-ccxp-header-links a {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
           padding: 8px 12px;
           background: rgba(124, 45, 146, 0.06);
           border: 1px solid rgba(124, 45, 146, 0.1);
@@ -197,6 +201,14 @@
 
         .better-ccxp-header-links a:hover {
           background: rgba(124, 45, 146, 0.14);
+        }
+
+        .better-ccxp-header-link-icon {
+          width: 14px;
+          height: 14px;
+          flex: 0 0 auto;
+          color: currentColor;
+          opacity: 0.9;
         }
 
       `;
@@ -216,7 +228,7 @@
       const sourceAnchors = Array.from(linksCell.querySelectorAll("a"));
 
       sourceAnchors.forEach((anchor) => {
-        linksHost.appendChild(anchor.cloneNode(true));
+        linksHost.appendChild(createHeaderLinkNode(topDocument, anchor));
       });
       idleLabel.remove();
 
@@ -238,9 +250,12 @@
       return;
     }
 
-    ensureNavBridge(navDocument);
+    if (navDocument.body.dataset.betterCcxpSidebarApplied !== "true" && !isDocumentComplete(navDocument)) {
+      retry();
+      return;
+    }
 
-    const rawTree = readNavTreeData(navDocument);
+    const rawTree = parseSidebarTree(navDocument);
 
     if (!rawTree || !Array.isArray(rawTree.children)) {
       retry();
@@ -259,154 +274,138 @@
         .${TOKENS.sidebarClass} {
           box-sizing: border-box;
           display: grid;
-          grid-template-columns: 112px minmax(0, 1fr);
+          grid-template-columns: 176px minmax(0, 1fr);
           width: 100%;
           min-height: 100vh;
+          height: 100vh;
           background: transparent;
-          color: var(--better-ccxp-text);
+          color: var(--better-ccxp-primary);
+          overflow: hidden;
         }
 
         .better-ccxp-sidebar-primary,
         .better-ccxp-sidebar-secondary {
           box-sizing: border-box;
-          min-height: 100vh;
+          min-height: 0;
+          height: 100vh;
           padding: 18px 14px 20px;
         }
 
         .better-ccxp-sidebar-primary {
           display: flex;
           flex-direction: column;
-          gap: 10px;
-          border-right: 1px solid var(--better-ccxp-border);
-          background: var(--better-ccxp-surface);
+          gap: 0;
+          background: transparent;
+          overflow-y: auto;
+          overflow-x: hidden;
         }
 
-        .better-ccxp-sidebar-primary-title {
-          color: var(--better-ccxp-text-muted);
-          font-size: 11px;
-          font-weight: 800;
-          letter-spacing: 0.12em;
-          text-transform: uppercase;
-        }
-
-        .better-ccxp-sidebar-primary-list {
+        .better-ccxp-sidebar-primary-list,
+        .better-ccxp-link-list {
           display: flex;
           flex-direction: column;
           gap: 8px;
+          min-width: 0;
         }
 
         .better-ccxp-primary-button {
           width: 100%;
           padding: 12px 10px;
-          border: 1px solid transparent;
+          border: 0;
           border-radius: 16px;
           background: transparent;
-          color: var(--better-ccxp-text-muted);
+          color: inherit;
           cursor: pointer;
-          font: inherit;
-          font-size: 13px;
-          font-weight: 700;
-          line-height: 1.35;
+          font: var(--better-ccxp-type-nav);
+          color: var(--better-ccxp-type-nav-color);
           text-align: left;
-          transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease, transform 120ms ease;
+          white-space: normal;
+          word-break: break-word;
+          overflow-wrap: anywhere;
+          transition: background-color 120ms ease, color 120ms ease;
         }
 
         .better-ccxp-primary-button:hover {
           background: rgba(124, 45, 146, 0.06);
-          color: var(--better-ccxp-text);
-          transform: translateY(-1px);
+          color: var(--better-ccxp-type-nav-color);
         }
 
         .better-ccxp-primary-button.is-active {
           background: rgba(124, 45, 146, 0.12);
-          border-color: rgba(124, 45, 146, 0.12);
-          color: var(--better-ccxp-primary-strong);
-          box-shadow: 0 12px 24px rgba(124, 45, 146, 0.1);
+          color: var(--better-ccxp-type-nav-color);
         }
 
         .better-ccxp-sidebar-secondary {
-          overflow: auto;
-        }
-
-        .better-ccxp-sidebar-secondary-header {
-          margin-bottom: 16px;
-        }
-
-        .better-ccxp-sidebar-secondary-heading {
-          color: var(--better-ccxp-text);
-          font-size: 18px;
-          font-weight: 800;
-          line-height: 1.2;
+          overflow-y: auto;
+          overflow-x: hidden;
         }
 
         .better-ccxp-sidebar-secondary-list {
           display: flex;
           flex-direction: column;
-          gap: 16px;
+          gap: 8px;
         }
 
         .better-ccxp-section {
           display: flex;
           flex-direction: column;
-          gap: 10px;
-        }
-
-        .better-ccxp-section-label {
-          color: var(--better-ccxp-text-muted);
-          font-size: 12px;
-          font-weight: 800;
-          letter-spacing: 0.08em;
-          text-transform: uppercase;
-        }
-
-        .better-ccxp-link-list {
-          display: flex;
-          flex-direction: column;
           gap: 8px;
         }
 
+        .better-ccxp-section-label {
+          color: var(--better-ccxp-type-section-label-color);
+          font: var(--better-ccxp-type-section-label);
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+        }
+
         .better-ccxp-link-button {
-          display: block;
+          display: grid;
+          grid-template-columns: minmax(0, 1fr) auto;
+          align-items: center;
+          gap: 8px;
           width: 100%;
-          padding: 12px 14px;
-          border: 1px solid var(--better-ccxp-border);
+          padding: 12px 10px;
+          border: 0;
           border-radius: 16px;
-          background: var(--better-ccxp-surface);
-          color: var(--better-ccxp-text);
+          background: transparent;
+          color: inherit;
           cursor: pointer;
-          font: inherit;
-          font-size: 14px;
-          font-weight: 700;
-          line-height: 1.45;
+          font: var(--better-ccxp-type-nav);
+          color: var(--better-ccxp-type-nav-color);
           text-align: left;
-          box-shadow: 0 12px 30px var(--better-ccxp-shadow);
-          transition: border-color 120ms ease, transform 120ms ease, box-shadow 120ms ease;
+          white-space: normal;
+          word-break: break-word;
+          overflow-wrap: anywhere;
+          transition: background-color 120ms ease, color 120ms ease;
         }
 
         .better-ccxp-link-button:hover {
-          border-color: rgba(124, 45, 146, 0.22);
-          transform: translateY(-1px);
-          box-shadow: 0 18px 36px rgba(65, 21, 81, 0.16);
+          background: rgba(124, 45, 146, 0.06);
+          color: var(--better-ccxp-type-nav-color);
         }
 
-        .better-ccxp-link-target {
-          display: block;
-          margin-top: 4px;
-          color: var(--better-ccxp-text-muted);
-          font-size: 11px;
-          font-weight: 700;
-          letter-spacing: 0.08em;
-          text-transform: uppercase;
+        .better-ccxp-link-label {
+          min-width: 0;
+          white-space: normal;
+          word-break: break-word;
+          overflow-wrap: anywhere;
+        }
+
+        .better-ccxp-link-icon {
+          width: 14px;
+          height: 14px;
+          color: inherit;
+          opacity: 0.85;
         }
 
         .better-ccxp-empty {
           padding: 14px;
-          border: 1px dashed var(--better-ccxp-border);
+          border: 0;
           border-radius: 16px;
-          color: var(--better-ccxp-text-muted);
-          font-size: 13px;
-          line-height: 1.5;
-          background: rgba(255, 255, 255, 0.6);
+          color: var(--better-ccxp-type-body-muted-color);
+          font: var(--better-ccxp-type-body-muted);
+          background: rgba(124, 45, 146, 0.04);
         }
       `;
       navDocument.head.appendChild(style);
@@ -419,9 +418,6 @@
           <div class="better-ccxp-sidebar-primary-list"></div>
         </aside>
         <section class="better-ccxp-sidebar-secondary">
-          <div class="better-ccxp-sidebar-secondary-header">
-            <div class="better-ccxp-sidebar-secondary-heading"></div>
-          </div>
           <div class="better-ccxp-sidebar-secondary-list"></div>
         </section>
       `;
@@ -459,7 +455,7 @@
     style.textContent = `
       html, body {
         background: var(--better-ccxp-bg) !important;
-        color: var(--better-ccxp-text) !important;
+        color: var(--better-ccxp-type-body-color) !important;
       }
 
       html, body, table, tbody, tr, td, th, input, select, textarea, button, a, font, div, span, p, li {
@@ -467,11 +463,102 @@
       }
 
       body {
-        line-height: 1.55;
+        color: var(--better-ccxp-type-body-color);
+        font: var(--better-ccxp-type-body);
       }
 
       a {
-        color: var(--better-ccxp-primary);
+        color: var(--better-ccxp-type-primary-link-color);
+        font: var(--better-ccxp-type-primary-link);
+        text-decoration: none;
+      }
+
+      a:hover {
+        color: var(--better-ccxp-type-primary-link-color);
+        text-decoration: underline;
+      }
+
+      .td26 {
+        color: var(--better-ccxp-type-page-title-color);
+        font: var(--better-ccxp-type-page-title);
+      }
+
+      .td17 {
+        color: var(--better-ccxp-type-body-strong-color);
+        font: var(--better-ccxp-type-body-strong);
+      }
+
+      .td15,
+      .opt,
+      .opt1,
+      li.td15,
+      td[style*="color:#333344" i],
+      td[style*="color: #333344" i] {
+        color: var(--better-ccxp-type-body-color);
+        font: var(--better-ccxp-type-body);
+      }
+
+      .td_item,
+      b,
+      strong {
+        color: var(--better-ccxp-type-body-strong-color);
+        font-weight: var(--better-ccxp-font-weight-strong);
+      }
+
+      .td_item {
+        font-size: var(--better-ccxp-font-size-body);
+      }
+
+      td[style*="color:navy" i],
+      td[style*="color: navy" i],
+      a[style*="color:#032274" i],
+      a[style*="color: #032274" i],
+      a[style*="color:navy" i],
+      a[style*="color: navy" i],
+      font[color="#032274" i],
+      font[color="navy" i],
+      [color="#032274" i],
+      [color="navy" i],
+      [style*="color:#032274" i],
+      [style*="color: #032274" i],
+      [style*="color:navy" i],
+      [style*="color: navy" i] {
+        color: var(--better-ccxp-type-info-color) !important;
+        font-weight: var(--better-ccxp-font-weight-strong) !important;
+      }
+
+      td[style*="color:#ff0000" i],
+      td[style*="color: #ff0000" i],
+      td[style*="color:#ff4444" i],
+      td[style*="color: #ff4444" i],
+      td[style*="color:red" i],
+      td[style*="color: red" i],
+      a[style*="color:#ff4444" i],
+      a[style*="color: #ff4444" i],
+      a[style*="color:#ff0000" i],
+      a[style*="color: #ff0000" i],
+      a[style*="color:red" i],
+      a[style*="color: red" i],
+      font[color="#ff4444" i],
+      font[color="#ff0000" i],
+      font[color="red" i],
+      [color="#ff4444" i],
+      [color="#ff0000" i],
+      [color="red" i],
+      [style*="color:#ff4444" i],
+      [style*="color: #ff4444" i],
+      [style*="color:#ff0000" i],
+      [style*="color: #ff0000" i],
+      [style*="color:red" i],
+      [style*="color: red" i] {
+        color: var(--better-ccxp-type-danger-color) !important;
+        font-weight: var(--better-ccxp-font-weight-strong) !important;
+      }
+
+      font[size="2" i],
+      [size="2" i] {
+        color: var(--better-ccxp-type-caption-color) !important;
+        font: var(--better-ccxp-type-caption) !important;
       }
     `;
     mainDocument.head.appendChild(style);
@@ -488,15 +575,15 @@
     style.textContent = `
       :root {
         --better-ccxp-primary: ${TOKENS.colorPrimary};
-        --better-ccxp-primary-strong: ${TOKENS.colorPrimaryStrong};
         --better-ccxp-accent: ${TOKENS.colorAccent};
+        --better-ccxp-legacy-blue-text: ${TOKENS.colorLegacyBlueText};
+        --better-ccxp-legacy-red-text: ${TOKENS.colorLegacyRedText};
         --better-ccxp-bg: ${TOKENS.colorBg};
         --better-ccxp-surface: ${TOKENS.colorSurface};
         --better-ccxp-surface-muted: ${TOKENS.colorSurfaceMuted};
         --better-ccxp-border: ${TOKENS.colorBorder};
         --better-ccxp-text: ${TOKENS.colorText};
         --better-ccxp-text-muted: ${TOKENS.colorTextMuted};
-        --better-ccxp-shadow: ${TOKENS.colorShadow};
         --better-ccxp-spacing-xs: ${TOKENS.spacingXs};
         --better-ccxp-spacing-sm: ${TOKENS.spacingSm};
         --better-ccxp-spacing-md: ${TOKENS.spacingMd};
@@ -505,6 +592,39 @@
         --better-ccxp-radius-md: ${TOKENS.radiusMd};
         --better-ccxp-radius-lg: ${TOKENS.radiusLg};
         --better-ccxp-font-sans: ${TOKENS.fontSans};
+        --better-ccxp-font-weight-regular: ${TOKENS.fontWeightRegular};
+        --better-ccxp-font-weight-strong: ${TOKENS.fontWeightStrong};
+        --better-ccxp-font-weight-heavy: ${TOKENS.fontWeightHeavy};
+        --better-ccxp-font-size-caption: ${TOKENS.fontSizeCaption};
+        --better-ccxp-font-size-nav: ${TOKENS.fontSizeNav};
+        --better-ccxp-font-size-utility: ${TOKENS.fontSizeUtility};
+        --better-ccxp-font-size-body: ${TOKENS.fontSizeBody};
+        --better-ccxp-font-size-page-title: ${TOKENS.fontSizePageTitle};
+        --better-ccxp-font-size-display: ${TOKENS.fontSizeDisplay};
+        --better-ccxp-type-display: var(--better-ccxp-font-weight-heavy) var(--better-ccxp-font-size-display)/1.1 var(--better-ccxp-font-sans);
+        --better-ccxp-type-display-color: var(--better-ccxp-text);
+        --better-ccxp-type-page-title: var(--better-ccxp-font-weight-strong) var(--better-ccxp-font-size-page-title)/1.2 var(--better-ccxp-font-sans);
+        --better-ccxp-type-page-title-color: var(--better-ccxp-text);
+        --better-ccxp-type-primary-link: var(--better-ccxp-font-weight-strong) var(--better-ccxp-font-size-body)/1.5 var(--better-ccxp-font-sans);
+        --better-ccxp-type-primary-link-color: var(--better-ccxp-primary);
+        --better-ccxp-type-info: var(--better-ccxp-font-weight-strong) var(--better-ccxp-font-size-body)/1.5 var(--better-ccxp-font-sans);
+        --better-ccxp-type-info-color: var(--better-ccxp-legacy-blue-text);
+        --better-ccxp-type-danger: var(--better-ccxp-font-weight-strong) var(--better-ccxp-font-size-body)/1.5 var(--better-ccxp-font-sans);
+        --better-ccxp-type-danger-color: var(--better-ccxp-legacy-red-text);
+        --better-ccxp-type-body-strong: var(--better-ccxp-font-weight-strong) var(--better-ccxp-font-size-body)/1.55 var(--better-ccxp-font-sans);
+        --better-ccxp-type-body-strong-color: var(--better-ccxp-text);
+        --better-ccxp-type-body: var(--better-ccxp-font-weight-regular) var(--better-ccxp-font-size-body)/1.55 var(--better-ccxp-font-sans);
+        --better-ccxp-type-body-color: var(--better-ccxp-text);
+        --better-ccxp-type-body-muted: var(--better-ccxp-font-weight-regular) var(--better-ccxp-font-size-body)/1.55 var(--better-ccxp-font-sans);
+        --better-ccxp-type-body-muted-color: var(--better-ccxp-text-muted);
+        --better-ccxp-type-utility: var(--better-ccxp-font-weight-strong) var(--better-ccxp-font-size-utility)/1.4 var(--better-ccxp-font-sans);
+        --better-ccxp-type-utility-color: var(--better-ccxp-primary);
+        --better-ccxp-type-nav: var(--better-ccxp-font-weight-strong) var(--better-ccxp-font-size-nav)/1.35 var(--better-ccxp-font-sans);
+        --better-ccxp-type-nav-color: var(--better-ccxp-primary);
+        --better-ccxp-type-caption: var(--better-ccxp-font-weight-strong) var(--better-ccxp-font-size-caption)/1.4 var(--better-ccxp-font-sans);
+        --better-ccxp-type-caption-color: var(--better-ccxp-text-muted);
+        --better-ccxp-type-section-label: var(--better-ccxp-font-weight-heavy) var(--better-ccxp-font-size-caption)/1.4 var(--better-ccxp-font-sans);
+        --better-ccxp-type-section-label-color: var(--better-ccxp-primary);
       }
 
       html, body {
@@ -523,23 +643,9 @@
 
   function buildSidebarModel(root, navDocument) {
     const rootChildren = root.children || [];
-    const directRootLinks = rootChildren
-      .filter((entry) => entry && !entry.children)
-      .map((entry) => normalizeLinkItem(entry, navDocument))
-      .filter(Boolean);
-
     const topLevelGroups = rootChildren
-      .filter((entry) => entry && entry.children)
-      .map((entry, index) => normalizeTopLevelGroup(entry, index, navDocument));
-
-    if (directRootLinks.length > 0) {
-      topLevelGroups.unshift({
-        id: "group-root-links",
-        label: STRINGS.shortcutsGroup,
-        directLinks: directRootLinks,
-        sections: []
-      });
-    }
+      .map((entry, index) => normalizeRootEntry(entry, index, navDocument))
+      .filter(Boolean);
 
     return {
       groups: topLevelGroups,
@@ -547,7 +653,30 @@
     };
   }
 
-  function normalizeTopLevelGroup(folderNode, index, navWindow) {
+  function normalizeRootEntry(entryNode, index, navDocument) {
+    if (!entryNode) {
+      return null;
+    }
+
+    if (entryNode.children) {
+      return normalizeTopLevelGroup(entryNode, index, navDocument);
+    }
+
+    const linkItem = normalizeLinkItem(entryNode, navDocument);
+    if (!linkItem) {
+      return null;
+    }
+
+    return {
+      id: `link-${index}`,
+      label: linkItem.label,
+      directLinks: [linkItem],
+      sections: [],
+      kind: "link"
+    };
+  }
+
+  function normalizeTopLevelGroup(folderNode, index, navDocument) {
     const directLinks = [];
     const sections = [];
 
@@ -555,13 +684,13 @@
       if (childNode && childNode.children) {
         sections.push({
           id: `section-${index}-${sections.length}`,
-          label: toPlainText(childNode.desc, navWindow),
-          links: collectLinks(childNode, navWindow)
+          label: toPlainText(childNode.desc, navDocument),
+          links: collectLinks(childNode, navDocument)
         });
         return;
       }
 
-      const linkItem = normalizeLinkItem(childNode, navWindow);
+      const linkItem = normalizeLinkItem(childNode, navDocument);
       if (linkItem) {
         directLinks.push(linkItem);
       }
@@ -569,22 +698,23 @@
 
     return {
       id: `group-${index}`,
-      label: toPlainText(folderNode.desc, navWindow),
+      label: toPlainText(folderNode.desc, navDocument),
       directLinks,
-      sections: sections.filter((section) => section.links.length > 0)
+      sections: sections.filter((section) => section.links.length > 0),
+      kind: "group"
     };
   }
 
-  function collectLinks(folderNode, navWindow) {
+  function collectLinks(folderNode, navDocument) {
     const links = [];
 
     (folderNode.children || []).forEach((childNode) => {
       if (childNode && childNode.children) {
-        links.push(...collectLinks(childNode, navWindow));
+        links.push(...collectLinks(childNode, navDocument));
         return;
       }
 
-      const linkItem = normalizeLinkItem(childNode, navWindow);
+      const linkItem = normalizeLinkItem(childNode, navDocument);
       if (linkItem) {
         links.push(linkItem);
       }
@@ -593,7 +723,7 @@
     return links;
   }
 
-  function normalizeLinkItem(itemNode, navWindow) {
+  function normalizeLinkItem(itemNode, navDocument) {
     if (!itemNode || typeof itemNode.link !== "string") {
       return null;
     }
@@ -606,7 +736,7 @@
 
     const rawHtml = String(itemNode.desc || "");
     return {
-      label: toPlainText(rawHtml, navWindow),
+      label: toPlainText(rawHtml, navDocument),
       href: parsedLink.href,
       target: parsedLink.target,
       clickLinkArgs: parseClickLinkArgs(rawHtml)
@@ -635,12 +765,12 @@
     };
   }
 
-  function toPlainText(rawHtml, navWindow) {
+  function toPlainText(rawHtml, navDocument) {
     if (!rawHtml) {
       return "";
     }
 
-    const scratch = navWindow.document.createElement("div");
+    const scratch = navDocument.createElement("div");
     scratch.innerHTML = String(rawHtml);
     return (scratch.textContent || "")
       .replace(/\s+/g, " ")
@@ -655,10 +785,9 @@
     }
 
     const primaryList = shell.querySelector(".better-ccxp-sidebar-primary-list");
-    const secondaryHeading = shell.querySelector(".better-ccxp-sidebar-secondary-heading");
     const secondaryList = shell.querySelector(".better-ccxp-sidebar-secondary-list");
 
-    if (!primaryList || !secondaryHeading || !secondaryList) {
+    if (!primaryList || !secondaryList) {
       return;
     }
 
@@ -685,21 +814,20 @@
       const activeGroup = model.groups.find((group) => group.id === activeGroupId) || model.groups[0];
 
       if (!activeGroup) {
-        secondaryHeading.textContent = "";
         secondaryList.innerHTML = `<div class="better-ccxp-empty">${STRINGS.emptyGroup}</div>`;
         return;
       }
 
-        secondaryHeading.textContent = activeGroup.label;
       secondaryList.innerHTML = "";
 
-      if (activeGroup.directLinks.length > 0) {
-        secondaryList.appendChild(createSection(navFrame, "", activeGroup.directLinks));
-      }
+      const flatLinks = [
+        ...activeGroup.directLinks,
+        ...activeGroup.sections.flatMap((section) => section.links)
+      ];
 
-      activeGroup.sections.forEach((section) => {
-        secondaryList.appendChild(createSection(navFrame, section.label, section.links));
-      });
+      if (flatLinks.length > 0) {
+        secondaryList.appendChild(createSection(navFrame, "", flatLinks));
+      }
 
       if (secondaryList.children.length === 0) {
         secondaryList.innerHTML = `<div class="better-ccxp-empty">${STRINGS.emptyGroup}</div>`;
@@ -712,6 +840,7 @@
   function createSection(targetDocument, label, links) {
     const section = targetDocument.createElement("section");
     section.className = "better-ccxp-section";
+
     if (label) {
       const sectionLabel = targetDocument.createElement("div");
       sectionLabel.className = "better-ccxp-section-label";
@@ -726,15 +855,20 @@
       const button = targetDocument.createElement("button");
       button.type = "button";
       button.className = "better-ccxp-link-button";
-      button.textContent = linkItem.label;
+
+      const label = targetDocument.createElement("span");
+      label.className = "better-ccxp-link-label";
+      label.textContent = linkItem.label;
+      button.appendChild(label);
+
       button.addEventListener("click", () => {
         activateLegacyLink(linkItem, targetDocument);
       });
 
-      const targetHint = targetDocument.createElement("span");
-      targetHint.className = "better-ccxp-link-target";
-      targetHint.textContent = formatTarget(linkItem.target);
-      button.appendChild(targetHint);
+      if (isExternalLinkTarget(linkItem.target)) {
+        button.appendChild(createExternalLinkIcon(targetDocument));
+      }
+
       linkList.appendChild(button);
     });
 
@@ -743,116 +877,185 @@
   }
 
   function activateLegacyLink(linkItem, navDocument) {
-    navDocument.dispatchEvent(
-      new CustomEvent("better-ccxp:activate-link", {
-        detail: {
-          href: linkItem.href,
-          target: linkItem.target,
-          clickLinkArgs: linkItem.clickLinkArgs || null
-        }
-      })
-    );
-  }
+    if (linkItem.clickLinkArgs) {
+      const helperFrame = navDocument.querySelector("iframe[name='frame_7472']");
+      const helperUrl = new URL("JH/JH01.php", navDocument.location.href);
+      helperUrl.searchParams.set("ACIXSTORE", readAcixstore(navDocument.location.href));
+      helperUrl.searchParams.set("name", linkItem.clickLinkArgs.name);
+      helperUrl.searchParams.set("url", linkItem.clickLinkArgs.url);
 
-  function formatTarget(target) {
-    const normalizedTarget = (target || "main").toLowerCase();
+      if (helperFrame && helperFrame.contentWindow) {
+        helperFrame.contentWindow.location.replace(helperUrl.toString());
+      } else if (helperFrame) {
+        helperFrame.setAttribute("src", helperUrl.toString());
+      }
+    }
+
+    const resolvedUrl = new URL(linkItem.href, navDocument.location.href).toString();
+    const normalizedTarget = (linkItem.target || "main").toLowerCase();
+
     if (normalizedTarget === "_blank") {
-      return "新分頁";
-    }
-    if (normalizedTarget === "_top") {
-      return "整頁跳轉";
-    }
-    return "主內容";
-  }
-
-  function ensureNavBridge(navDocument) {
-    if (navDocument.documentElement.hasAttribute(NAV_BRIDGE_ATTR)) {
+      window.open(resolvedUrl, "_blank", "noopener");
       return;
     }
 
-    const script = navDocument.createElement("script");
-    script.textContent = `
-      (() => {
-        const dataId = ${JSON.stringify(NAV_TREE_DATA_ID)};
+    if (normalizedTarget === "_top") {
+      window.top.location.href = resolvedUrl;
+      return;
+    }
 
-        function serializeNode(node) {
-          return {
-            desc: node && typeof node.desc === "string" ? node.desc : "",
-            link: node && typeof node.link === "string" ? node.link : null,
-            children: node && Array.isArray(node.children) ? node.children.map(serializeNode) : []
-          };
-        }
+    if (normalizedTarget === "main" && window.top && window.top.frames && window.top.frames.main) {
+      window.top.frames.main.location.href = resolvedUrl;
+      return;
+    }
 
-        function writeTreeData() {
-          if (!window.foldersTree) {
-            return;
-          }
-
-          let dataNode = document.getElementById(dataId);
-          if (!dataNode) {
-            dataNode = document.createElement("script");
-            dataNode.type = "application/json";
-            dataNode.id = dataId;
-            document.documentElement.appendChild(dataNode);
-          }
-
-          dataNode.textContent = JSON.stringify(serializeNode(window.foldersTree));
-        }
-
-        function activateLink(event) {
-          const detail = event.detail || {};
-          const href = detail.href;
-          const target = (detail.target || "main").toLowerCase();
-          const clickLinkArgs = detail.clickLinkArgs || null;
-
-          if (clickLinkArgs && typeof window.ClickLink === "function") {
-            window.ClickLink(clickLinkArgs.name, clickLinkArgs.url);
-          }
-
-          if (!href) {
-            return;
-          }
-
-          const resolvedUrl = new URL(href, window.location.href).toString();
-
-          if (target === "_blank") {
-            window.open(resolvedUrl, "_blank");
-            return;
-          }
-
-          if (target === "_top") {
-            window.top.location.href = resolvedUrl;
-            return;
-          }
-
-          if (target === "main" && window.top && window.top.frames && window.top.frames.main) {
-            window.top.frames.main.location.href = resolvedUrl;
-            return;
-          }
-
-          window.location.href = resolvedUrl;
-        }
-
-        document.addEventListener("better-ccxp:activate-link", activateLink);
-        writeTreeData();
-        document.documentElement.setAttribute(${JSON.stringify(NAV_BRIDGE_ATTR)}, "true");
-      })();
-    `;
-
-    navDocument.documentElement.appendChild(script);
-    script.remove();
+    window.location.href = resolvedUrl;
   }
 
-  function readNavTreeData(navDocument) {
-    const dataNode = navDocument.getElementById(NAV_TREE_DATA_ID);
-    if (!dataNode || !dataNode.textContent) {
-      return null;
+  function isExternalLinkTarget(target) {
+    return (target || "main").toLowerCase() === "_blank";
+  }
+
+  function createExternalLinkIcon(targetDocument) {
+    const icon = targetDocument.createElementNS("http://www.w3.org/2000/svg", "svg");
+    icon.setAttribute("class", "better-ccxp-link-icon");
+    icon.setAttribute("viewBox", "0 0 24 24");
+    icon.setAttribute("fill", "none");
+    icon.setAttribute("stroke", "currentColor");
+    icon.setAttribute("stroke-width", "2");
+    icon.setAttribute("stroke-linecap", "round");
+    icon.setAttribute("stroke-linejoin", "round");
+    icon.setAttribute("aria-hidden", "true");
+
+    [
+      "M15 3h6v6",
+      "M10 14 21 3",
+      "M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"
+    ].forEach((pathData) => {
+      const path = targetDocument.createElementNS("http://www.w3.org/2000/svg", "path");
+      path.setAttribute("d", pathData);
+      icon.appendChild(path);
+    });
+
+    return icon;
+  }
+
+  function createHeaderLinkNode(targetDocument, anchor) {
+    const clone = anchor.cloneNode(true);
+
+    if ((anchor.getAttribute("target") || "main").toLowerCase() !== "_blank") {
+      return clone;
     }
 
-    try {
-      return JSON.parse(dataNode.textContent);
-    } catch {
-      return null;
+    const icon = targetDocument.createElementNS("http://www.w3.org/2000/svg", "svg");
+    icon.setAttribute("class", "better-ccxp-header-link-icon");
+    icon.setAttribute("viewBox", "0 0 24 24");
+    icon.setAttribute("fill", "none");
+    icon.setAttribute("stroke", "currentColor");
+    icon.setAttribute("stroke-width", "2");
+    icon.setAttribute("stroke-linecap", "round");
+    icon.setAttribute("stroke-linejoin", "round");
+    icon.setAttribute("aria-hidden", "true");
+
+    [
+      "M15 3h6v6",
+      "M10 14 21 3",
+      "M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"
+    ].forEach((pathData) => {
+      const path = targetDocument.createElementNS("http://www.w3.org/2000/svg", "path");
+      path.setAttribute("d", pathData);
+      icon.appendChild(path);
+    });
+
+    clone.appendChild(icon);
+    return clone;
+  }
+
+  function parseSidebarTree(navDocument) {
+    const statements = Array.from(navDocument.scripts)
+      .map((script) => script.textContent || "")
+      .join("\n")
+      .split(";")
+      .map((statement) => statement.trim())
+      .filter(Boolean);
+
+    const nodes = new Map();
+    const root = { desc: "", children: [] };
+    nodes.set("foldersTree", root);
+
+    const stringPattern = "\"(?:[^\"\\\\]|\\\\.)*\"|'(?:[^'\\\\]|\\\\.)*'";
+    const rootRegex = new RegExp(`^foldersTree\\s*=\\s*gFld\\s*\\(\\s*(${stringPattern})\\s*,\\s*(${stringPattern})\\s*\\)$`);
+    const folderRegex = new RegExp(`^(\\w+)\\s*=\\s*insFld\\s*\\(\\s*(\\w+)\\s*,\\s*gFld\\s*\\(\\s*(${stringPattern})\\s*,\\s*(${stringPattern})\\s*\\)\\s*\\)$`);
+    const docRegex = new RegExp(`^insDoc\\s*\\(\\s*(\\w+)\\s*,\\s*gLnk\\s*\\(\\s*([^,]+?)\\s*,\\s*(${stringPattern})\\s*,\\s*(${stringPattern})\\s*\\)\\s*\\)$`);
+
+    statements.forEach((statement) => {
+      const rootMatch = statement.match(rootRegex);
+      if (rootMatch) {
+        root.desc = parseJsStringLiteral(rootMatch[1]);
+        return;
+      }
+
+      const folderMatch = statement.match(folderRegex);
+      if (folderMatch) {
+        const [, variableName, parentName, descLiteral] = folderMatch;
+        const folderNode = {
+          desc: parseJsStringLiteral(descLiteral),
+          children: []
+        };
+        nodes.set(variableName, folderNode);
+        const parentNode = nodes.get(parentName);
+        if (parentNode) {
+          parentNode.children.push(folderNode);
+        }
+        return;
+      }
+
+      const docMatch = statement.match(docRegex);
+      if (docMatch) {
+        const [, parentName, targetToken, descLiteral, hrefLiteral] = docMatch;
+        const parentNode = nodes.get(parentName);
+        if (!parentNode) {
+          return;
+        }
+
+        parentNode.children.push({
+          desc: parseJsStringLiteral(descLiteral),
+          link: buildLegacyLinkString(targetToken.trim(), parseJsStringLiteral(hrefLiteral))
+        });
+      }
+    });
+
+    return root.children.length > 0 ? root : null;
+  }
+
+  function parseJsStringLiteral(literal) {
+    const quote = literal[0];
+    const inner = literal.slice(1, -1);
+
+    if (quote === "\"") {
+      return JSON.parse(literal);
     }
+
+    return inner
+      .replace(/\\\\/g, "\\")
+      .replace(/\\'/g, "'")
+      .replace(/\\"/g, "\"")
+      .replace(/\\n/g, "\n")
+      .replace(/\\r/g, "\r")
+      .replace(/\\t/g, "\t");
+  }
+
+  function buildLegacyLinkString(targetToken, href) {
+    const normalizedTarget = targetToken === "1" ? "_blank" : "main";
+    return `'${href}' target="${normalizedTarget}"`;
+  }
+
+  function readAcixstore(locationHref) {
+    const url = new URL(locationHref);
+    return url.searchParams.get("ACIXSTORE") || "";
+  }
+
+  function isDocumentComplete(targetDocument) {
+    return targetDocument.readyState === "complete";
   }
 })();
