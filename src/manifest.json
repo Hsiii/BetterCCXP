@@ -13,5 +13,15 @@
         "content.js"
       ]
     }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "logo.jpg"
+      ],
+      "matches": [
+        "https://www.ccxp.nthu.edu.tw/*"
+      ]
+    }
   ]
 }

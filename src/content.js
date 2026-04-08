@@ -31,19 +31,18 @@
     fontSizeDisplay: "30px",
     sidebarWidth: "288px",
     sidebarClass: "better-ccxp-sidebar-shell",
-    headerClass: "better-ccxp-header-shell",
     mainClass: "better-ccxp-main-skin"
   };
 
   const STRINGS = {
-    appTitle: "NTHU AIS 校務資訊系統",
+    sidebarTitle: "NTHU AIS",
     emptyGroup: "此分類暫無可顯示項目"
   };
 
   const RETRY_LIMIT = 40;
   const RETRY_DELAY_MS = 250;
   const FRAMESET_COLUMNS = "288,*";
-  const FRAMESET_ROWS = "60,*";
+  const FRAMESET_ROWS = "0,*";
 
   let attempts = 0;
 
@@ -58,10 +57,9 @@
     }
 
     applyFramesetLayout();
-    attachFrameListener(frames.top, simplifyHeader);
     attachFrameListener(frames.nav, simplifySidebar);
     attachFrameListener(frames.main, simplifyMainFrame);
-    simplifyHeader(frames.top);
+    removeHeader(frames.top);
     simplifySidebar(frames.nav);
     simplifyMainFrame(frames.main);
   }
@@ -118,129 +116,22 @@
     }
   }
 
-  function simplifyHeader(topFrame) {
+  function removeHeader(topFrame) {
     const topDocument = topFrame.contentDocument;
-    const topWindow = topFrame.contentWindow;
 
-    if (!topDocument || !topWindow || !topDocument.body || !topDocument.head) {
+    if (!topDocument || !topDocument.body || !topDocument.head) {
       retry();
       return;
     }
 
-    const { body } = topDocument;
-    const linksCell = body.querySelector("table + table td[align='right']");
-    const idleLabel = topDocument.getElementById("idle");
-
-    if (!linksCell || !idleLabel) {
+    if (topDocument.body.dataset.betterCcxpHeaderRemoved === "true") {
       return;
     }
 
-    if (body.dataset.betterCcxpHeaderApplied !== "true") {
-      injectBaseTokens(topDocument, "top");
-
-      const style = topDocument.createElement("style");
-      style.textContent = `
-        body > *:not(.${TOKENS.headerClass}) {
-          display: none !important;
-        }
-
-        .${TOKENS.headerClass} {
-          box-sizing: border-box;
-          display: grid;
-          grid-template-columns: minmax(0, 1fr) auto;
-          gap: var(--better-ccxp-spacing-sm);
-          align-items: center;
-          width: 100%;
-          min-height: 60px;
-          padding: 8px 16px;
-          background: var(--better-ccxp-surface);
-          border-bottom: 1px solid var(--better-ccxp-border);
-        }
-
-        .better-ccxp-header-copy {
-          min-width: 0;
-        }
-
-        .better-ccxp-header-title {
-          color: var(--better-ccxp-type-display-color);
-          font: var(--better-ccxp-type-body);
-          font-size: 19px;
-          font-weight: var(--better-ccxp-font-weight-heavy);
-          letter-spacing: 0.01em;
-          line-height: 1.2;
-          white-space: nowrap;
-        }
-
-        .better-ccxp-header-links {
-          display: flex;
-          flex-wrap: nowrap;
-          justify-content: flex-end;
-          gap: 2px;
-          align-items: center;
-        }
-
-        .better-ccxp-header-links a,
-        .better-ccxp-header-links span,
-        .better-ccxp-header-links label {
-          color: var(--better-ccxp-type-nav-color) !important;
-          font: var(--better-ccxp-type-nav);
-          text-decoration: none;
-        }
-
-        .better-ccxp-header-links a {
-          display: grid;
-          grid-template-columns: minmax(0, 1fr) auto;
-          align-items: center;
-          gap: 6px;
-          padding: 8px 10px;
-          border: 0;
-          border-radius: 16px;
-          background: transparent;
-          white-space: nowrap;
-          transition: background-color 120ms ease, color 120ms ease;
-        }
-
-        .better-ccxp-header-links a:hover {
-          background: rgba(124, 45, 146, 0.06);
-          color: var(--better-ccxp-type-nav-color) !important;
-        }
-
-        .better-ccxp-header-link-icon {
-          width: 12px;
-          height: 12px;
-          flex: 0 0 auto;
-          color: currentColor;
-          opacity: 0.9;
-        }
-
-      `;
-      topDocument.head.appendChild(style);
-
-      const header = topDocument.createElement("div");
-      header.className = TOKENS.headerClass;
-      header.innerHTML = `
-        <div class="better-ccxp-header-copy">
-          <div class="better-ccxp-header-title">${STRINGS.appTitle}</div>
-        </div>
-        <div class="better-ccxp-header-links"></div>
-      `;
-
-      const linksHost = header.querySelector(".better-ccxp-header-links");
-      const sourceAnchors = Array.from(linksCell.querySelectorAll("a")).slice(0, 3);
-
-      sourceAnchors.forEach((anchor) => {
-        linksHost.appendChild(createHeaderLinkNode(topDocument, anchor));
-      });
-      idleLabel.remove();
-
-      body.dataset.betterCcxpHeaderApplied = "true";
-      body.appendChild(header);
-      body.removeAttribute("bgcolor");
-    }
-
-    topWindow.requestAnimationFrame(() => {
-      topFrame.setAttribute("scrolling", "no");
-    });
+    topDocument.documentElement.style.display = "none";
+    topDocument.body.replaceChildren();
+    topDocument.body.dataset.betterCcxpHeaderRemoved = "true";
+    topFrame.setAttribute("scrolling", "no");
   }
 
   function simplifySidebar(navFrame) {
@@ -286,6 +177,33 @@
           overflow-y: auto;
           overflow-x: hidden;
           background: transparent;
+        }
+
+        .better-ccxp-sidebar-brand {
+          display: grid;
+          grid-template-columns: 48px minmax(0, 1fr);
+          align-items: center;
+          gap: 12px;
+          padding: 4px 6px 18px;
+        }
+
+        .better-ccxp-sidebar-brand-mark {
+          width: 48px;
+          height: 48px;
+          border-radius: 14px;
+          object-fit: cover;
+          box-shadow: 0 12px 28px rgba(124, 45, 146, 0.12);
+        }
+
+        .better-ccxp-sidebar-brand-copy {
+          min-width: 0;
+        }
+
+        .better-ccxp-sidebar-brand-title {
+          color: var(--better-ccxp-type-display-color);
+          font: var(--better-ccxp-type-body-strong);
+          font-size: 20px;
+          letter-spacing: 0.01em;
         }
 
         .better-ccxp-sidebar-list,
@@ -393,8 +311,15 @@
 
       const helperFrame = navDocument.querySelector("iframe[name='frame_7472']");
       const shell = navDocument.createElement("div");
+      const logoUrl = getExtensionAssetUrl("logo.jpg");
       shell.className = TOKENS.sidebarClass;
       shell.innerHTML = `
+        <div class="better-ccxp-sidebar-brand">
+          <img class="better-ccxp-sidebar-brand-mark" src="${logoUrl}" alt="${STRINGS.sidebarTitle}">
+          <div class="better-ccxp-sidebar-brand-copy">
+            <div class="better-ccxp-sidebar-brand-title">${STRINGS.sidebarTitle}</div>
+          </div>
+        </div>
         <aside class="better-ccxp-sidebar-list"></aside>
       `;
 
@@ -1002,35 +927,12 @@
     return icon;
   }
 
-  function createHeaderLinkNode(targetDocument, anchor) {
-    const clone = anchor.cloneNode(true);
-
-    if ((anchor.getAttribute("target") || "main").toLowerCase() !== "_blank") {
-      return clone;
+  function getExtensionAssetUrl(assetPath) {
+    if (typeof chrome !== "undefined" && chrome.runtime && typeof chrome.runtime.getURL === "function") {
+      return chrome.runtime.getURL(assetPath);
     }
 
-    const icon = targetDocument.createElementNS("http://www.w3.org/2000/svg", "svg");
-    icon.setAttribute("class", "better-ccxp-header-link-icon");
-    icon.setAttribute("viewBox", "0 0 24 24");
-    icon.setAttribute("fill", "none");
-    icon.setAttribute("stroke", "currentColor");
-    icon.setAttribute("stroke-width", "2");
-    icon.setAttribute("stroke-linecap", "round");
-    icon.setAttribute("stroke-linejoin", "round");
-    icon.setAttribute("aria-hidden", "true");
-
-    [
-      "M15 3h6v6",
-      "M10 14 21 3",
-      "M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"
-    ].forEach((pathData) => {
-      const path = targetDocument.createElementNS("http://www.w3.org/2000/svg", "path");
-      path.setAttribute("d", pathData);
-      icon.appendChild(path);
-    });
-
-    clone.appendChild(icon);
-    return clone;
+    return assetPath;
   }
 
   function parseSidebarTree(navDocument) {

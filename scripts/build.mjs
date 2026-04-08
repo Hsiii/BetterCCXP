@@ -9,14 +9,16 @@ const srcDir = join(projectRoot, "src");
 const distDir = join(projectRoot, "dist");
 const outputZip = join(distDir, "BetterCCXP.zip");
 const stagingDir = mkdtempSync(join(tmpdir(), "better-ccxp-build-"));
-const filesToPack = ["manifest.json", "content.js"];
+const filesToPack = ["manifest.json", "content.js", "logo.jpg"];
 
 try {
   mkdirSync(distDir, { recursive: true });
   rmSync(outputZip, { force: true });
 
   for (const fileName of filesToPack) {
-    const sourcePath = join(srcDir, fileName);
+    const sourcePath = existsSync(join(srcDir, fileName))
+      ? join(srcDir, fileName)
+      : join(projectRoot, fileName);
 
     if (!existsSync(sourcePath)) {
       throw new Error(`Missing required source file: ${sourcePath}`);
