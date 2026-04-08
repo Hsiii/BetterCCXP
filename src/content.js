@@ -306,7 +306,7 @@
           display: grid;
           grid-template-columns: 18px minmax(0, 1fr) auto;
           align-items: center;
-          gap: 8px;
+          gap: 6px;
           width: 100%;
           padding: var(--better-ccxp-sidebar-row-padding-y) var(--better-ccxp-sidebar-row-padding-x);
           border: 0;
