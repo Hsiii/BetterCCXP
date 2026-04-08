@@ -33,15 +33,14 @@
   };
 
   const STRINGS = {
-    appTitle: "NTHU 校務資訊系統",
-    appSubtitle: "Better CCXP",
+    appTitle: "NTHU AIS 校務資訊系統",
     emptyGroup: "此分類暫無可顯示項目"
   };
 
   const RETRY_LIMIT = 40;
   const RETRY_DELAY_MS = 250;
   const FRAMESET_COLUMNS = "360,*";
-  const FRAMESET_ROWS = "108,*";
+  const FRAMESET_ROWS = "60,*";
 
   let attempts = 0;
 
@@ -146,11 +145,11 @@
           box-sizing: border-box;
           display: grid;
           grid-template-columns: minmax(0, 1fr) auto;
-          gap: var(--better-ccxp-spacing-md);
+          gap: var(--better-ccxp-spacing-sm);
           align-items: center;
           width: 100%;
-          min-height: 108px;
-          padding: 20px 28px 18px;
+          min-height: 60px;
+          padding: 8px 16px;
           background: var(--better-ccxp-surface);
           border-bottom: 1px solid var(--better-ccxp-border);
         }
@@ -159,53 +158,53 @@
           min-width: 0;
         }
 
-        .better-ccxp-header-kicker {
-          color: var(--better-ccxp-type-caption-color);
-          font: var(--better-ccxp-type-caption);
-          letter-spacing: 0.14em;
-          text-transform: uppercase;
-        }
-
         .better-ccxp-header-title {
-          margin-top: 4px;
           color: var(--better-ccxp-type-display-color);
-          font: var(--better-ccxp-type-display);
-          letter-spacing: 0.03em;
+          font: var(--better-ccxp-type-body);
+          font-size: 19px;
+          font-weight: var(--better-ccxp-font-weight-heavy);
+          letter-spacing: 0.01em;
+          line-height: 1.2;
+          white-space: nowrap;
         }
 
         .better-ccxp-header-links {
           display: flex;
-          flex-wrap: wrap;
+          flex-wrap: nowrap;
           justify-content: flex-end;
-          gap: 10px;
+          gap: 2px;
           align-items: center;
         }
 
         .better-ccxp-header-links a,
         .better-ccxp-header-links span,
         .better-ccxp-header-links label {
-          color: var(--better-ccxp-type-utility-color) !important;
-          font: var(--better-ccxp-type-utility);
+          color: var(--better-ccxp-type-nav-color) !important;
+          font: var(--better-ccxp-type-nav);
           text-decoration: none;
         }
 
         .better-ccxp-header-links a {
-          display: inline-flex;
+          display: grid;
+          grid-template-columns: minmax(0, 1fr) auto;
           align-items: center;
           gap: 6px;
-          padding: 8px 12px;
-          background: rgba(124, 45, 146, 0.06);
-          border: 1px solid rgba(124, 45, 146, 0.1);
-          border-radius: 999px;
+          padding: 8px 10px;
+          border: 0;
+          border-radius: 16px;
+          background: transparent;
+          white-space: nowrap;
+          transition: background-color 120ms ease, color 120ms ease;
         }
 
         .better-ccxp-header-links a:hover {
-          background: rgba(124, 45, 146, 0.14);
+          background: rgba(124, 45, 146, 0.06);
+          color: var(--better-ccxp-type-nav-color) !important;
         }
 
         .better-ccxp-header-link-icon {
-          width: 14px;
-          height: 14px;
+          width: 12px;
+          height: 12px;
           flex: 0 0 auto;
           color: currentColor;
           opacity: 0.9;
@@ -218,14 +217,13 @@
       header.className = TOKENS.headerClass;
       header.innerHTML = `
         <div class="better-ccxp-header-copy">
-          <div class="better-ccxp-header-kicker">${STRINGS.appSubtitle}</div>
           <div class="better-ccxp-header-title">${STRINGS.appTitle}</div>
         </div>
         <div class="better-ccxp-header-links"></div>
       `;
 
       const linksHost = header.querySelector(".better-ccxp-header-links");
-      const sourceAnchors = Array.from(linksCell.querySelectorAll("a"));
+      const sourceAnchors = Array.from(linksCell.querySelectorAll("a")).slice(0, 3);
 
       sourceAnchors.forEach((anchor) => {
         linksHost.appendChild(createHeaderLinkNode(topDocument, anchor));
