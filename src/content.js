@@ -622,7 +622,7 @@
 
     return {
       items,
-      initialExpandedItemIds: items.filter((item) => item.kind === "group").slice(0, 1).map((item) => item.id)
+      initialExpandedItemIds: collectInitialExpandedIds(items)
     };
   }
 
@@ -649,30 +649,63 @@
   }
 
   function normalizeTopLevelGroup(folderNode, index, navDocument) {
-    return {
-      id: `group-${index}`,
-      label: toPlainText(folderNode.desc, navDocument),
-      links: collectLinks(folderNode, navDocument),
-      kind: "group"
-    };
-  }
-
-  function collectLinks(folderNode, navDocument) {
-    const links = [];
+    const directLinks = [];
+    const sections = [];
 
     (folderNode.children || []).forEach((childNode) => {
       if (childNode && childNode.children) {
-        links.push(...collectLinks(childNode, navDocument));
+        const section = normalizeSectionNode(childNode, `${index}-${sections.length}`, navDocument);
+        if (section) {
+          sections.push(section);
+        }
         return;
       }
 
       const linkItem = normalizeLinkItem(childNode, navDocument);
       if (linkItem) {
-        links.push(linkItem);
+        directLinks.push(linkItem);
       }
     });
 
-    return links;
+    return {
+      id: `group-${index}`,
+      label: toPlainText(folderNode.desc, navDocument),
+      directLinks,
+      sections,
+      kind: "group"
+    };
+  }
+
+  function normalizeSectionNode(folderNode, indexKey, navDocument) {
+    const directLinks = [];
+    const sections = [];
+
+    (folderNode.children || []).forEach((childNode) => {
+      if (childNode && childNode.children) {
+        const section = normalizeSectionNode(childNode, `${indexKey}-${sections.length}`, navDocument);
+        if (section) {
+          sections.push(section);
+        }
+        return;
+      }
+
+      const linkItem = normalizeLinkItem(childNode, navDocument);
+      if (linkItem) {
+        directLinks.push(linkItem);
+      }
+    });
+
+    if (!toPlainText(folderNode.desc, navDocument) && directLinks.length === 0 && sections.length === 0) {
+      return null;
+    }
+
+    return {
+      id: `section-${indexKey}`,
+      label: toPlainText(folderNode.desc, navDocument),
+      directLinks,
+      sections,
+      kind: "section"
+    };
   }
 
   function normalizeLinkItem(itemNode, navDocument) {
@@ -763,7 +796,7 @@
 
       model.items.forEach((item) => {
         if (item.kind === "group") {
-          sidebarList.appendChild(createExpandableGroup(navFrame, item, expandedItemIds.has(item.id), (groupId) => {
+          sidebarList.appendChild(createExpandableGroup(navFrame, item, expandedItemIds, 0, (groupId) => {
             if (expandedItemIds.has(groupId)) {
               expandedItemIds.delete(groupId);
             } else {
@@ -774,14 +807,15 @@
           return;
         }
 
-        sidebarList.appendChild(createLinkButton(navFrame, item.linkItem, "better-ccxp-item"));
+        sidebarList.appendChild(createLinkButton(navFrame, item.linkItem, "better-ccxp-item", 0));
       });
     };
 
     renderItems();
   }
 
-  function createExpandableGroup(targetDocument, group, isExpanded, onToggle) {
+  function createExpandableGroup(targetDocument, group, expandedItemIds, depth, onToggle) {
+    const isExpanded = expandedItemIds.has(group.id);
     const linkList = targetDocument.createElement("div");
     linkList.className = "better-ccxp-sidebar-group";
 
@@ -789,6 +823,7 @@
     button.type = "button";
     button.className = "better-ccxp-row-button better-ccxp-expandable";
     button.setAttribute("aria-expanded", isExpanded ? "true" : "false");
+    button.style.paddingLeft = `${10 + depth * 24}px`;
 
     const leading = targetDocument.createElement("span");
     leading.className = "better-ccxp-row-leading";
@@ -807,12 +842,18 @@
     linkList.appendChild(button);
 
     if (isExpanded) {
-      if (group.links.length > 0) {
-        const children = targetDocument.createElement("div");
-        children.className = "better-ccxp-link-list";
-        group.links.forEach((linkItem) => {
-          children.appendChild(createLinkButton(targetDocument, linkItem, "better-ccxp-item"));
-        });
+      const children = targetDocument.createElement("div");
+      children.className = "better-ccxp-link-list";
+
+      group.directLinks.forEach((linkItem) => {
+        children.appendChild(createLinkButton(targetDocument, linkItem, "better-ccxp-item", depth + 1));
+      });
+
+      group.sections.forEach((section) => {
+        children.appendChild(createExpandableGroup(targetDocument, section, expandedItemIds, depth + 1, onToggle));
+      });
+
+      if (children.childElementCount > 0) {
         linkList.appendChild(children);
       } else {
         const empty = targetDocument.createElement("div");
@@ -825,10 +866,11 @@
     return linkList;
   }
 
-  function createLinkButton(targetDocument, linkItem, toneClass) {
+  function createLinkButton(targetDocument, linkItem, toneClass, depth) {
     const button = targetDocument.createElement("button");
     button.type = "button";
     button.className = `better-ccxp-row-button ${toneClass}`;
+    button.style.paddingLeft = `${10 + depth * 24}px`;
 
     const leading = targetDocument.createElement("span");
     leading.className = "better-ccxp-row-leading";
@@ -848,6 +890,24 @@
     }
 
     return button;
+  }
+
+  function collectInitialExpandedIds(items) {
+    const ids = [];
+    const firstGroup = items.find((item) => item.kind === "group");
+
+    if (!firstGroup) {
+      return ids;
+    }
+
+    ids.push(firstGroup.id);
+
+    const firstSection = firstGroup.sections && firstGroup.sections[0];
+    if (firstSection) {
+      ids.push(firstSection.id);
+    }
+
+    return ids;
   }
 
   function activateLegacyLink(linkItem, navDocument) {
