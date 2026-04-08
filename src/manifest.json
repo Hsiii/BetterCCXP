@@ -6,6 +6,8 @@
   "content_scripts": [
     {
       "matches": [
+        "https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/",
+        "https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/index.php*",
         "https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/select_entry.php*"
       ],
       "run_at": "document_idle",

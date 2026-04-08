@@ -1,16 +1,16 @@
 (function bootstrapBetterCcxp() {
   const TOKENS = {
-    colorPrimary: "#7c2d92",
-    colorAccent: "#d7a8e4",
+    colorPrimary: "#1f2933",
+    colorAccent: "#d5dbe1",
     colorLegacyBlueText: "#2e4978",
     colorLegacyRedText: "#b85c68",
     colorBg: "#ffffff",
     colorSurface: "#ffffff",
-    colorSidebarSurface: "#f5f5f5",
-    colorSurfaceMuted: "#f7f3fa",
-    colorBorder: "rgba(103, 37, 125, 0.14)",
-    colorText: "#221728",
-    colorTextMuted: "#6c5a74",
+    colorSidebarSurface: "#f5f7f9",
+    colorSurfaceMuted: "#f5f7f9",
+    colorBorder: "rgba(31, 41, 51, 0.12)",
+    colorText: "#111827",
+    colorTextMuted: "#52606d",
     spacingXs: "6px",
     spacingSm: "10px",
     spacingMd: "16px",
@@ -30,9 +30,11 @@
     fontSizeBody: "15px",
     fontSizePageTitle: "26px",
     fontSizeDisplay: "30px",
+    landingMaxWidth: "960px",
     sidebarWidth: "288px",
     sidebarClass: "better-ccxp-sidebar-shell",
-    mainClass: "better-ccxp-main-skin"
+    mainClass: "better-ccxp-main-skin",
+    landingClass: "better-ccxp-landing-shell"
   };
 
   const STRINGS = {
@@ -50,6 +52,11 @@
   attachAndApply();
 
   function attachAndApply() {
+    if (isLandingPage(document)) {
+      simplifyLandingPage(document);
+      return;
+    }
+
     const frames = findFrames();
 
     if (!frames.top || !frames.nav || !frames.main) {
@@ -84,6 +91,337 @@
     });
 
     return { top, nav, main };
+  }
+
+  function isLandingPage(targetDocument) {
+    const pathName = ((targetDocument.location && targetDocument.location.pathname) || "").toLowerCase();
+    const isSupportedPath = /\/ccxp\/inquire\/(?:index\.php)?$/.test(pathName);
+    return isSupportedPath && Boolean(targetDocument.querySelector("form[name='form1'][action*='pre_select_entry.php']"));
+  }
+
+  function simplifyLandingPage(targetDocument) {
+    if (!targetDocument.body || !targetDocument.head) {
+      retry();
+      return;
+    }
+
+    if (targetDocument.body.dataset.betterCcxpLandingApplied === "true") {
+      return;
+    }
+
+    if (!isDocumentComplete(targetDocument)) {
+      retry();
+      return;
+    }
+
+    const loginSourceCell = findLoginSourceCell(targetDocument);
+    const tabNavigation = targetDocument.querySelector(".tab");
+    const tabContents = Array.from(targetDocument.querySelectorAll(".tabcontent"));
+    const languageLinks = targetDocument.querySelector("ul.links");
+    const announcementTable = findAnnouncementTable(targetDocument);
+    const utilityLinks = findUtilityLinksTable(targetDocument);
+    const serviceLink = findServiceLink(targetDocument);
+
+    if (!loginSourceCell || !tabNavigation || tabContents.length === 0) {
+      retry();
+      return;
+    }
+
+    injectBaseTokens(targetDocument, "landing");
+
+    const style = targetDocument.createElement("style");
+    style.dataset.betterCcxpLanding = "true";
+    style.textContent = `
+      html, body {
+        background: var(--better-ccxp-bg) !important;
+        color: var(--better-ccxp-type-body-color);
+      }
+
+      body {
+        margin: 0;
+        padding: var(--better-ccxp-spacing-lg) var(--better-ccxp-spacing-md) 48px;
+        font: var(--better-ccxp-type-body);
+      }
+
+      a {
+        color: var(--better-ccxp-type-primary-link-color);
+        text-decoration: none;
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
+
+      .${TOKENS.landingClass} {
+        width: min(100%, ${TOKENS.landingMaxWidth});
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: var(--better-ccxp-spacing-lg);
+      }
+
+      .better-ccxp-landing-section {
+        width: 100%;
+      }
+
+      .better-ccxp-landing-top {
+        display: flex;
+        flex-direction: column;
+        gap: var(--better-ccxp-spacing-md);
+      }
+
+      .better-ccxp-landing-lang {
+        display: flex;
+        justify-content: flex-end;
+        padding-bottom: var(--better-ccxp-spacing-sm);
+        border-bottom: 1px solid var(--better-ccxp-border);
+      }
+
+      .better-ccxp-landing-lang ul,
+      .better-ccxp-landing-lang li {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .better-ccxp-landing-lang a {
+        color: var(--better-ccxp-type-utility-color);
+        font: var(--better-ccxp-type-utility);
+      }
+
+      .better-ccxp-landing-login > table:first-of-type {
+        display: none;
+      }
+
+      .better-ccxp-landing-login div[style*="login_mid.png"] {
+        margin: 0 !important;
+        padding: 0 !important;
+        background-image: none !important;
+      }
+
+      .better-ccxp-landing-login div[style*="margin-left:1em"] {
+        margin-left: 0 !important;
+      }
+
+      .better-ccxp-landing-login .inputtext {
+        width: min(100%, 320px) !important;
+        margin: 6px 0 12px !important;
+        padding: 8px 0 !important;
+        border: 0 !important;
+        border-bottom: 1px solid var(--better-ccxp-border) !important;
+        background: transparent;
+        color: var(--better-ccxp-type-body-color);
+        font: var(--better-ccxp-type-body);
+      }
+
+      .better-ccxp-landing-login .button {
+        min-width: 112px;
+        padding: 10px 18px;
+        border-radius: 999px;
+        background: var(--better-ccxp-text);
+        color: var(--better-ccxp-bg);
+        font: var(--better-ccxp-type-body-strong);
+      }
+
+      .better-ccxp-landing-section img,
+      .better-ccxp-landing-section table,
+      .better-ccxp-landing-section iframe {
+        max-width: 100%;
+      }
+
+      .better-ccxp-landing-login table[border="1"] {
+        margin-top: var(--better-ccxp-spacing-sm);
+        border-color: var(--better-ccxp-border);
+      }
+
+      .better-ccxp-landing-login td,
+      .better-ccxp-landing-section td,
+      .better-ccxp-landing-section th,
+      .better-ccxp-landing-section font,
+      .better-ccxp-landing-section span,
+      .better-ccxp-landing-section div,
+      .better-ccxp-landing-section p,
+      .better-ccxp-landing-section li,
+      .better-ccxp-landing-section button,
+      .better-ccxp-landing-section input {
+        font-family: var(--better-ccxp-font-sans) !important;
+      }
+
+      .better-ccxp-landing-links table,
+      .better-ccxp-landing-notices table,
+      .better-ccxp-landing-calendar table {
+        width: 100% !important;
+      }
+
+      .better-ccxp-landing-links table[background],
+      .better-ccxp-landing-links [background] {
+        background: none !important;
+      }
+
+      .better-ccxp-landing-tabs .tab {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        min-width: 0 !important;
+      }
+
+      .better-ccxp-landing-tabs .tab button {
+        float: none;
+        padding: 8px 12px;
+        border: 1px solid var(--better-ccxp-border);
+        border-radius: 999px;
+        background: transparent;
+        color: var(--better-ccxp-type-body-color);
+        font: var(--better-ccxp-type-body);
+      }
+
+      .better-ccxp-landing-tabs .tab button.active {
+        background: var(--better-ccxp-surface-muted);
+        color: var(--better-ccxp-type-body-strong-color);
+      }
+
+      .better-ccxp-landing-tabs .tabcontent {
+        margin-top: var(--better-ccxp-spacing-md);
+        padding: var(--better-ccxp-spacing-md);
+        border: 1px solid var(--better-ccxp-border);
+        background: var(--better-ccxp-surface);
+      }
+
+      .better-ccxp-landing-tabs .tabcontent h3,
+      .better-ccxp-landing-tabs .tabcontent ul {
+        margin-block: 0.2em;
+      }
+
+      .better-ccxp-landing-service {
+        margin-top: var(--better-ccxp-spacing-sm);
+        text-align: right;
+      }
+
+      .better-ccxp-landing-notices td,
+      .better-ccxp-landing-calendar td {
+        word-break: break-word;
+      }
+
+      .better-ccxp-landing-seal {
+        padding-top: var(--better-ccxp-spacing-sm);
+        border-top: 1px solid var(--better-ccxp-border);
+      }
+    `;
+    targetDocument.head.appendChild(style);
+
+    const shell = targetDocument.createElement("main");
+    shell.className = TOKENS.landingClass;
+
+    const topSection = createLandingSection(targetDocument, "better-ccxp-landing-top");
+    const langSection = createLandingSection(targetDocument, "better-ccxp-landing-lang");
+    const loginSection = createLandingSection(targetDocument, "better-ccxp-landing-login");
+    const linksSection = createLandingSection(targetDocument, "better-ccxp-landing-links");
+    const tabsSection = createLandingSection(targetDocument, "better-ccxp-landing-tabs");
+    const noticesSection = createLandingSection(targetDocument, "better-ccxp-landing-notices");
+    const calendarSection = createLandingSection(targetDocument, "better-ccxp-landing-calendar");
+    const sealSection = createLandingSection(targetDocument, "better-ccxp-landing-seal");
+
+    if (languageLinks) {
+      langSection.appendChild(languageLinks);
+    }
+
+    moveChildNodes(loginSourceCell, loginSection);
+
+    const calendarTable = findCalendarTable(loginSection);
+    const sealTable = loginSection.querySelector("#twcaseal")?.closest("table");
+
+    if (calendarTable) {
+      calendarSection.appendChild(calendarTable);
+    }
+
+    if (sealTable) {
+      sealSection.appendChild(sealTable);
+    }
+
+    topSection.appendChild(langSection);
+    topSection.appendChild(loginSection);
+    shell.appendChild(topSection);
+
+    if (utilityLinks) {
+      linksSection.appendChild(utilityLinks);
+      shell.appendChild(linksSection);
+    }
+
+    tabsSection.appendChild(tabNavigation);
+    tabContents.forEach((tabContent) => {
+      tabsSection.appendChild(tabContent);
+    });
+
+    if (serviceLink) {
+      serviceLink.classList.add("better-ccxp-landing-service");
+      tabsSection.appendChild(serviceLink);
+    }
+
+    shell.appendChild(tabsSection);
+
+    if (announcementTable) {
+      noticesSection.appendChild(announcementTable);
+      shell.appendChild(noticesSection);
+    }
+
+    if (calendarSection.childElementCount > 0) {
+      shell.appendChild(calendarSection);
+    }
+
+    if (sealSection.childElementCount > 0) {
+      shell.appendChild(sealSection);
+    }
+
+    targetDocument.body.replaceChildren(shell);
+    targetDocument.body.dataset.betterCcxpLandingApplied = "true";
+  }
+
+  function createLandingSection(targetDocument, className) {
+    const section = targetDocument.createElement("section");
+    section.className = `better-ccxp-landing-section ${className}`;
+    return section;
+  }
+
+  function moveChildNodes(sourceNode, targetNode) {
+    while (sourceNode.firstChild) {
+      targetNode.appendChild(sourceNode.firstChild);
+    }
+  }
+
+  function findLoginSourceCell(targetDocument) {
+    return Array.from(targetDocument.querySelectorAll("td"))
+      .find((cell) => cell.querySelector("form[name='form1'][action*='pre_select_entry.php']"));
+  }
+
+  function findAnnouncementTable(targetDocument) {
+    return Array.from(targetDocument.querySelectorAll("table"))
+      .find((table) => {
+        const heading = table.querySelector(".board_item");
+        return heading && ["系統公告", "System Notice"].some((text) => heading.textContent.includes(text));
+      });
+  }
+
+  function findUtilityLinksTable(targetDocument) {
+    const anchor = targetDocument.querySelector(
+      "a[href*='ccc.site.nthu.edu.tw'], a[href*='aisccc.site.nthu.edu.tw'], a[href*='nthu-en.site.nthu.edu.tw']"
+    );
+    return anchor ? anchor.closest("table") : null;
+  }
+
+  function findServiceLink(targetDocument) {
+    const anchor = targetDocument.querySelector("a[href*='inquire_cpr.html']");
+    return anchor ? anchor.closest("div") : null;
+  }
+
+  function findCalendarTable(targetNode) {
+    const calendarFrame = targetNode.querySelector("iframe[src*='calendar/cal.php']");
+
+    if (!calendarFrame) {
+      return null;
+    }
+
+    return Array.from(targetNode.querySelectorAll("table"))
+      .find((table) => table.contains(calendarFrame) && ["月曆", "Calendar"].some((text) => table.textContent.includes(text)));
   }
 
   function attachFrameListener(frame, callback) {
