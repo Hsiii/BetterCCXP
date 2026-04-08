@@ -181,18 +181,10 @@
 
         .better-ccxp-sidebar-brand {
           display: grid;
-          grid-template-columns: 48px minmax(0, 1fr);
+          grid-template-columns: minmax(0, 1fr);
           align-items: center;
-          gap: 12px;
+          gap: 8px;
           padding: 4px 6px 18px;
-        }
-
-        .better-ccxp-sidebar-brand-mark {
-          width: 48px;
-          height: 48px;
-          border-radius: 14px;
-          object-fit: cover;
-          box-shadow: 0 12px 28px rgba(124, 45, 146, 0.12);
         }
 
         .better-ccxp-sidebar-brand-copy {
@@ -311,11 +303,9 @@
 
       const helperFrame = navDocument.querySelector("iframe[name='frame_7472']");
       const shell = navDocument.createElement("div");
-      const logoUrl = getExtensionAssetUrl("logo.jpg");
       shell.className = TOKENS.sidebarClass;
       shell.innerHTML = `
         <div class="better-ccxp-sidebar-brand">
-          <img class="better-ccxp-sidebar-brand-mark" src="${logoUrl}" alt="${STRINGS.sidebarTitle}">
           <div class="better-ccxp-sidebar-brand-copy">
             <div class="better-ccxp-sidebar-brand-title">${STRINGS.sidebarTitle}</div>
           </div>
@@ -925,14 +915,6 @@
     icon.appendChild(path);
 
     return icon;
-  }
-
-  function getExtensionAssetUrl(assetPath) {
-    if (typeof chrome !== "undefined" && chrome.runtime && typeof chrome.runtime.getURL === "function") {
-      return chrome.runtime.getURL(assetPath);
-    }
-
-    return assetPath;
   }
 
   function parseSidebarTree(navDocument) {
