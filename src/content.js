@@ -286,7 +286,7 @@
         border-radius: 999px;
         background: transparent;
         color: var(--better-ccxp-type-body-color);
-        font: var(--better-ccxp-type-body);
+        font: var(--better-ccxp-type-nav);
       }
 
       .better-ccxp-landing-tabs .tab button.active {
@@ -304,6 +304,16 @@
       .better-ccxp-landing-tabs .tabcontent h3,
       .better-ccxp-landing-tabs .tabcontent ul {
         margin-block: 0.2em;
+      }
+
+      .better-ccxp-landing-tabs .tabcontent h3 {
+        color: var(--better-ccxp-type-body-strong-color);
+        font: var(--better-ccxp-type-body-strong);
+      }
+
+      .better-ccxp-landing-service {
+        color: var(--better-ccxp-type-utility-color);
+        font: var(--better-ccxp-type-utility);
       }
 
       .better-ccxp-landing-service {
