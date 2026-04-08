@@ -359,6 +359,10 @@
         font: var(--better-ccxp-type-body);
       }
 
+      body.${TOKENS.mainClass} {
+        padding: var(--better-ccxp-spacing-lg);
+      }
+
       a {
         color: var(--better-ccxp-type-primary-link-color);
         font: var(--better-ccxp-type-primary-link);
