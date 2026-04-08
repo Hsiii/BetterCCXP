@@ -15,6 +15,8 @@
     spacingMd: "16px",
     spacingLg: "24px",
     spacingXl: "32px",
+    sidebarRowPaddingY: "12px",
+    sidebarRowPaddingX: "10px",
     radiusMd: "14px",
     radiusLg: "20px",
     fontSans: "\"Noto Sans TC\", \"PingFang TC\", \"Microsoft JhengHei\", sans-serif",
@@ -27,6 +29,7 @@
     fontSizeBody: "15px",
     fontSizePageTitle: "26px",
     fontSizeDisplay: "30px",
+    sidebarWidth: "288px",
     sidebarClass: "better-ccxp-sidebar-shell",
     headerClass: "better-ccxp-header-shell",
     mainClass: "better-ccxp-main-skin"
@@ -39,7 +42,7 @@
 
   const RETRY_LIMIT = 40;
   const RETRY_DELAY_MS = 250;
-  const FRAMESET_COLUMNS = "360,*";
+  const FRAMESET_COLUMNS = "288,*";
   const FRAMESET_ROWS = "60,*";
 
   let attempts = 0;
@@ -271,34 +274,21 @@
 
         .${TOKENS.sidebarClass} {
           box-sizing: border-box;
-          display: grid;
-          grid-template-columns: 176px minmax(0, 1fr);
           width: 100%;
+          min-width: var(--better-ccxp-sidebar-width);
           min-height: 100vh;
           height: 100vh;
-          background: transparent;
-          color: var(--better-ccxp-primary);
-          overflow: hidden;
-        }
-
-        .better-ccxp-sidebar-primary,
-        .better-ccxp-sidebar-secondary {
-          box-sizing: border-box;
           min-height: 0;
-          height: 100vh;
           padding: 18px 14px 20px;
-        }
-
-        .better-ccxp-sidebar-primary {
           display: flex;
           flex-direction: column;
           gap: 0;
-          background: transparent;
           overflow-y: auto;
           overflow-x: hidden;
+          background: transparent;
         }
 
-        .better-ccxp-sidebar-primary-list,
+        .better-ccxp-sidebar-list,
         .better-ccxp-link-list {
           display: flex;
           flex-direction: column;
@@ -306,64 +296,19 @@
           min-width: 0;
         }
 
-        .better-ccxp-primary-button {
-          width: 100%;
-          padding: 12px 10px;
-          border: 0;
-          border-radius: 16px;
-          background: transparent;
-          color: inherit;
-          cursor: pointer;
-          font: var(--better-ccxp-type-nav);
-          color: var(--better-ccxp-type-nav-color);
-          text-align: left;
-          white-space: normal;
-          word-break: break-word;
-          overflow-wrap: anywhere;
-          transition: background-color 120ms ease, color 120ms ease;
-        }
-
-        .better-ccxp-primary-button:hover {
-          background: rgba(124, 45, 146, 0.06);
-          color: var(--better-ccxp-type-nav-color);
-        }
-
-        .better-ccxp-primary-button.is-active {
-          background: rgba(124, 45, 146, 0.12);
-          color: var(--better-ccxp-type-nav-color);
-        }
-
-        .better-ccxp-sidebar-secondary {
-          overflow-y: auto;
-          overflow-x: hidden;
-        }
-
-        .better-ccxp-sidebar-secondary-list {
+        .better-ccxp-sidebar-group {
           display: flex;
           flex-direction: column;
           gap: 0;
         }
 
-        .better-ccxp-section {
-          display: flex;
-          flex-direction: column;
-          gap: 0;
-        }
-
-        .better-ccxp-section-label {
-          color: var(--better-ccxp-type-section-label-color);
-          font: var(--better-ccxp-type-section-label);
-          letter-spacing: 0.08em;
-          text-transform: uppercase;
-        }
-
-        .better-ccxp-link-button {
+        .better-ccxp-row-button {
           display: grid;
-          grid-template-columns: minmax(0, 1fr) auto;
+          grid-template-columns: 18px minmax(0, 1fr) auto;
           align-items: center;
           gap: 8px;
           width: 100%;
-          padding: 12px 10px;
+          padding: var(--better-ccxp-sidebar-row-padding-y) var(--better-ccxp-sidebar-row-padding-x);
           border: 0;
           border-radius: 16px;
           background: transparent;
@@ -378,16 +323,48 @@
           transition: background-color 120ms ease, color 120ms ease;
         }
 
-        .better-ccxp-link-button:hover {
+        .better-ccxp-row-button:hover {
           background: rgba(124, 45, 146, 0.06);
+        }
+
+        .better-ccxp-expandable {
           color: var(--better-ccxp-type-nav-color);
         }
 
-        .better-ccxp-link-label {
+        .better-ccxp-item {
+          color: var(--better-ccxp-type-body-color);
+          font: var(--better-ccxp-type-nav);
+        }
+
+        .better-ccxp-row-leading {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 18px;
+          height: 18px;
+          color: inherit;
+        }
+
+        .better-ccxp-row-label {
           min-width: 0;
           white-space: normal;
           word-break: break-word;
           overflow-wrap: anywhere;
+        }
+
+        .better-ccxp-chevron {
+          width: 14px;
+          height: 14px;
+          color: currentColor;
+          transition: transform 120ms ease;
+        }
+
+        .better-ccxp-chevron.is-expanded {
+          transform: rotate(90deg);
+        }
+
+        .better-ccxp-link-list {
+          padding-left: 24px;
         }
 
         .better-ccxp-link-icon {
@@ -412,12 +389,7 @@
       const shell = navDocument.createElement("div");
       shell.className = TOKENS.sidebarClass;
       shell.innerHTML = `
-        <aside class="better-ccxp-sidebar-primary">
-          <div class="better-ccxp-sidebar-primary-list"></div>
-        </aside>
-        <section class="better-ccxp-sidebar-secondary">
-          <div class="better-ccxp-sidebar-secondary-list"></div>
-        </section>
+        <aside class="better-ccxp-sidebar-list"></aside>
       `;
 
       navDocument.body.replaceChildren(shell);
@@ -587,6 +559,8 @@
         --better-ccxp-spacing-md: ${TOKENS.spacingMd};
         --better-ccxp-spacing-lg: ${TOKENS.spacingLg};
         --better-ccxp-spacing-xl: ${TOKENS.spacingXl};
+        --better-ccxp-sidebar-row-padding-y: ${TOKENS.sidebarRowPaddingY};
+        --better-ccxp-sidebar-row-padding-x: ${TOKENS.sidebarRowPaddingX};
         --better-ccxp-radius-md: ${TOKENS.radiusMd};
         --better-ccxp-radius-lg: ${TOKENS.radiusLg};
         --better-ccxp-font-sans: ${TOKENS.fontSans};
@@ -599,6 +573,7 @@
         --better-ccxp-font-size-body: ${TOKENS.fontSizeBody};
         --better-ccxp-font-size-page-title: ${TOKENS.fontSizePageTitle};
         --better-ccxp-font-size-display: ${TOKENS.fontSizeDisplay};
+        --better-ccxp-sidebar-width: ${TOKENS.sidebarWidth};
         --better-ccxp-type-display: var(--better-ccxp-font-weight-heavy) var(--better-ccxp-font-size-display)/1.1 var(--better-ccxp-font-sans);
         --better-ccxp-type-display-color: var(--better-ccxp-text);
         --better-ccxp-type-page-title: var(--better-ccxp-font-weight-strong) var(--better-ccxp-font-size-page-title)/1.2 var(--better-ccxp-font-sans);
@@ -641,13 +616,13 @@
 
   function buildSidebarModel(root, navDocument) {
     const rootChildren = root.children || [];
-    const topLevelGroups = rootChildren
+    const items = rootChildren
       .map((entry, index) => normalizeRootEntry(entry, index, navDocument))
       .filter(Boolean);
 
     return {
-      groups: topLevelGroups,
-      initialGroupId: topLevelGroups[0] ? topLevelGroups[0].id : null
+      items,
+      initialExpandedItemIds: items.filter((item) => item.kind === "group").slice(0, 1).map((item) => item.id)
     };
   }
 
@@ -668,37 +643,16 @@
     return {
       id: `link-${index}`,
       label: linkItem.label,
-      directLinks: [linkItem],
-      sections: [],
+      linkItem,
       kind: "link"
     };
   }
 
   function normalizeTopLevelGroup(folderNode, index, navDocument) {
-    const directLinks = [];
-    const sections = [];
-
-    (folderNode.children || []).forEach((childNode) => {
-      if (childNode && childNode.children) {
-        sections.push({
-          id: `section-${index}-${sections.length}`,
-          label: toPlainText(childNode.desc, navDocument),
-          links: collectLinks(childNode, navDocument)
-        });
-        return;
-      }
-
-      const linkItem = normalizeLinkItem(childNode, navDocument);
-      if (linkItem) {
-        directLinks.push(linkItem);
-      }
-    });
-
     return {
       id: `group-${index}`,
       label: toPlainText(folderNode.desc, navDocument),
-      directLinks,
-      sections: sections.filter((section) => section.links.length > 0),
+      links: collectLinks(folderNode, navDocument),
       kind: "group"
     };
   }
@@ -782,96 +736,118 @@
       return;
     }
 
-    const primaryList = shell.querySelector(".better-ccxp-sidebar-primary-list");
-    const secondaryList = shell.querySelector(".better-ccxp-sidebar-secondary-list");
+    const sidebarList = shell.querySelector(".better-ccxp-sidebar-list");
 
-    if (!primaryList || !secondaryList) {
+    if (!sidebarList) {
       return;
     }
 
-    let activeGroupId =
-      shell.dataset.activeGroupId && model.groups.some((group) => group.id === shell.dataset.activeGroupId)
-        ? shell.dataset.activeGroupId
-        : model.initialGroupId;
+    const initialExpandedIds = new Set(model.initialExpandedItemIds || []);
+    const storedExpandedIds = shell.dataset.expandedItemIds
+      ? shell.dataset.expandedItemIds.split(",").filter(Boolean)
+      : null;
+    let expandedItemIds = new Set(
+      storedExpandedIds && storedExpandedIds.length > 0
+        ? storedExpandedIds.filter((itemId) => model.items.some((item) => item.id === itemId && item.kind === "group"))
+        : Array.from(initialExpandedIds)
+    );
 
-    const renderActiveState = () => {
-      primaryList.innerHTML = "";
-      model.groups.forEach((group) => {
-        const button = navFrame.createElement("button");
-        button.type = "button";
-        button.className = `better-ccxp-primary-button${group.id === activeGroupId ? " is-active" : ""}`;
-        button.textContent = group.label;
-        button.addEventListener("click", () => {
-          activeGroupId = group.id;
-          shell.dataset.activeGroupId = group.id;
-          renderActiveState();
-        });
-        primaryList.appendChild(button);
-      });
+    const renderItems = () => {
+      shell.dataset.expandedItemIds = Array.from(expandedItemIds).join(",");
+      sidebarList.innerHTML = "";
 
-      const activeGroup = model.groups.find((group) => group.id === activeGroupId) || model.groups[0];
-
-      if (!activeGroup) {
-        secondaryList.innerHTML = `<div class="better-ccxp-empty">${STRINGS.emptyGroup}</div>`;
+      if (model.items.length === 0) {
+        sidebarList.innerHTML = `<div class="better-ccxp-empty">${STRINGS.emptyGroup}</div>`;
         return;
       }
 
-      secondaryList.innerHTML = "";
+      model.items.forEach((item) => {
+        if (item.kind === "group") {
+          sidebarList.appendChild(createExpandableGroup(navFrame, item, expandedItemIds.has(item.id), (groupId) => {
+            if (expandedItemIds.has(groupId)) {
+              expandedItemIds.delete(groupId);
+            } else {
+              expandedItemIds.add(groupId);
+            }
+            renderItems();
+          }));
+          return;
+        }
 
-      const flatLinks = [
-        ...activeGroup.directLinks,
-        ...activeGroup.sections.flatMap((section) => section.links)
-      ];
-
-      if (flatLinks.length > 0) {
-        secondaryList.appendChild(createSection(navFrame, "", flatLinks));
-      }
-
-      if (secondaryList.children.length === 0) {
-        secondaryList.innerHTML = `<div class="better-ccxp-empty">${STRINGS.emptyGroup}</div>`;
-      }
+        sidebarList.appendChild(createLinkButton(navFrame, item.linkItem, "better-ccxp-item"));
+      });
     };
 
-    renderActiveState();
+    renderItems();
   }
 
-  function createSection(targetDocument, label, links) {
-    const section = targetDocument.createElement("section");
-    section.className = "better-ccxp-section";
-
-    if (label) {
-      const sectionLabel = targetDocument.createElement("div");
-      sectionLabel.className = "better-ccxp-section-label";
-      sectionLabel.textContent = label;
-      section.appendChild(sectionLabel);
-    }
-
+  function createExpandableGroup(targetDocument, group, isExpanded, onToggle) {
     const linkList = targetDocument.createElement("div");
-    linkList.className = "better-ccxp-link-list";
+    linkList.className = "better-ccxp-sidebar-group";
 
-    links.forEach((linkItem) => {
-      const button = targetDocument.createElement("button");
-      button.type = "button";
-      button.className = "better-ccxp-link-button";
+    const button = targetDocument.createElement("button");
+    button.type = "button";
+    button.className = "better-ccxp-row-button better-ccxp-expandable";
+    button.setAttribute("aria-expanded", isExpanded ? "true" : "false");
 
-      const label = targetDocument.createElement("span");
-      label.className = "better-ccxp-link-label";
-      label.textContent = linkItem.label;
-      button.appendChild(label);
+    const leading = targetDocument.createElement("span");
+    leading.className = "better-ccxp-row-leading";
+    leading.appendChild(createChevronIcon(targetDocument, isExpanded));
+    button.appendChild(leading);
 
-      button.addEventListener("click", () => {
-        activateLegacyLink(linkItem, targetDocument);
-      });
+    const label = targetDocument.createElement("span");
+    label.className = "better-ccxp-row-label";
+    label.textContent = group.label;
+    button.appendChild(label);
 
-      if (isExternalLinkTarget(linkItem.target)) {
-        button.appendChild(createExternalLinkIcon(targetDocument));
-      }
-
-      linkList.appendChild(button);
+    button.addEventListener("click", () => {
+      onToggle(group.id);
     });
 
-    section.appendChild(linkList);
-    return section;
+    linkList.appendChild(button);
+
+    if (isExpanded) {
+      if (group.links.length > 0) {
+        const children = targetDocument.createElement("div");
+        children.className = "better-ccxp-link-list";
+        group.links.forEach((linkItem) => {
+          children.appendChild(createLinkButton(targetDocument, linkItem, "better-ccxp-item"));
+        });
+        linkList.appendChild(children);
+      } else {
+        const empty = targetDocument.createElement("div");
+        empty.className = "better-ccxp-empty";
+        empty.textContent = STRINGS.emptyGroup;
+        linkList.appendChild(empty);
+      }
+    }
+
+    return linkList;
+  }
+
+  function createLinkButton(targetDocument, linkItem, toneClass) {
+    const button = targetDocument.createElement("button");
+    button.type = "button";
+    button.className = `better-ccxp-row-button ${toneClass}`;
+
+    const leading = targetDocument.createElement("span");
+    leading.className = "better-ccxp-row-leading";
+    button.appendChild(leading);
+
+    const label = targetDocument.createElement("span");
+    label.className = "better-ccxp-row-label";
+    label.textContent = linkItem.label;
+    button.appendChild(label);
+
+    button.addEventListener("click", () => {
+      activateLegacyLink(linkItem, targetDocument);
+    });
+
+    if (isExternalLinkTarget(linkItem.target)) {
+      button.appendChild(createExternalLinkIcon(targetDocument));
+    }
+
+    return button;
   }
 
   function activateLegacyLink(linkItem, navDocument) {
@@ -934,6 +910,24 @@
       path.setAttribute("d", pathData);
       icon.appendChild(path);
     });
+
+    return icon;
+  }
+
+  function createChevronIcon(targetDocument, isExpanded) {
+    const icon = targetDocument.createElementNS("http://www.w3.org/2000/svg", "svg");
+    icon.setAttribute("class", `better-ccxp-chevron${isExpanded ? " is-expanded" : ""}`);
+    icon.setAttribute("viewBox", "0 0 24 24");
+    icon.setAttribute("fill", "none");
+    icon.setAttribute("stroke", "currentColor");
+    icon.setAttribute("stroke-width", "2.25");
+    icon.setAttribute("stroke-linecap", "round");
+    icon.setAttribute("stroke-linejoin", "round");
+    icon.setAttribute("aria-hidden", "true");
+
+    const path = targetDocument.createElementNS("http://www.w3.org/2000/svg", "path");
+    path.setAttribute("d", "m9 6 6 6-6 6");
+    icon.appendChild(path);
 
     return icon;
   }
