@@ -1,0 +1,100 @@
+
+<!-- saved from url=(0104)https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/top.php?account=110062113&ACIXSTORE=a1sntle608juevr8o7b2cdmek1 -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=Big5">
+      
+      <meta http-equiv="x-ua-compatible" content="IE=10">
+      <link href="./style.css" rel="stylesheet" type="text/css">
+      <script src="./jquery-1.12.4.min.js"></script>
+   </head>
+
+   <body bgcolor="#ffffff" topmargin="0" leftmargin="0" scroll="no">
+      <table width="100%" border="0" cellpadding="0" cellspacing="0" background="./ccxp_r1_c4.png">
+         <tbody><tr height="90">
+            <td width="100%"><img src="./ccxp_r1_c1.png" border="0"><img src="./ccxp_r1_c2.png" border="0"><img src="./ccxp_r1_c3.png" border="0"></td>
+         </tr>
+      </tbody></table>
+      <table width="100%" border="0" cellpadding="0" cellspacing="0">
+         <tbody><tr>
+            <td width="100%" valign="top">
+               <table width="100%" height="40" border="0" cellpadding="0" cellspacing="0" background="./ccxp_r2.png">
+                  <tbody><tr>
+                     <td width="10">&nbsp;</td>
+                     <td align="right" valign="middle" style="font-size:16px;">
+                        <a href="http://www.nthu.edu.tw/" target="_blank">清華大學</a>&nbsp;|&nbsp;
+                        <a href="https://ccc.site.nthu.edu.tw/?Lang=zh-tw" target="_blank">計通中心</a>&nbsp;|&nbsp;
+                        <a href="https://aisccc.site.nthu.edu.tw/" target="_blank">校務資訊組</a>&nbsp;|&nbsp;
+                        閒置時間：<label id="idle">0.3分</label>
+                     </td>
+                     <td width="21" align="center">&nbsp;</td>
+                  </tr>
+               </tbody></table>
+            </td>
+         </tr>
+      </tbody></table>
+   
+      		 
+<script>
+  var maxlifetime = 1800;
+  var idle=0;
+  var start_time=new Date().getTime();
+  var timer ;
+  var timer2 ;
+  var account='';
+  var if_confirm='1';
+  function update_timer()
+  {
+    $.ajax(
+    { url:     'time.php?account=110062113&ACIXSTORE=a1sntle608juevr8o7b2cdmek1',
+      success: function(data)
+               {
+                 if(data.idle>maxlifetime){
+                      clearInterval(timer);
+                      clearInterval(timer2);
+                      window.top.location="logout.php?account=110062113&ACIXSTORE=a1sntle608juevr8o7b2cdmek1";
+                 }
+                 start_time=new Date().getTime();
+                 idle=data.idle;
+                },
+      complete:function(XMLHttpRequest,textStatus)
+               {
+                 //console.log(XMLHttpRequest);
+                 //console.log(textStatus);
+               }
+    } );
+  }
+
+  $( document ).ready(function() 
+                      {
+                      update_timer();
+                      timer=setInterval(
+                            function()
+                            {
+                            var now=new Date().getTime();
+                            var used_time=((now-start_time)/1000+idle);
+                            $('#idle').html((used_time/60).toFixed(1)+'分');
+                            if( used_time < 60 ){
+                              if_confirm='1';
+                            } 
+                            if(used_time > maxlifetime-120){
+                              //console.log(maxlifetime-120);
+                              update_timer();
+                              setTimeout(function()
+					{
+                                        var used_time=((now-start_time)/1000+idle);
+                                        if(used_time > maxlifetime-120 && if_confirm=='1' ){
+					  if(confirm("閒置時間過長, 是否繼續?")){
+                                            location.reload();
+                                          }else{
+                                            //window.top.location="logout.php?account=110062113&ACIXSTORE=a1sntle608juevr8o7b2cdmek1";
+                                            if_confirm='0';
+                                          }
+                                        }
+                                        },2000);
+                            }
+                            },4000);
+                      timer2=setInterval(update_timer,6000);
+                    });
+</script>
+   
+
+</body></html>
