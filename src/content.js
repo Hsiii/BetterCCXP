@@ -27,7 +27,6 @@
     appTitle: "NTHU 校務資訊系統",
     appSubtitle: "Better CCXP",
     linksSection: "常用入口",
-    menuSection: "功能選單",
     shortcutsGroup: "快捷",
     emptyGroup: "此分類暫無可顯示項目"
   };
@@ -417,7 +416,6 @@
       shell.className = TOKENS.sidebarClass;
       shell.innerHTML = `
         <aside class="better-ccxp-sidebar-primary">
-          <div class="better-ccxp-sidebar-primary-title">${STRINGS.menuSection}</div>
           <div class="better-ccxp-sidebar-primary-list"></div>
         </aside>
         <section class="better-ccxp-sidebar-secondary">
