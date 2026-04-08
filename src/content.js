@@ -18,6 +18,7 @@
     spacingXl: "32px",
     sidebarRowPaddingY: "12px",
     sidebarRowPaddingX: "10px",
+    radiusSm: "10px",
     radiusMd: "14px",
     radiusLg: "20px",
     fontSans: "\"Noto Sans TC\", \"PingFang TC\", \"Microsoft JhengHei\", sans-serif",
@@ -114,15 +115,17 @@
       return;
     }
 
-    const loginSourceCell = findLoginSourceCell(targetDocument);
+    const loginForm = targetDocument.querySelector("form[name='form1'][action*='pre_select_entry.php']");
     const tabNavigation = targetDocument.querySelector(".tab");
     const tabContents = Array.from(targetDocument.querySelectorAll(".tabcontent"));
     const languageLinks = targetDocument.querySelector("ul.links");
     const announcementTable = findAnnouncementTable(targetDocument);
     const utilityLinks = findUtilityLinksTable(targetDocument);
     const serviceLink = findServiceLink(targetDocument);
+    const calendarTable = findCalendarTable(targetDocument);
+    const sealTable = targetDocument.querySelector("#twcaseal")?.closest("table");
 
-    if (!loginSourceCell || !tabNavigation || tabContents.length === 0) {
+    if (!loginForm || !tabNavigation || tabContents.length === 0) {
       retry();
       return;
     }
@@ -325,10 +328,7 @@
       langSection.appendChild(languageLinks);
     }
 
-    moveChildNodes(loginSourceCell, loginSection);
-
-    const calendarTable = findCalendarTable(loginSection);
-    const sealTable = loginSection.querySelector("#twcaseal")?.closest("table");
+    loginSection.appendChild(loginForm);
 
     if (calendarTable) {
       calendarSection.appendChild(calendarTable);
@@ -380,17 +380,6 @@
     const section = targetDocument.createElement("section");
     section.className = `better-ccxp-landing-section ${className}`;
     return section;
-  }
-
-  function moveChildNodes(sourceNode, targetNode) {
-    while (sourceNode.firstChild) {
-      targetNode.appendChild(sourceNode.firstChild);
-    }
-  }
-
-  function findLoginSourceCell(targetDocument) {
-    return Array.from(targetDocument.querySelectorAll("td"))
-      .find((cell) => cell.querySelector("form[name='form1'][action*='pre_select_entry.php']"));
   }
 
   function findAnnouncementTable(targetDocument) {
@@ -559,7 +548,7 @@
           width: 100%;
           padding: var(--better-ccxp-sidebar-row-padding-y) var(--better-ccxp-sidebar-row-padding-x);
           border: 0;
-          border-radius: 16px;
+          border-radius: var(--better-ccxp-radius-sm);
           background: transparent;
           color: inherit;
           cursor: pointer;
@@ -632,7 +621,7 @@
         .better-ccxp-empty {
           padding: 14px;
           border: 0;
-          border-radius: 16px;
+          border-radius: var(--better-ccxp-radius-sm);
           color: var(--better-ccxp-type-body-muted-color);
           font: var(--better-ccxp-type-body-muted);
           background: rgba(124, 45, 146, 0.04);
@@ -826,6 +815,7 @@
         --better-ccxp-spacing-xl: ${TOKENS.spacingXl};
         --better-ccxp-sidebar-row-padding-y: ${TOKENS.sidebarRowPaddingY};
         --better-ccxp-sidebar-row-padding-x: ${TOKENS.sidebarRowPaddingX};
+        --better-ccxp-radius-sm: ${TOKENS.radiusSm};
         --better-ccxp-radius-md: ${TOKENS.radiusMd};
         --better-ccxp-radius-lg: ${TOKENS.radiusLg};
         --better-ccxp-font-sans: ${TOKENS.fontSans};
