@@ -738,11 +738,11 @@
         }
 
         .ccxp-lite-row-button {
-          display: grid;
-          grid-template-columns: 18px minmax(0, 1fr) auto;
+          display: flex;
           align-items: center;
           gap: 6px;
           width: 100%;
+          min-width: 0;
           padding: var(--ccxp-lite-sidebar-row-padding-y) var(--ccxp-lite-sidebar-row-padding-x);
           border: 0;
           border-radius: var(--ccxp-lite-radius-sm);
@@ -803,12 +803,6 @@
           color: inherit;
         }
 
-        .ccxp-lite-row-marker {
-          color: currentColor;
-          font: inherit;
-          line-height: 1;
-        }
-
         .ccxp-lite-row-label {
           min-width: 0;
           white-space: normal;
@@ -821,9 +815,12 @@
           align-items: center;
           gap: 6px;
           min-width: 0;
+          flex: 1 1 auto;
         }
 
         .ccxp-lite-chevron {
+          flex: 0 0 auto;
+          margin-left: auto;
           width: 14px;
           height: 14px;
           color: currentColor;
@@ -849,12 +846,6 @@
           width: 15px;
           height: 15px;
           color: currentColor;
-        }
-
-        .ccxp-lite-row-spacer {
-          display: inline-block;
-          width: 14px;
-          height: 14px;
         }
 
         .ccxp-lite-empty {
@@ -1388,13 +1379,11 @@
     button.style.paddingLeft = `${getSidebarIndent(group.kind, depth)}px`;
 
     const leading = targetDocument.createElement("span");
-    leading.className = "ccxp-lite-row-leading";
     if (group.kind === "category") {
+      leading.className = "ccxp-lite-row-leading";
       leading.appendChild(createCategoryIcon(targetDocument, group.icon));
-    } else {
-      leading.appendChild(createRowSpacer(targetDocument));
+      button.appendChild(leading);
     }
-    button.appendChild(leading);
 
     button.appendChild(createRowLabel(targetDocument, group.label));
     button.appendChild(createChevronIcon(targetDocument, isExpanded));
@@ -1435,14 +1424,6 @@
     button.type = "button";
     button.className = `ccxp-lite-row-button ${toneClass}`;
     button.style.paddingLeft = `${getSidebarIndent("link", depth)}px`;
-
-    const leading = targetDocument.createElement("span");
-    leading.className = "ccxp-lite-row-leading";
-    const marker = targetDocument.createElement("span");
-    marker.className = "ccxp-lite-row-marker";
-    marker.textContent = "-";
-    leading.appendChild(marker);
-    button.appendChild(leading);
 
     button.appendChild(createRowLabel(targetDocument, linkItem.label, isExternalLinkTarget(linkItem.target)));
 
@@ -1573,13 +1554,6 @@
     });
 
     return icon;
-  }
-
-  function createRowSpacer(targetDocument) {
-    const spacer = targetDocument.createElement("span");
-    spacer.className = "ccxp-lite-row-spacer";
-    spacer.setAttribute("aria-hidden", "true");
-    return spacer;
   }
 
   function createChevronIcon(targetDocument, isExpanded) {
