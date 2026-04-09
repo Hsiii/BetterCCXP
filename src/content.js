@@ -798,10 +798,11 @@
 
         .ccxp-lite-row-leading {
           display: inline-flex;
+          flex: 0 0 auto;
           align-items: center;
           justify-content: center;
-          width: 18px;
-          height: 18px;
+          width: var(--ccxp-lite-size-sidebar-category-leading);
+          height: var(--ccxp-lite-size-sidebar-category-leading);
           color: inherit;
         }
 
@@ -1437,6 +1438,8 @@
       leading.className = "ccxp-lite-row-leading";
       leading.appendChild(createCategoryIcon(targetDocument, group.icon));
       button.appendChild(leading);
+    } else if (depth > 0) {
+      button.appendChild(createRowLeadingSpacer(targetDocument));
     }
 
     button.appendChild(createRowLabel(targetDocument, group.label));
@@ -1479,6 +1482,10 @@
     button.className = `ccxp-lite-row-button ${toneClass}`;
     button.style.paddingLeft = `${getSidebarIndent("link", depth)}px`;
 
+    if (depth > 0) {
+      button.appendChild(createRowLeadingSpacer(targetDocument));
+    }
+
     button.appendChild(createRowLabel(targetDocument, linkItem.label, isExternalLinkTarget(linkItem.target)));
 
     button.addEventListener("click", () => {
@@ -1502,6 +1509,13 @@
     }
 
     return labelWrap;
+  }
+
+  function createRowLeadingSpacer(targetDocument) {
+    const spacer = targetDocument.createElement("span");
+    spacer.className = "ccxp-lite-row-leading";
+    spacer.setAttribute("aria-hidden", "true");
+    return spacer;
   }
 
   function collectInitialExpandedIds(items) {
@@ -1531,15 +1545,10 @@
 
   function getSidebarIndent(kind, depth) {
     if (kind === "category") {
-      return TOKENS.sidebarRowPaddingX;
+      return Number.parseInt(TOKENS.sidebarRowPaddingX, 10);
     }
 
-    if (depth <= 0) {
-      return TOKENS.sidebarRowPaddingX;
-    }
-
-    const nestedDepthOffset = Math.max(0, depth - 1) * Number.parseInt(TOKENS.sidebarTreeIndentStep, 10);
-    return `calc(${TOKENS.sidebarRowPaddingX} + ${TOKENS.sizeSidebarCategoryLeading} + ${TOKENS.sidebarRowGap} + ${nestedDepthOffset}px)`;
+    return Number.parseInt(TOKENS.sidebarRowPaddingX, 10) + Math.max(0, depth - 1) * Number.parseInt(TOKENS.sidebarTreeIndentStep, 10);
   }
 
   function activateLegacyLink(linkItem, navDocument) {
