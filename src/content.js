@@ -93,7 +93,7 @@
       id: "payments-and-aid",
       label: "繳費與補助",
       icon: "wallet-cards",
-      itemLabels: ["繳費單相關作業(出納組)", "退費查詢", "所得相關查詢", "出納傳票付款查詢", "就學貸款", "弱勢助學作業", "學雜費減免作業"]
+      itemLabels: ["繳費單相關作業(出納組)", "退費查詢", "所得相關查詢", "出納傳票付款查詢", "就學貸款", "弱勢助學作業", "學雜費減免作業", "國外差旅費"]
     },
     {
       id: "housing-and-life",
@@ -1311,7 +1311,9 @@
     }
 
     const scratch = navDocument.createElement("div");
-    scratch.innerHTML = String(rawHtml);
+    scratch.innerHTML = String(rawHtml)
+      .replace(/\\"/g, "&quot;")
+      .replace(/\\'/g, "&#39;");
     return (scratch.textContent || "")
       .replace(/\s+/g, " ")
       .trim();
