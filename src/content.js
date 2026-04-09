@@ -1519,16 +1519,7 @@
   }
 
   function collectInitialExpandedIds(items) {
-    const ids = [];
-    const firstGroup = items.find((item) => item.kind === "category" || item.kind === "group");
-
-    if (!firstGroup) {
-      return ids;
-    }
-
-    ids.push(firstGroup.id);
-
-    return ids;
+    return [];
   }
 
   function hasExpandableId(item, itemId) {
