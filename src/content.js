@@ -20,6 +20,8 @@
     spacingXl: "32px",
     sidebarRowPaddingY: "12px",
     sidebarRowPaddingX: "10px",
+    sidebarRowGap: "6px",
+    sidebarTreeIndentStep: "16px",
     radiusSm: "10px",
     radiusMd: "14px",
     radiusLg: "20px",
@@ -34,6 +36,7 @@
     fontSizeBody: "15px",
     fontSizeSidebarBrand: "20px",
     sizeSidebarBrandLogo: "30px",
+    sizeSidebarCategoryLeading: "1.5em",
     spacingSidebarBrandWordGap: "0.5ch",
     sizeSidebarHeaderDividerWidth: "100%",
     sizeSidebarHeaderDividerHeight: "1px",
@@ -740,7 +743,7 @@
         .ccxp-lite-row-button {
           display: flex;
           align-items: center;
-          gap: 6px;
+          gap: var(--ccxp-lite-sidebar-row-gap);
           width: 100%;
           min-width: 0;
           padding: var(--ccxp-lite-sidebar-row-padding-y) var(--ccxp-lite-sidebar-row-padding-x);
@@ -780,8 +783,8 @@
         }
 
         .ccxp-lite-category > .ccxp-lite-row-button .ccxp-lite-row-leading {
-          width: 1.5em;
-          height: 1.5em;
+          width: var(--ccxp-lite-size-sidebar-category-leading);
+          height: var(--ccxp-lite-size-sidebar-category-leading);
         }
 
         .ccxp-lite-category .ccxp-lite-row-label {
@@ -1052,6 +1055,8 @@
         --ccxp-lite-spacing-xl: ${TOKENS.spacingXl};
         --ccxp-lite-sidebar-row-padding-y: ${TOKENS.sidebarRowPaddingY};
         --ccxp-lite-sidebar-row-padding-x: ${TOKENS.sidebarRowPaddingX};
+        --ccxp-lite-sidebar-row-gap: ${TOKENS.sidebarRowGap};
+        --ccxp-lite-sidebar-tree-indent-step: ${TOKENS.sidebarTreeIndentStep};
         --ccxp-lite-radius-sm: ${TOKENS.radiusSm};
         --ccxp-lite-radius-md: ${TOKENS.radiusMd};
         --ccxp-lite-radius-lg: ${TOKENS.radiusLg};
@@ -1066,6 +1071,7 @@
         --ccxp-lite-font-size-body: ${TOKENS.fontSizeBody};
         --ccxp-lite-font-size-sidebar-brand: ${TOKENS.fontSizeSidebarBrand};
         --ccxp-lite-size-sidebar-brand-logo: ${TOKENS.sizeSidebarBrandLogo};
+        --ccxp-lite-size-sidebar-category-leading: ${TOKENS.sizeSidebarCategoryLeading};
         --ccxp-lite-spacing-sidebar-brand-word-gap: ${TOKENS.spacingSidebarBrandWordGap};
         --ccxp-lite-size-sidebar-header-divider-width: ${TOKENS.sizeSidebarHeaderDividerWidth};
         --ccxp-lite-size-sidebar-header-divider-height: ${TOKENS.sizeSidebarHeaderDividerHeight};
@@ -1156,13 +1162,12 @@
   }
 
   function findCategoryForItem(item) {
-    const normalizedLabel = normalizeSidebarLabel(item.label);
+    const candidateLabels = collectSidebarLabels(item);
+
     return SIDEBAR_CATEGORIES.find((category) =>
       category.itemLabels.some((label) => {
         const normalizedCategoryLabel = normalizeSidebarLabel(label);
-        return normalizedCategoryLabel === normalizedLabel
-          || normalizedLabel.includes(normalizedCategoryLabel)
-          || normalizedCategoryLabel.includes(normalizedLabel);
+        return candidateLabels.some((candidateLabel) => isSidebarLabelMatch(candidateLabel, normalizedCategoryLabel));
       })
     ) || null;
   }
@@ -1174,6 +1179,41 @@
       .replace(/\s*\/\s*/g, " ")
       .replace(/\s+/g, " ")
       .trim();
+  }
+
+  function collectSidebarLabels(item) {
+    if (!item) {
+      return [];
+    }
+
+    const labels = [];
+    const itemLabel = normalizeSidebarLabel(item.label);
+    if (itemLabel) {
+      labels.push(itemLabel);
+    }
+
+    (item.directLinks || []).forEach((linkItem) => {
+      const linkLabel = normalizeSidebarLabel(linkItem.label);
+      if (linkLabel) {
+        labels.push(linkLabel);
+      }
+    });
+
+    (item.sections || []).forEach((section) => {
+      labels.push(...collectSidebarLabels(section));
+    });
+
+    return labels;
+  }
+
+  function isSidebarLabelMatch(candidateLabel, normalizedCategoryLabel) {
+    if (!candidateLabel || !normalizedCategoryLabel) {
+      return false;
+    }
+
+    return normalizedCategoryLabel === candidateLabel
+      || candidateLabel.includes(normalizedCategoryLabel)
+      || normalizedCategoryLabel.includes(candidateLabel);
   }
 
   function normalizeRootEntry(entryNode, index, navDocument) {
@@ -1305,12 +1345,27 @@
       return "";
     }
 
+    const extractedVisibleText = extractLegacyVisibleText(rawHtml);
+    if (extractedVisibleText) {
+      return extractedVisibleText;
+    }
+
     const scratch = navDocument.createElement("div");
     scratch.innerHTML = String(rawHtml)
+      .replace(/onClick='[^']*'/gi, "")
       .replace(/\\"/g, "&quot;")
-      .replace(/\\'/g, "&#39;");
+      .replace(/\\'/g, "&#39;")
+      .replace(/<br\s*\/?>/gi, " ");
     return (scratch.textContent || "")
       .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  function extractLegacyVisibleText(rawHtml) {
+    return [...String(rawHtml).replace(/<br\s*\/?>/gi, "\n").matchAll(/>([^<>]+)/g)]
+      .map((match) => String(match[1] || "").replace(/\s+/g, " ").trim())
+      .filter(Boolean)
+      .join(" ")
       .trim();
   }
 
@@ -1459,11 +1514,6 @@
 
     ids.push(firstGroup.id);
 
-    const firstSection = firstGroup.sections && firstGroup.sections[0];
-    if (firstSection) {
-      ids.push(firstSection.id);
-    }
-
     return ids;
   }
 
@@ -1481,14 +1531,15 @@
 
   function getSidebarIndent(kind, depth) {
     if (kind === "category") {
-      return 10;
+      return TOKENS.sidebarRowPaddingX;
     }
 
-    if (kind === "group" || kind === "section") {
-      return 10 + Math.max(0, depth - 1) * 16;
+    if (depth <= 0) {
+      return TOKENS.sidebarRowPaddingX;
     }
 
-    return 10 + Math.max(0, depth - 1) * 16;
+    const nestedDepthOffset = Math.max(0, depth - 1) * Number.parseInt(TOKENS.sidebarTreeIndentStep, 10);
+    return `calc(${TOKENS.sidebarRowPaddingX} + ${TOKENS.sizeSidebarCategoryLeading} + ${TOKENS.sidebarRowGap} + ${nestedDepthOffset}px)`;
   }
 
   function activateLegacyLink(linkItem, navDocument) {
