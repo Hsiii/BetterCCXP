@@ -45,7 +45,7 @@
   };
 
   const ASSETS = {
-    brandLogoPath: "assets/logo.jpg"
+    brandLogoPath: "assets/nthu.jpg"
   };
 
   const RETRY_LIMIT = 40;

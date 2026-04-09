@@ -3,6 +3,12 @@
   "name": "ccxpLite",
   "version": "0.1.0",
   "description": "A minimalism theme plugin for NTHU CCXP.",
+  "icons": {
+    "16": "assets/logo.png",
+    "32": "assets/logo.png",
+    "48": "assets/logo.png",
+    "128": "assets/logo.png"
+  },
   "web_accessible_resources": [
     {
       "resources": [
