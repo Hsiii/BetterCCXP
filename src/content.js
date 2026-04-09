@@ -52,6 +52,75 @@
     emptyGroup: "此分類暫無可顯示項目"
   };
 
+  const SIDEBAR_CATEGORIES = [
+    {
+      id: "profile",
+      label: "個人資料",
+      icon: "user-round",
+      itemLabels: ["帳號相關維護", "個人資料維護", "導師聯繫資料", "原住民資料系統"]
+    },
+    {
+      id: "planning-and-enrollment",
+      label: "預排與選課",
+      icon: "calendar-range",
+      itemLabels: ["預排系統 Tentative schedule", "選課 Select courses", "校際/跨系統選修", "暑修 Summer courses"]
+    },
+    {
+      id: "courses-and-grades",
+      label: "課程成績",
+      icon: "book-open-check",
+      itemLabels: ["課程、成績 Courses, transcript", "學分&抵免學分"]
+    },
+    {
+      id: "teaching-feedback",
+      label: "教學意見",
+      icon: "message-square-more",
+      itemLabels: ["教學意見 Comments about courses", "傑出教學教師票選", "教學助理評量問卷"]
+    },
+    {
+      id: "status-changes",
+      label: "學籍異動",
+      icon: "refresh-cw",
+      itemLabels: ["申請復學", "保留生申請入學", "轉系所申請", "兵役業務"]
+    },
+    {
+      id: "graduation-and-defense",
+      label: "畢業與口試",
+      icon: "graduation-cap",
+      itemLabels: ["畢業審查", "研究生學位考試", "畢業生離校系統", "數位學位證書", "袍服借用申請"]
+    },
+    {
+      id: "payments-and-aid",
+      label: "繳費與補助",
+      icon: "wallet-cards",
+      itemLabels: ["繳費單相關作業(出納組)", "退費查詢", "所得相關查詢", "出納傳票付款查詢", "就學貸款", "弱勢助學作業", "學雜費減免作業"]
+    },
+    {
+      id: "housing-and-life",
+      label: "住宿與生活",
+      icon: "house-heart",
+      itemLabels: ["學生請假系統", "外宿資料", "學生宿舍相關", "健康照護系統", "職涯諮詢與評測"]
+    },
+    {
+      id: "forms",
+      label: "表單系統",
+      icon: "files",
+      itemLabels: ["電子表單系統", "計畫差勤及臨時工時登錄系統", "出國申請與報告繳交系統", "校外實習登錄平台"]
+    },
+    {
+      id: "campus-systems",
+      label: "校園系統",
+      icon: "building-2",
+      itemLabels: ["學習平台", "計通中心相關服務", "研發處資訊系統", "校內其他系統", "明燈平台"]
+    },
+    {
+      id: "announcements-and-voting",
+      label: "公告與投票",
+      icon: "megaphone",
+      itemLabels: ["會議紀錄", "校內業務公告", "線上投票系統", "線上投票系統(特殊投票)", "校園通報網"]
+    }
+  ];
+
   const ASSETS = {
     brandLogoPath: "assets/nthu.jpg",
     sidebarBrandLogoPath: "assets/nthu.png"
@@ -697,6 +766,31 @@
           color: var(--ccxp-lite-type-nav-color);
         }
 
+        .ccxp-lite-category {
+          margin-top: var(--ccxp-lite-spacing-sm);
+          color: var(--ccxp-lite-brand);
+        }
+
+        .ccxp-lite-category:first-child {
+          margin-top: 0;
+        }
+
+        .ccxp-lite-category > .ccxp-lite-row-button {
+          padding-top: 13px;
+          padding-bottom: 13px;
+          border: 1px solid rgba(121, 36, 133, 0.14);
+          background: rgba(121, 36, 133, 0.08);
+          color: var(--ccxp-lite-brand);
+        }
+
+        .ccxp-lite-category > .ccxp-lite-row-button:hover {
+          background: rgba(121, 36, 133, 0.12);
+        }
+
+        .ccxp-lite-category .ccxp-lite-row-label {
+          font-weight: var(--ccxp-lite-font-weight-heavy);
+        }
+
         .ccxp-lite-item {
           color: var(--ccxp-lite-type-body-color);
           font: var(--ccxp-lite-type-nav);
@@ -744,6 +838,12 @@
           height: 14px;
           color: inherit;
           opacity: 0.85;
+        }
+
+        .ccxp-lite-category-icon {
+          width: 15px;
+          height: 15px;
+          color: currentColor;
         }
 
         .ccxp-lite-empty {
@@ -1013,14 +1113,72 @@
 
   function buildSidebarModel(root, navDocument) {
     const rootChildren = root.children || [];
-    const items = rootChildren
+    const normalizedItems = rootChildren
       .map((entry, index) => normalizeRootEntry(entry, index, navDocument))
       .filter(Boolean);
+    const items = buildCategorizedSidebarItems(normalizedItems);
 
     return {
       items,
       initialExpandedItemIds: collectInitialExpandedIds(items)
     };
+  }
+
+  function buildCategorizedSidebarItems(items) {
+    const buckets = new Map(SIDEBAR_CATEGORIES.map((category) => [category.id, []]));
+    const unmatchedItems = [];
+
+    items.forEach((item) => {
+      const category = findCategoryForItem(item);
+      if (category) {
+        buckets.get(category.id).push(item);
+      } else {
+        unmatchedItems.push(item);
+      }
+    });
+
+    return SIDEBAR_CATEGORIES
+      .map((category) => {
+        const categoryItems = buckets.get(category.id) || [];
+
+        if (categoryItems.length === 0) {
+          return null;
+        }
+
+        return {
+          id: `category-${category.id}`,
+          label: category.label,
+          icon: category.icon,
+          directLinks: categoryItems.filter((item) => item.kind === "link").map((item) => item.linkItem),
+          sections: categoryItems.filter((item) => item.kind !== "link"),
+          kind: "category"
+        };
+      })
+      .filter(Boolean)
+      .concat(unmatchedItems.length > 0
+        ? [{
+          id: "category-uncategorized",
+          label: "其他",
+          icon: "folders",
+          directLinks: unmatchedItems.filter((item) => item.kind === "link").map((item) => item.linkItem),
+          sections: unmatchedItems.filter((item) => item.kind !== "link"),
+          kind: "category"
+        }]
+        : []);
+  }
+
+  function findCategoryForItem(item) {
+    const normalizedLabel = normalizeSidebarLabel(item.label);
+    return SIDEBAR_CATEGORIES.find((category) =>
+      category.itemLabels.some((label) => normalizeSidebarLabel(label) === normalizedLabel)
+    ) || null;
+  }
+
+  function normalizeSidebarLabel(label) {
+    return String(label || "")
+      .replace(/\s*\/\s*/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
   }
 
   function normalizeRootEntry(entryNode, index, navDocument) {
@@ -1178,7 +1336,7 @@
       : null;
     let expandedItemIds = new Set(
       storedExpandedIds && storedExpandedIds.length > 0
-        ? storedExpandedIds.filter((itemId) => model.items.some((item) => item.id === itemId && item.kind === "group"))
+        ? storedExpandedIds.filter((itemId) => model.items.some((item) => hasExpandableId(item, itemId)))
         : Array.from(initialExpandedIds)
     );
 
@@ -1192,7 +1350,7 @@
       }
 
       model.items.forEach((item) => {
-        if (item.kind === "group") {
+        if (item.kind === "category" || item.kind === "group" || item.kind === "section") {
           sidebarList.appendChild(createExpandableGroup(navFrame, item, expandedItemIds, 0, (groupId) => {
             if (expandedItemIds.has(groupId)) {
               expandedItemIds.delete(groupId);
@@ -1214,7 +1372,7 @@
   function createExpandableGroup(targetDocument, group, expandedItemIds, depth, onToggle) {
     const isExpanded = expandedItemIds.has(group.id);
     const linkList = targetDocument.createElement("div");
-    linkList.className = "ccxp-lite-sidebar-group";
+    linkList.className = `ccxp-lite-sidebar-group${group.kind === "category" ? " ccxp-lite-category" : ""}`;
 
     const button = targetDocument.createElement("button");
     button.type = "button";
@@ -1224,13 +1382,21 @@
 
     const leading = targetDocument.createElement("span");
     leading.className = "ccxp-lite-row-leading";
-    leading.appendChild(createChevronIcon(targetDocument, isExpanded));
+    if (group.kind === "category") {
+      leading.appendChild(createCategoryIcon(targetDocument, group.icon));
+    } else {
+      leading.appendChild(createChevronIcon(targetDocument, isExpanded));
+    }
     button.appendChild(leading);
 
     const label = targetDocument.createElement("span");
     label.className = "ccxp-lite-row-label";
     label.textContent = group.label;
     button.appendChild(label);
+
+    if (group.kind === "category") {
+      button.appendChild(createChevronIcon(targetDocument, isExpanded));
+    }
 
     button.addEventListener("click", () => {
       onToggle(group.id);
@@ -1295,7 +1461,7 @@
 
   function collectInitialExpandedIds(items) {
     const ids = [];
-    const firstGroup = items.find((item) => item.kind === "group");
+    const firstGroup = items.find((item) => item.kind === "category" || item.kind === "group");
 
     if (!firstGroup) {
       return ids;
@@ -1309,6 +1475,18 @@
     }
 
     return ids;
+  }
+
+  function hasExpandableId(item, itemId) {
+    if (!item || (item.kind !== "category" && item.kind !== "group" && item.kind !== "section")) {
+      return false;
+    }
+
+    if (item.id === itemId) {
+      return true;
+    }
+
+    return (item.sections || []).some((childItem) => hasExpandableId(childItem, itemId));
   }
 
   function activateLegacyLink(linkItem, navDocument) {
@@ -1391,6 +1569,108 @@
     icon.appendChild(path);
 
     return icon;
+  }
+
+  function createCategoryIcon(targetDocument, iconName) {
+    const icon = targetDocument.createElementNS("http://www.w3.org/2000/svg", "svg");
+    icon.setAttribute("class", "ccxp-lite-category-icon");
+    icon.setAttribute("viewBox", "0 0 24 24");
+    icon.setAttribute("fill", "none");
+    icon.setAttribute("stroke", "currentColor");
+    icon.setAttribute("stroke-width", "2");
+    icon.setAttribute("stroke-linecap", "round");
+    icon.setAttribute("stroke-linejoin", "round");
+    icon.setAttribute("aria-hidden", "true");
+
+    getCategoryIconPaths(iconName).forEach((pathData) => {
+      const path = targetDocument.createElementNS("http://www.w3.org/2000/svg", "path");
+      path.setAttribute("d", pathData);
+      icon.appendChild(path);
+    });
+
+    return icon;
+  }
+
+  function getCategoryIconPaths(iconName) {
+    const iconPathMap = {
+      "user-round": [
+        "M12 13a5 5 0 1 0 0-10 5 5 0 0 0 0 10",
+        "M4 21a8 8 0 0 1 16 0"
+      ],
+      "calendar-range": [
+        "M8 2v4",
+        "M16 2v4",
+        "M3 10h18",
+        "M7 14h5",
+        "M16 14h1",
+        "M16 18h1",
+        "M3 6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
+      ],
+      "book-open-check": [
+        "M12 7v14",
+        "M4 19.5A2.5 2.5 0 0 1 6.5 17H12",
+        "M20 19.5A2.5 2.5 0 0 0 17.5 17H12",
+        "m16 9 2 2 4-4",
+        "M6.5 3H12v14H6.5A2.5 2.5 0 0 0 4 19.5V5.5A2.5 2.5 0 0 1 6.5 3Z",
+        "M17.5 3H12v14h5.5A2.5 2.5 0 0 1 20 19.5V5.5A2.5 2.5 0 0 0 17.5 3Z"
+      ],
+      "message-square-more": [
+        "M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z",
+        "M8 10h.01",
+        "M12 10h.01",
+        "M16 10h.01"
+      ],
+      "refresh-cw": [
+        "M21 2v6h-6",
+        "M3 22v-6h6",
+        "M20.49 9A9 9 0 0 0 5.64 5.64L3 8",
+        "M3.51 15A9 9 0 0 0 18.36 18.36L21 16"
+      ],
+      "graduation-cap": [
+        "m22 10-10-5L2 10l10 5z",
+        "M6 12v5c3 2 9 2 12 0v-5",
+        "M19 13v6"
+      ],
+      "wallet-cards": [
+        "M21 12V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10",
+        "M3 10h18",
+        "M16 19h6",
+        "M19 16v6"
+      ],
+      "house-heart": [
+        "M3 10.5 12 3l9 7.5",
+        "M5 9.5V21h14V9.5",
+        "m12 17-1.6-1.5a2.3 2.3 0 0 1 3.2-3.3l.4.4.4-.4a2.3 2.3 0 0 1 3.2 3.3z"
+      ],
+      files: [
+        "M20 7h-8a2 2 0 0 1-2-2V3",
+        "M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h5",
+        "M14 3l6 6v4",
+        "M14 19h7",
+        "M14 23h7",
+        "M14 15h7"
+      ],
+      "building-2": [
+        "M6 22V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v18",
+        "M4 22h16",
+        "M10 6h4",
+        "M10 10h4",
+        "M10 14h4",
+        "M10 18h4"
+      ],
+      megaphone: [
+        "M3 11v2",
+        "M11 5 18 3v18l-7-2-5-4V9z",
+        "M11 19v3",
+        "M7 15v5"
+      ],
+      folders: [
+        "M2 6a2 2 0 0 1 2-2h5l2 2h9a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2z",
+        "M2 10h20"
+      ]
+    };
+
+    return iconPathMap[iconName] || iconPathMap.folders;
   }
 
   function parseSidebarTree(navDocument) {
