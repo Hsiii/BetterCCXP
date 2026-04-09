@@ -35,7 +35,7 @@
     fontSizeSidebarBrand: "20px",
     sizeSidebarBrandLogo: "30px",
     spacingSidebarBrandWordGap: "0.5ch",
-    sizeSidebarHeaderDividerWidth: "80%",
+    sizeSidebarHeaderDividerWidth: "100%",
     sizeSidebarHeaderDividerHeight: "1px",
     fontSizePageTitle: "26px",
     fontSizeDisplay: "30px",
@@ -816,6 +816,13 @@
           overflow-wrap: anywhere;
         }
 
+        .ccxp-lite-row-label-wrap {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          min-width: 0;
+        }
+
         .ccxp-lite-chevron {
           width: 14px;
           height: 14px;
@@ -842,6 +849,12 @@
           width: 15px;
           height: 15px;
           color: currentColor;
+        }
+
+        .ccxp-lite-row-spacer {
+          display: inline-block;
+          width: 14px;
+          height: 14px;
         }
 
         .ccxp-lite-empty {
@@ -1385,18 +1398,12 @@
     if (group.kind === "category") {
       leading.appendChild(createCategoryIcon(targetDocument, group.icon));
     } else {
-      leading.appendChild(createChevronIcon(targetDocument, isExpanded));
+      leading.appendChild(createRowSpacer(targetDocument));
     }
     button.appendChild(leading);
 
-    const label = targetDocument.createElement("span");
-    label.className = "ccxp-lite-row-label";
-    label.textContent = group.label;
-    button.appendChild(label);
-
-    if (group.kind === "category") {
-      button.appendChild(createChevronIcon(targetDocument, isExpanded));
-    }
+    button.appendChild(createRowLabel(targetDocument, group.label));
+    button.appendChild(createChevronIcon(targetDocument, isExpanded));
 
     button.addEventListener("click", () => {
       onToggle(group.id);
@@ -1443,20 +1450,29 @@
     leading.appendChild(marker);
     button.appendChild(leading);
 
-    const label = targetDocument.createElement("span");
-    label.className = "ccxp-lite-row-label";
-    label.textContent = linkItem.label;
-    button.appendChild(label);
+    button.appendChild(createRowLabel(targetDocument, linkItem.label, isExternalLinkTarget(linkItem.target)));
 
     button.addEventListener("click", () => {
       activateLegacyLink(linkItem, targetDocument);
     });
 
-    if (isExternalLinkTarget(linkItem.target)) {
-      button.appendChild(createExternalLinkIcon(targetDocument));
+    return button;
+  }
+
+  function createRowLabel(targetDocument, text, withExternalLinkIcon = false) {
+    const labelWrap = targetDocument.createElement("span");
+    labelWrap.className = "ccxp-lite-row-label-wrap";
+
+    const label = targetDocument.createElement("span");
+    label.className = "ccxp-lite-row-label";
+    label.textContent = text;
+    labelWrap.appendChild(label);
+
+    if (withExternalLinkIcon) {
+      labelWrap.appendChild(createExternalLinkIcon(targetDocument));
     }
 
-    return button;
+    return labelWrap;
   }
 
   function collectInitialExpandedIds(items) {
@@ -1563,6 +1579,13 @@
     });
 
     return icon;
+  }
+
+  function createRowSpacer(targetDocument) {
+    const spacer = targetDocument.createElement("span");
+    spacer.className = "ccxp-lite-row-spacer";
+    spacer.setAttribute("aria-hidden", "true");
+    return spacer;
   }
 
   function createChevronIcon(targetDocument, isExpanded) {
