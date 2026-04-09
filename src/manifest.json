@@ -3,6 +3,16 @@
   "name": "ccxpLite",
   "version": "0.1.0",
   "description": "A minimalism theme plugin for NTHU CCXP.",
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "assets/*"
+      ],
+      "matches": [
+        "https://www.ccxp.nthu.edu.tw/*"
+      ]
+    }
+  ],
   "content_scripts": [
     {
       "matches": [

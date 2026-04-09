@@ -40,7 +40,12 @@
 
   const STRINGS = {
     sidebarTitle: "NTHU AIS",
+    landingTitle: "NTHU AIS",
     emptyGroup: "此分類暫無可顯示項目"
+  };
+
+  const ASSETS = {
+    brandLogoPath: "assets/logo.jpg"
   };
 
   const RETRY_LIMIT = 40;
@@ -163,6 +168,33 @@
         display: flex;
         flex-direction: column;
         gap: var(--ccxp-lite-spacing-md);
+      }
+
+      .ccxp-lite-landing-brand {
+        display: flex;
+        align-items: center;
+        gap: var(--ccxp-lite-spacing-md);
+        padding-bottom: var(--ccxp-lite-spacing-sm);
+        border-bottom: 1px solid var(--ccxp-lite-border);
+      }
+
+      .ccxp-lite-landing-brand-logo {
+        width: 56px;
+        height: 56px;
+        border-radius: 16px;
+        object-fit: cover;
+        flex-shrink: 0;
+      }
+
+      .ccxp-lite-landing-brand-copy {
+        min-width: 0;
+      }
+
+      .ccxp-lite-landing-brand-title {
+        color: var(--ccxp-lite-type-display-color);
+        font: var(--ccxp-lite-type-body-strong);
+        font-size: 28px;
+        letter-spacing: 0.01em;
       }
 
       .ccxp-lite-landing-lang {
@@ -326,11 +358,15 @@
     shell.className = TOKENS.landingClass;
 
     const topSection = createLandingSection(targetDocument, "ccxp-lite-landing-top");
+    const brandSection = createLandingSection(targetDocument, "ccxp-lite-landing-brand");
     const langSection = createLandingSection(targetDocument, "ccxp-lite-landing-lang");
     const loginSection = createLandingSection(targetDocument, "ccxp-lite-landing-login");
     const linksSection = createLandingSection(targetDocument, "ccxp-lite-landing-links");
     const tabsSection = createLandingSection(targetDocument, "ccxp-lite-landing-tabs");
     const noticesSection = createLandingSection(targetDocument, "ccxp-lite-landing-notices");
+
+    brandSection.appendChild(createBrandImage(targetDocument, "ccxp-lite-landing-brand-logo"));
+    brandSection.appendChild(createBrandCopy(targetDocument, "ccxp-lite-landing-brand-copy", "ccxp-lite-landing-brand-title", STRINGS.landingTitle));
 
     if (languageLinks) {
       langSection.appendChild(languageLinks);
@@ -340,6 +376,7 @@
     removeNode(findCalendarTable(loginSection));
     removeNode(loginSection.querySelector("#twcaseal")?.closest("table"));
 
+    topSection.appendChild(brandSection);
     topSection.appendChild(langSection);
     topSection.appendChild(loginSection);
     shell.appendChild(topSection);
@@ -374,6 +411,26 @@
     const section = targetDocument.createElement("section");
     section.className = `ccxp-lite-landing-section ${className}`;
     return section;
+  }
+
+  function createBrandImage(targetDocument, className) {
+    const image = targetDocument.createElement("img");
+    image.className = className;
+    image.alt = STRINGS.sidebarTitle;
+    image.src = chrome.runtime.getURL(ASSETS.brandLogoPath);
+    return image;
+  }
+
+  function createBrandCopy(targetDocument, containerClassName, titleClassName, title) {
+    const copy = targetDocument.createElement("div");
+    copy.className = containerClassName;
+
+    const titleNode = targetDocument.createElement("div");
+    titleNode.className = titleClassName;
+    titleNode.textContent = title;
+    copy.appendChild(titleNode);
+
+    return copy;
   }
 
   function moveChildNodes(sourceNode, targetNode) {
@@ -519,11 +576,18 @@
         }
 
         .ccxp-lite-sidebar-brand {
-          display: grid;
-          grid-template-columns: minmax(0, 1fr);
+        display: grid;
+          grid-template-columns: 44px minmax(0, 1fr);
           align-items: center;
           gap: 8px;
           padding: 4px 6px 18px;
+        }
+
+        .ccxp-lite-sidebar-brand-logo {
+          width: 44px;
+          height: 44px;
+          border-radius: 12px;
+          object-fit: cover;
         }
 
         .ccxp-lite-sidebar-brand-copy {
@@ -643,14 +707,16 @@
       const helperFrame = navDocument.querySelector("iframe[name='frame_7472']");
       const shell = navDocument.createElement("div");
       shell.className = TOKENS.sidebarClass;
-      shell.innerHTML = `
-        <div class="ccxp-lite-sidebar-brand">
-          <div class="ccxp-lite-sidebar-brand-copy">
-            <div class="ccxp-lite-sidebar-brand-title">${STRINGS.sidebarTitle}</div>
-          </div>
-        </div>
-        <aside class="ccxp-lite-sidebar-list"></aside>
-      `;
+      const brand = navDocument.createElement("div");
+      brand.className = "ccxp-lite-sidebar-brand";
+      brand.appendChild(createBrandImage(navDocument, "ccxp-lite-sidebar-brand-logo"));
+      brand.appendChild(createBrandCopy(navDocument, "ccxp-lite-sidebar-brand-copy", "ccxp-lite-sidebar-brand-title", STRINGS.sidebarTitle));
+
+      const list = navDocument.createElement("aside");
+      list.className = "ccxp-lite-sidebar-list";
+
+      shell.appendChild(brand);
+      shell.appendChild(list);
 
       navDocument.body.replaceChildren(shell);
 

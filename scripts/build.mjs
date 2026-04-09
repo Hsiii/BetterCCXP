@@ -1,4 +1,4 @@
-import { copyFileSync, mkdtempSync, mkdirSync, rmSync, existsSync } from "node:fs";
+import { copyFileSync, cpSync, mkdtempSync, mkdirSync, rmSync, existsSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { spawnSync } from "node:child_process";
@@ -9,7 +9,7 @@ const srcDir = join(projectRoot, "src");
 const distDir = join(projectRoot, "dist");
 const outputZip = join(distDir, "ccxpLite.zip");
 const stagingDir = mkdtempSync(join(tmpdir(), "ccxp-lite-build-"));
-const filesToPack = ["manifest.json", "content.js"];
+const filesToPack = ["manifest.json", "content.js", "assets"];
 
 try {
   mkdirSync(distDir, { recursive: true });
@@ -22,7 +22,14 @@ try {
       throw new Error(`Missing required source file: ${sourcePath}`);
     }
 
-    copyFileSync(sourcePath, join(stagingDir, fileName));
+    const destinationPath = join(stagingDir, fileName);
+
+    if (fileName === "assets") {
+      cpSync(sourcePath, destinationPath, { recursive: true });
+      continue;
+    }
+
+    copyFileSync(sourcePath, destinationPath);
   }
 
   const zipResult = spawnSync("zip", ["-q", "-r", outputZip, ...filesToPack], {
