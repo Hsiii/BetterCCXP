@@ -35,7 +35,7 @@
     fontSizeSidebarBrand: "20px",
     sizeSidebarBrandLogo: "30px",
     spacingSidebarBrandWordGap: "0.5ch",
-    sizeSidebarHeaderDividerWidth: "64px",
+    sizeSidebarHeaderDividerWidth: "96px",
     sizeSidebarHeaderDividerHeight: "2px",
     fontSizePageTitle: "26px",
     fontSizeDisplay: "30px",
@@ -636,7 +636,10 @@
         }
 
         .ccxp-lite-sidebar-divider {
+          display: block;
+          flex: 0 0 auto;
           width: var(--ccxp-lite-size-sidebar-header-divider-width);
+          min-height: var(--ccxp-lite-size-sidebar-header-divider-height);
           height: var(--ccxp-lite-size-sidebar-header-divider-height);
           margin: 0 0 14px 6px;
           border-radius: 999px;
