@@ -1,4 +1,4 @@
-(function bootstrapBetterCcxp() {
+(function bootstrapCcxpLite() {
   const TOKENS = {
     colorPrimary: "#1f2933",
     colorAccent: "#d5dbe1",
@@ -33,9 +33,9 @@
     fontSizeDisplay: "30px",
     landingMaxWidth: "960px",
     sidebarWidth: "288px",
-    sidebarClass: "better-ccxp-sidebar-shell",
-    mainClass: "better-ccxp-main-skin",
-    landingClass: "better-ccxp-landing-shell"
+    sidebarClass: "ccxp-lite-sidebar-shell",
+    mainClass: "ccxp-lite-main-skin",
+    landingClass: "ccxp-lite-landing-shell"
   };
 
   const STRINGS = {
@@ -101,7 +101,7 @@
       return;
     }
 
-    if (targetDocument.body.dataset.betterCcxpLandingApplied === "true") {
+    if (targetDocument.body.dataset.ccxpLiteLandingApplied === "true") {
       return;
     }
 
@@ -125,21 +125,21 @@
     injectBaseTokens(targetDocument, "landing");
 
     const style = targetDocument.createElement("style");
-    style.dataset.betterCcxpLanding = "true";
+    style.dataset.ccxpLiteLanding = "true";
     style.textContent = `
       html, body {
-        background: var(--better-ccxp-bg) !important;
-        color: var(--better-ccxp-type-body-color);
+        background: var(--ccxp-lite-bg) !important;
+        color: var(--ccxp-lite-type-body-color);
       }
 
       body {
         margin: 0;
-        padding: var(--better-ccxp-spacing-lg) var(--better-ccxp-spacing-md) 48px;
-        font: var(--better-ccxp-type-body);
+        padding: var(--ccxp-lite-spacing-lg) var(--ccxp-lite-spacing-md) 48px;
+        font: var(--ccxp-lite-type-body);
       }
 
       a {
-        color: var(--better-ccxp-type-primary-link-color);
+        color: var(--ccxp-lite-type-primary-link-color);
         text-decoration: none;
       }
 
@@ -152,171 +152,171 @@
         margin: 0 auto;
         display: flex;
         flex-direction: column;
-        gap: var(--better-ccxp-spacing-lg);
+        gap: var(--ccxp-lite-spacing-lg);
       }
 
-      .better-ccxp-landing-section {
+      .ccxp-lite-landing-section {
         width: 100%;
       }
 
-      .better-ccxp-landing-top {
+      .ccxp-lite-landing-top {
         display: flex;
         flex-direction: column;
-        gap: var(--better-ccxp-spacing-md);
+        gap: var(--ccxp-lite-spacing-md);
       }
 
-      .better-ccxp-landing-lang {
+      .ccxp-lite-landing-lang {
         display: flex;
         justify-content: flex-end;
-        padding-bottom: var(--better-ccxp-spacing-sm);
-        border-bottom: 1px solid var(--better-ccxp-border);
+        padding-bottom: var(--ccxp-lite-spacing-sm);
+        border-bottom: 1px solid var(--ccxp-lite-border);
       }
 
-      .better-ccxp-landing-lang ul,
-      .better-ccxp-landing-lang li {
+      .ccxp-lite-landing-lang ul,
+      .ccxp-lite-landing-lang li {
         margin: 0;
         padding: 0;
         list-style: none;
       }
 
-      .better-ccxp-landing-lang a {
-        color: var(--better-ccxp-type-utility-color);
-        font: var(--better-ccxp-type-utility);
+      .ccxp-lite-landing-lang a {
+        color: var(--ccxp-lite-type-utility-color);
+        font: var(--ccxp-lite-type-utility);
       }
 
-      .better-ccxp-landing-login > table:first-of-type {
+      .ccxp-lite-landing-login > table:first-of-type {
         display: none;
       }
 
-      .better-ccxp-landing-login div[style*="login_mid.png"] {
+      .ccxp-lite-landing-login div[style*="login_mid.png"] {
         margin: 0 !important;
         padding: 0 !important;
         background-image: none !important;
       }
 
-      .better-ccxp-landing-login div[style*="margin-left:1em"] {
+      .ccxp-lite-landing-login div[style*="margin-left:1em"] {
         margin-left: 0 !important;
       }
 
-      .better-ccxp-landing-login .inputtext {
+      .ccxp-lite-landing-login .inputtext {
         width: min(100%, 320px) !important;
         margin: 6px 0 12px !important;
         padding: 8px 0 !important;
         border: 0 !important;
-        border-bottom: 1px solid var(--better-ccxp-border) !important;
+        border-bottom: 1px solid var(--ccxp-lite-border) !important;
         background: transparent;
-        color: var(--better-ccxp-type-body-color);
-        font: var(--better-ccxp-type-body);
+        color: var(--ccxp-lite-type-body-color);
+        font: var(--ccxp-lite-type-body);
       }
 
-      .better-ccxp-landing-login .button {
+      .ccxp-lite-landing-login .button {
         min-width: 112px;
         padding: 10px 18px;
         border-radius: 999px;
-        background: var(--better-ccxp-text);
-        color: var(--better-ccxp-bg);
-        font: var(--better-ccxp-type-body-strong);
+        background: var(--ccxp-lite-text);
+        color: var(--ccxp-lite-bg);
+        font: var(--ccxp-lite-type-body-strong);
       }
 
-      .better-ccxp-landing-section img,
-      .better-ccxp-landing-section table,
-      .better-ccxp-landing-section iframe {
+      .ccxp-lite-landing-section img,
+      .ccxp-lite-landing-section table,
+      .ccxp-lite-landing-section iframe {
         max-width: 100%;
       }
 
-      .better-ccxp-landing-login table[border="1"] {
-        margin-top: var(--better-ccxp-spacing-sm);
-        border-color: var(--better-ccxp-border);
+      .ccxp-lite-landing-login table[border="1"] {
+        margin-top: var(--ccxp-lite-spacing-sm);
+        border-color: var(--ccxp-lite-border);
       }
 
-      .better-ccxp-landing-login td,
-      .better-ccxp-landing-section td,
-      .better-ccxp-landing-section th,
-      .better-ccxp-landing-section font,
-      .better-ccxp-landing-section span,
-      .better-ccxp-landing-section div,
-      .better-ccxp-landing-section p,
-      .better-ccxp-landing-section li,
-      .better-ccxp-landing-section button,
-      .better-ccxp-landing-section input {
-        font-family: var(--better-ccxp-font-sans) !important;
+      .ccxp-lite-landing-login td,
+      .ccxp-lite-landing-section td,
+      .ccxp-lite-landing-section th,
+      .ccxp-lite-landing-section font,
+      .ccxp-lite-landing-section span,
+      .ccxp-lite-landing-section div,
+      .ccxp-lite-landing-section p,
+      .ccxp-lite-landing-section li,
+      .ccxp-lite-landing-section button,
+      .ccxp-lite-landing-section input {
+        font-family: var(--ccxp-lite-font-sans) !important;
       }
 
-      .better-ccxp-landing-links table,
-      .better-ccxp-landing-notices table {
+      .ccxp-lite-landing-links table,
+      .ccxp-lite-landing-notices table {
         width: 100% !important;
       }
 
-      .better-ccxp-landing-notices table[width],
-      .better-ccxp-landing-notices td[width],
-      .better-ccxp-landing-notices th[width] {
+      .ccxp-lite-landing-notices table[width],
+      .ccxp-lite-landing-notices td[width],
+      .ccxp-lite-landing-notices th[width] {
         width: auto !important;
       }
 
-      .better-ccxp-landing-notices table {
+      .ccxp-lite-landing-notices table {
         table-layout: fixed;
       }
 
-      .better-ccxp-landing-notices td:first-child,
-      .better-ccxp-landing-notices th:first-child {
+      .ccxp-lite-landing-notices td:first-child,
+      .ccxp-lite-landing-notices th:first-child {
         width: 8rem !important;
       }
 
-      .better-ccxp-landing-links table[background],
-      .better-ccxp-landing-links [background] {
+      .ccxp-lite-landing-links table[background],
+      .ccxp-lite-landing-links [background] {
         background: none !important;
       }
 
-      .better-ccxp-landing-tabs .tab {
+      .ccxp-lite-landing-tabs .tab {
         display: flex;
         flex-wrap: wrap;
         gap: 8px;
         min-width: 0 !important;
       }
 
-      .better-ccxp-landing-tabs .tab button {
+      .ccxp-lite-landing-tabs .tab button {
         float: none;
         padding: 8px 12px;
-        border: 1px solid var(--better-ccxp-border);
+        border: 1px solid var(--ccxp-lite-border);
         border-radius: 999px;
         background: transparent;
-        color: var(--better-ccxp-type-body-color);
-        font: var(--better-ccxp-type-nav);
+        color: var(--ccxp-lite-type-body-color);
+        font: var(--ccxp-lite-type-nav);
       }
 
-      .better-ccxp-landing-tabs .tab button.active {
-        background: var(--better-ccxp-surface-muted);
-        color: var(--better-ccxp-type-body-strong-color);
+      .ccxp-lite-landing-tabs .tab button.active {
+        background: var(--ccxp-lite-surface-muted);
+        color: var(--ccxp-lite-type-body-strong-color);
       }
 
-      .better-ccxp-landing-tabs .tabcontent {
-        margin-top: var(--better-ccxp-spacing-md);
-        padding: var(--better-ccxp-spacing-md);
-        border: 1px solid var(--better-ccxp-border);
-        background: var(--better-ccxp-surface);
+      .ccxp-lite-landing-tabs .tabcontent {
+        margin-top: var(--ccxp-lite-spacing-md);
+        padding: var(--ccxp-lite-spacing-md);
+        border: 1px solid var(--ccxp-lite-border);
+        background: var(--ccxp-lite-surface);
       }
 
-      .better-ccxp-landing-tabs .tabcontent h3,
-      .better-ccxp-landing-tabs .tabcontent ul {
+      .ccxp-lite-landing-tabs .tabcontent h3,
+      .ccxp-lite-landing-tabs .tabcontent ul {
         margin-block: 0.2em;
       }
 
-      .better-ccxp-landing-tabs .tabcontent h3 {
-        color: var(--better-ccxp-type-body-strong-color);
-        font: var(--better-ccxp-type-body-strong);
+      .ccxp-lite-landing-tabs .tabcontent h3 {
+        color: var(--ccxp-lite-type-body-strong-color);
+        font: var(--ccxp-lite-type-body-strong);
       }
 
-      .better-ccxp-landing-service {
-        color: var(--better-ccxp-type-utility-color);
-        font: var(--better-ccxp-type-utility);
+      .ccxp-lite-landing-service {
+        color: var(--ccxp-lite-type-utility-color);
+        font: var(--ccxp-lite-type-utility);
       }
 
-      .better-ccxp-landing-service {
-        margin-top: var(--better-ccxp-spacing-sm);
+      .ccxp-lite-landing-service {
+        margin-top: var(--ccxp-lite-spacing-sm);
         text-align: right;
       }
 
-      .better-ccxp-landing-notices td {
+      .ccxp-lite-landing-notices td {
         word-break: break-word;
       }
     `;
@@ -325,12 +325,12 @@
     const shell = targetDocument.createElement("main");
     shell.className = TOKENS.landingClass;
 
-    const topSection = createLandingSection(targetDocument, "better-ccxp-landing-top");
-    const langSection = createLandingSection(targetDocument, "better-ccxp-landing-lang");
-    const loginSection = createLandingSection(targetDocument, "better-ccxp-landing-login");
-    const linksSection = createLandingSection(targetDocument, "better-ccxp-landing-links");
-    const tabsSection = createLandingSection(targetDocument, "better-ccxp-landing-tabs");
-    const noticesSection = createLandingSection(targetDocument, "better-ccxp-landing-notices");
+    const topSection = createLandingSection(targetDocument, "ccxp-lite-landing-top");
+    const langSection = createLandingSection(targetDocument, "ccxp-lite-landing-lang");
+    const loginSection = createLandingSection(targetDocument, "ccxp-lite-landing-login");
+    const linksSection = createLandingSection(targetDocument, "ccxp-lite-landing-links");
+    const tabsSection = createLandingSection(targetDocument, "ccxp-lite-landing-tabs");
+    const noticesSection = createLandingSection(targetDocument, "ccxp-lite-landing-notices");
 
     if (languageLinks) {
       langSection.appendChild(languageLinks);
@@ -355,7 +355,7 @@
     });
 
     if (serviceLink) {
-      serviceLink.classList.add("better-ccxp-landing-service");
+      serviceLink.classList.add("ccxp-lite-landing-service");
       tabsSection.appendChild(serviceLink);
     }
 
@@ -367,12 +367,12 @@
     }
 
     targetDocument.body.replaceChildren(shell);
-    targetDocument.body.dataset.betterCcxpLandingApplied = "true";
+    targetDocument.body.dataset.ccxpLiteLandingApplied = "true";
   }
 
   function createLandingSection(targetDocument, className) {
     const section = targetDocument.createElement("section");
-    section.className = `better-ccxp-landing-section ${className}`;
+    section.className = `ccxp-lite-landing-section ${className}`;
     return section;
   }
 
@@ -425,12 +425,12 @@
   }
 
   function attachFrameListener(frame, callback) {
-    if (frame.dataset.betterCcxpListenerAttached === "true") {
+    if (frame.dataset.ccxpLiteListenerAttached === "true") {
       return;
     }
 
     frame.addEventListener("load", () => callback(frame));
-    frame.dataset.betterCcxpListenerAttached = "true";
+    frame.dataset.ccxpLiteListenerAttached = "true";
   }
 
   function retry() {
@@ -463,13 +463,13 @@
       return;
     }
 
-    if (topDocument.body.dataset.betterCcxpHeaderRemoved === "true") {
+    if (topDocument.body.dataset.ccxpLiteHeaderRemoved === "true") {
       return;
     }
 
     topDocument.documentElement.style.display = "none";
     topDocument.body.replaceChildren();
-    topDocument.body.dataset.betterCcxpHeaderRemoved = "true";
+    topDocument.body.dataset.ccxpLiteHeaderRemoved = "true";
     topFrame.setAttribute("scrolling", "no");
   }
 
@@ -481,7 +481,7 @@
       return;
     }
 
-    if (navDocument.body.dataset.betterCcxpSidebarApplied !== "true" && !isDocumentComplete(navDocument)) {
+    if (navDocument.body.dataset.ccxpLiteSidebarApplied !== "true" && !isDocumentComplete(navDocument)) {
       retry();
       return;
     }
@@ -495,17 +495,17 @@
 
     injectBaseTokens(navDocument, "nav");
 
-    if (navDocument.body.dataset.betterCcxpSidebarApplied !== "true") {
+    if (navDocument.body.dataset.ccxpLiteSidebarApplied !== "true") {
       const style = navDocument.createElement("style");
       style.textContent = `
         html, body {
-          background: var(--better-ccxp-bg);
+          background: var(--ccxp-lite-bg);
         }
 
         .${TOKENS.sidebarClass} {
           box-sizing: border-box;
           width: 100%;
-          min-width: var(--better-ccxp-sidebar-width);
+          min-width: var(--ccxp-lite-sidebar-width);
           min-height: 100vh;
           height: 100vh;
           min-height: 0;
@@ -515,10 +515,10 @@
           gap: 0;
           overflow-y: auto;
           overflow-x: hidden;
-          background: var(--better-ccxp-sidebar-surface);
+          background: var(--ccxp-lite-sidebar-surface);
         }
 
-        .better-ccxp-sidebar-brand {
+        .ccxp-lite-sidebar-brand {
           display: grid;
           grid-template-columns: minmax(0, 1fr);
           align-items: center;
@@ -526,45 +526,45 @@
           padding: 4px 6px 18px;
         }
 
-        .better-ccxp-sidebar-brand-copy {
+        .ccxp-lite-sidebar-brand-copy {
           min-width: 0;
         }
 
-        .better-ccxp-sidebar-brand-title {
-          color: var(--better-ccxp-type-display-color);
-          font: var(--better-ccxp-type-body-strong);
+        .ccxp-lite-sidebar-brand-title {
+          color: var(--ccxp-lite-type-display-color);
+          font: var(--ccxp-lite-type-body-strong);
           font-size: 20px;
           letter-spacing: 0.01em;
         }
 
-        .better-ccxp-sidebar-list,
-        .better-ccxp-link-list {
+        .ccxp-lite-sidebar-list,
+        .ccxp-lite-link-list {
           display: flex;
           flex-direction: column;
           gap: 0;
           min-width: 0;
         }
 
-        .better-ccxp-sidebar-group {
+        .ccxp-lite-sidebar-group {
           display: flex;
           flex-direction: column;
           gap: 0;
         }
 
-        .better-ccxp-row-button {
+        .ccxp-lite-row-button {
           display: grid;
           grid-template-columns: 18px minmax(0, 1fr) auto;
           align-items: center;
           gap: 6px;
           width: 100%;
-          padding: var(--better-ccxp-sidebar-row-padding-y) var(--better-ccxp-sidebar-row-padding-x);
+          padding: var(--ccxp-lite-sidebar-row-padding-y) var(--ccxp-lite-sidebar-row-padding-x);
           border: 0;
-          border-radius: var(--better-ccxp-radius-sm);
+          border-radius: var(--ccxp-lite-radius-sm);
           background: transparent;
           color: inherit;
           cursor: pointer;
-          font: var(--better-ccxp-type-nav);
-          color: var(--better-ccxp-type-nav-color);
+          font: var(--ccxp-lite-type-nav);
+          color: var(--ccxp-lite-type-nav-color);
           text-align: left;
           white-space: normal;
           word-break: break-word;
@@ -572,20 +572,20 @@
           transition: background-color 120ms ease, color 120ms ease;
         }
 
-        .better-ccxp-row-button:hover {
+        .ccxp-lite-row-button:hover {
           background: rgba(124, 45, 146, 0.06);
         }
 
-        .better-ccxp-expandable {
-          color: var(--better-ccxp-type-nav-color);
+        .ccxp-lite-expandable {
+          color: var(--ccxp-lite-type-nav-color);
         }
 
-        .better-ccxp-item {
-          color: var(--better-ccxp-type-body-color);
-          font: var(--better-ccxp-type-nav);
+        .ccxp-lite-item {
+          color: var(--ccxp-lite-type-body-color);
+          font: var(--ccxp-lite-type-nav);
         }
 
-        .better-ccxp-row-leading {
+        .ccxp-lite-row-leading {
           display: inline-flex;
           align-items: center;
           justify-content: center;
@@ -594,47 +594,47 @@
           color: inherit;
         }
 
-        .better-ccxp-row-marker {
+        .ccxp-lite-row-marker {
           color: currentColor;
           font: inherit;
           line-height: 1;
         }
 
-        .better-ccxp-row-label {
+        .ccxp-lite-row-label {
           min-width: 0;
           white-space: normal;
           word-break: break-word;
           overflow-wrap: anywhere;
         }
 
-        .better-ccxp-chevron {
+        .ccxp-lite-chevron {
           width: 14px;
           height: 14px;
           color: currentColor;
           transition: transform 120ms ease;
         }
 
-        .better-ccxp-chevron.is-expanded {
+        .ccxp-lite-chevron.is-expanded {
           transform: rotate(90deg);
         }
 
-        .better-ccxp-link-list {
+        .ccxp-lite-link-list {
           padding-left: 0;
         }
 
-        .better-ccxp-link-icon {
+        .ccxp-lite-link-icon {
           width: 14px;
           height: 14px;
           color: inherit;
           opacity: 0.85;
         }
 
-        .better-ccxp-empty {
+        .ccxp-lite-empty {
           padding: 14px;
           border: 0;
-          border-radius: var(--better-ccxp-radius-sm);
-          color: var(--better-ccxp-type-body-muted-color);
-          font: var(--better-ccxp-type-body-muted);
+          border-radius: var(--ccxp-lite-radius-sm);
+          color: var(--ccxp-lite-type-body-muted-color);
+          font: var(--ccxp-lite-type-body-muted);
           background: rgba(124, 45, 146, 0.04);
         }
       `;
@@ -644,12 +644,12 @@
       const shell = navDocument.createElement("div");
       shell.className = TOKENS.sidebarClass;
       shell.innerHTML = `
-        <div class="better-ccxp-sidebar-brand">
-          <div class="better-ccxp-sidebar-brand-copy">
-            <div class="better-ccxp-sidebar-brand-title">${STRINGS.sidebarTitle}</div>
+        <div class="ccxp-lite-sidebar-brand">
+          <div class="ccxp-lite-sidebar-brand-copy">
+            <div class="ccxp-lite-sidebar-brand-title">${STRINGS.sidebarTitle}</div>
           </div>
         </div>
-        <aside class="better-ccxp-sidebar-list"></aside>
+        <aside class="ccxp-lite-sidebar-list"></aside>
       `;
 
       navDocument.body.replaceChildren(shell);
@@ -659,7 +659,7 @@
         navDocument.body.appendChild(helperFrame);
       }
 
-      navDocument.body.dataset.betterCcxpSidebarApplied = "true";
+      navDocument.body.dataset.ccxpLiteSidebarApplied = "true";
     }
 
     const model = buildSidebarModel(rawTree, navDocument);
@@ -676,50 +676,50 @@
 
     injectBaseTokens(mainDocument, "main");
 
-    if (mainDocument.head.querySelector("[data-better-ccxp-main='true']")) {
+    if (mainDocument.head.querySelector("[data-ccxp-lite-main='true']")) {
       return;
     }
 
     const style = mainDocument.createElement("style");
-    style.dataset.betterCcxpMain = "true";
+    style.dataset.ccxpLiteMain = "true";
     style.textContent = `
       html, body {
-        background: var(--better-ccxp-bg) !important;
-        color: var(--better-ccxp-type-body-color) !important;
+        background: var(--ccxp-lite-bg) !important;
+        color: var(--ccxp-lite-type-body-color) !important;
       }
 
       html, body, table, tbody, tr, td, th, input, select, textarea, button, a, font, div, span, p, li {
-        font-family: var(--better-ccxp-font-sans) !important;
+        font-family: var(--ccxp-lite-font-sans) !important;
       }
 
       body {
-        color: var(--better-ccxp-type-body-color);
-        font: var(--better-ccxp-type-body);
+        color: var(--ccxp-lite-type-body-color);
+        font: var(--ccxp-lite-type-body);
       }
 
       body.${TOKENS.mainClass} {
-        padding: var(--better-ccxp-spacing-lg);
+        padding: var(--ccxp-lite-spacing-lg);
       }
 
       a {
-        color: var(--better-ccxp-type-primary-link-color);
-        font: var(--better-ccxp-type-primary-link);
+        color: var(--ccxp-lite-type-primary-link-color);
+        font: var(--ccxp-lite-type-primary-link);
         text-decoration: none;
       }
 
       a:hover {
-        color: var(--better-ccxp-type-primary-link-color);
+        color: var(--ccxp-lite-type-primary-link-color);
         text-decoration: underline;
       }
 
       .td26 {
-        color: var(--better-ccxp-type-page-title-color);
-        font: var(--better-ccxp-type-page-title);
+        color: var(--ccxp-lite-type-page-title-color);
+        font: var(--ccxp-lite-type-page-title);
       }
 
       .td17 {
-        color: var(--better-ccxp-type-body-strong-color);
-        font: var(--better-ccxp-type-body-strong);
+        color: var(--ccxp-lite-type-body-strong-color);
+        font: var(--ccxp-lite-type-body-strong);
       }
 
       .td15,
@@ -728,19 +728,19 @@
       li.td15,
       td[style*="color:#333344" i],
       td[style*="color: #333344" i] {
-        color: var(--better-ccxp-type-body-color);
-        font: var(--better-ccxp-type-body);
+        color: var(--ccxp-lite-type-body-color);
+        font: var(--ccxp-lite-type-body);
       }
 
       .td_item,
       b,
       strong {
-        color: var(--better-ccxp-type-body-strong-color);
-        font-weight: var(--better-ccxp-font-weight-strong);
+        color: var(--ccxp-lite-type-body-strong-color);
+        font-weight: var(--ccxp-lite-font-weight-strong);
       }
 
       .td_item {
-        font-size: var(--better-ccxp-font-size-body);
+        font-size: var(--ccxp-lite-font-size-body);
       }
 
       td[style*="color:navy" i],
@@ -757,8 +757,8 @@
       [style*="color: #032274" i],
       [style*="color:navy" i],
       [style*="color: navy" i] {
-        color: var(--better-ccxp-type-info-color) !important;
-        font-weight: var(--better-ccxp-font-weight-strong) !important;
+        color: var(--ccxp-lite-type-info-color) !important;
+        font-weight: var(--ccxp-lite-font-weight-strong) !important;
       }
 
       td[style*="color:#ff0000" i],
@@ -785,14 +785,14 @@
       [style*="color: #ff0000" i],
       [style*="color:red" i],
       [style*="color: red" i] {
-        color: var(--better-ccxp-type-danger-color) !important;
-        font-weight: var(--better-ccxp-font-weight-strong) !important;
+        color: var(--ccxp-lite-type-danger-color) !important;
+        font-weight: var(--ccxp-lite-font-weight-strong) !important;
       }
 
       font[size="2" i],
       [size="2" i] {
-        color: var(--better-ccxp-type-caption-color) !important;
-        font: var(--better-ccxp-type-caption) !important;
+        color: var(--ccxp-lite-type-caption-color) !important;
+        font: var(--ccxp-lite-type-caption) !important;
       }
     `;
     mainDocument.head.appendChild(style);
@@ -800,77 +800,77 @@
   }
 
   function injectBaseTokens(targetDocument, scope) {
-    if (targetDocument.head.querySelector(`[data-better-ccxp-tokens='${scope}']`)) {
+    if (targetDocument.head.querySelector(`[data-ccxp-lite-tokens='${scope}']`)) {
       return;
     }
 
     const style = targetDocument.createElement("style");
-    style.dataset.betterCcxpTokens = scope;
+    style.dataset.ccxpLiteTokens = scope;
     style.textContent = `
       :root {
-        --better-ccxp-primary: ${TOKENS.colorPrimary};
-        --better-ccxp-accent: ${TOKENS.colorAccent};
-        --better-ccxp-legacy-blue-text: ${TOKENS.colorLegacyBlueText};
-        --better-ccxp-legacy-red-text: ${TOKENS.colorLegacyRedText};
-        --better-ccxp-bg: ${TOKENS.colorBg};
-        --better-ccxp-surface: ${TOKENS.colorSurface};
-        --better-ccxp-sidebar-surface: ${TOKENS.colorSidebarSurface};
-        --better-ccxp-surface-muted: ${TOKENS.colorSurfaceMuted};
-        --better-ccxp-border: ${TOKENS.colorBorder};
-        --better-ccxp-text: ${TOKENS.colorText};
-        --better-ccxp-text-muted: ${TOKENS.colorTextMuted};
-        --better-ccxp-spacing-xs: ${TOKENS.spacingXs};
-        --better-ccxp-spacing-sm: ${TOKENS.spacingSm};
-        --better-ccxp-spacing-md: ${TOKENS.spacingMd};
-        --better-ccxp-spacing-lg: ${TOKENS.spacingLg};
-        --better-ccxp-spacing-xl: ${TOKENS.spacingXl};
-        --better-ccxp-sidebar-row-padding-y: ${TOKENS.sidebarRowPaddingY};
-        --better-ccxp-sidebar-row-padding-x: ${TOKENS.sidebarRowPaddingX};
-        --better-ccxp-radius-sm: ${TOKENS.radiusSm};
-        --better-ccxp-radius-md: ${TOKENS.radiusMd};
-        --better-ccxp-radius-lg: ${TOKENS.radiusLg};
-        --better-ccxp-font-sans: ${TOKENS.fontSans};
-        --better-ccxp-font-weight-regular: ${TOKENS.fontWeightRegular};
-        --better-ccxp-font-weight-strong: ${TOKENS.fontWeightStrong};
-        --better-ccxp-font-weight-heavy: ${TOKENS.fontWeightHeavy};
-        --better-ccxp-font-size-caption: ${TOKENS.fontSizeCaption};
-        --better-ccxp-font-size-nav: ${TOKENS.fontSizeNav};
-        --better-ccxp-font-size-utility: ${TOKENS.fontSizeUtility};
-        --better-ccxp-font-size-body: ${TOKENS.fontSizeBody};
-        --better-ccxp-font-size-page-title: ${TOKENS.fontSizePageTitle};
-        --better-ccxp-font-size-display: ${TOKENS.fontSizeDisplay};
-        --better-ccxp-sidebar-width: ${TOKENS.sidebarWidth};
-        --better-ccxp-type-display: var(--better-ccxp-font-weight-heavy) var(--better-ccxp-font-size-display)/1.1 var(--better-ccxp-font-sans);
-        --better-ccxp-type-display-color: var(--better-ccxp-text);
-        --better-ccxp-type-page-title: var(--better-ccxp-font-weight-strong) var(--better-ccxp-font-size-page-title)/1.2 var(--better-ccxp-font-sans);
-        --better-ccxp-type-page-title-color: var(--better-ccxp-text);
-        --better-ccxp-type-primary-link: var(--better-ccxp-font-weight-strong) var(--better-ccxp-font-size-body)/1.5 var(--better-ccxp-font-sans);
-        --better-ccxp-type-primary-link-color: var(--better-ccxp-primary);
-        --better-ccxp-type-info: var(--better-ccxp-font-weight-strong) var(--better-ccxp-font-size-body)/1.5 var(--better-ccxp-font-sans);
-        --better-ccxp-type-info-color: var(--better-ccxp-legacy-blue-text);
-        --better-ccxp-type-danger: var(--better-ccxp-font-weight-strong) var(--better-ccxp-font-size-body)/1.5 var(--better-ccxp-font-sans);
-        --better-ccxp-type-danger-color: var(--better-ccxp-legacy-red-text);
-        --better-ccxp-type-body-strong: var(--better-ccxp-font-weight-strong) var(--better-ccxp-font-size-body)/1.55 var(--better-ccxp-font-sans);
-        --better-ccxp-type-body-strong-color: var(--better-ccxp-text);
-        --better-ccxp-type-body: var(--better-ccxp-font-weight-regular) var(--better-ccxp-font-size-body)/1.55 var(--better-ccxp-font-sans);
-        --better-ccxp-type-body-color: var(--better-ccxp-text);
-        --better-ccxp-type-body-muted: var(--better-ccxp-font-weight-regular) var(--better-ccxp-font-size-body)/1.55 var(--better-ccxp-font-sans);
-        --better-ccxp-type-body-muted-color: var(--better-ccxp-text-muted);
-        --better-ccxp-type-utility: var(--better-ccxp-font-weight-strong) var(--better-ccxp-font-size-utility)/1.4 var(--better-ccxp-font-sans);
-        --better-ccxp-type-utility-color: var(--better-ccxp-primary);
-        --better-ccxp-type-nav: var(--better-ccxp-font-weight-strong) var(--better-ccxp-font-size-nav)/1.35 var(--better-ccxp-font-sans);
-        --better-ccxp-type-nav-color: var(--better-ccxp-primary);
-        --better-ccxp-type-caption: var(--better-ccxp-font-weight-strong) var(--better-ccxp-font-size-caption)/1.4 var(--better-ccxp-font-sans);
-        --better-ccxp-type-caption-color: var(--better-ccxp-text-muted);
-        --better-ccxp-type-section-label: var(--better-ccxp-font-weight-heavy) var(--better-ccxp-font-size-caption)/1.4 var(--better-ccxp-font-sans);
-        --better-ccxp-type-section-label-color: var(--better-ccxp-primary);
+        --ccxp-lite-primary: ${TOKENS.colorPrimary};
+        --ccxp-lite-accent: ${TOKENS.colorAccent};
+        --ccxp-lite-legacy-blue-text: ${TOKENS.colorLegacyBlueText};
+        --ccxp-lite-legacy-red-text: ${TOKENS.colorLegacyRedText};
+        --ccxp-lite-bg: ${TOKENS.colorBg};
+        --ccxp-lite-surface: ${TOKENS.colorSurface};
+        --ccxp-lite-sidebar-surface: ${TOKENS.colorSidebarSurface};
+        --ccxp-lite-surface-muted: ${TOKENS.colorSurfaceMuted};
+        --ccxp-lite-border: ${TOKENS.colorBorder};
+        --ccxp-lite-text: ${TOKENS.colorText};
+        --ccxp-lite-text-muted: ${TOKENS.colorTextMuted};
+        --ccxp-lite-spacing-xs: ${TOKENS.spacingXs};
+        --ccxp-lite-spacing-sm: ${TOKENS.spacingSm};
+        --ccxp-lite-spacing-md: ${TOKENS.spacingMd};
+        --ccxp-lite-spacing-lg: ${TOKENS.spacingLg};
+        --ccxp-lite-spacing-xl: ${TOKENS.spacingXl};
+        --ccxp-lite-sidebar-row-padding-y: ${TOKENS.sidebarRowPaddingY};
+        --ccxp-lite-sidebar-row-padding-x: ${TOKENS.sidebarRowPaddingX};
+        --ccxp-lite-radius-sm: ${TOKENS.radiusSm};
+        --ccxp-lite-radius-md: ${TOKENS.radiusMd};
+        --ccxp-lite-radius-lg: ${TOKENS.radiusLg};
+        --ccxp-lite-font-sans: ${TOKENS.fontSans};
+        --ccxp-lite-font-weight-regular: ${TOKENS.fontWeightRegular};
+        --ccxp-lite-font-weight-strong: ${TOKENS.fontWeightStrong};
+        --ccxp-lite-font-weight-heavy: ${TOKENS.fontWeightHeavy};
+        --ccxp-lite-font-size-caption: ${TOKENS.fontSizeCaption};
+        --ccxp-lite-font-size-nav: ${TOKENS.fontSizeNav};
+        --ccxp-lite-font-size-utility: ${TOKENS.fontSizeUtility};
+        --ccxp-lite-font-size-body: ${TOKENS.fontSizeBody};
+        --ccxp-lite-font-size-page-title: ${TOKENS.fontSizePageTitle};
+        --ccxp-lite-font-size-display: ${TOKENS.fontSizeDisplay};
+        --ccxp-lite-sidebar-width: ${TOKENS.sidebarWidth};
+        --ccxp-lite-type-display: var(--ccxp-lite-font-weight-heavy) var(--ccxp-lite-font-size-display)/1.1 var(--ccxp-lite-font-sans);
+        --ccxp-lite-type-display-color: var(--ccxp-lite-text);
+        --ccxp-lite-type-page-title: var(--ccxp-lite-font-weight-strong) var(--ccxp-lite-font-size-page-title)/1.2 var(--ccxp-lite-font-sans);
+        --ccxp-lite-type-page-title-color: var(--ccxp-lite-text);
+        --ccxp-lite-type-primary-link: var(--ccxp-lite-font-weight-strong) var(--ccxp-lite-font-size-body)/1.5 var(--ccxp-lite-font-sans);
+        --ccxp-lite-type-primary-link-color: var(--ccxp-lite-primary);
+        --ccxp-lite-type-info: var(--ccxp-lite-font-weight-strong) var(--ccxp-lite-font-size-body)/1.5 var(--ccxp-lite-font-sans);
+        --ccxp-lite-type-info-color: var(--ccxp-lite-legacy-blue-text);
+        --ccxp-lite-type-danger: var(--ccxp-lite-font-weight-strong) var(--ccxp-lite-font-size-body)/1.5 var(--ccxp-lite-font-sans);
+        --ccxp-lite-type-danger-color: var(--ccxp-lite-legacy-red-text);
+        --ccxp-lite-type-body-strong: var(--ccxp-lite-font-weight-strong) var(--ccxp-lite-font-size-body)/1.55 var(--ccxp-lite-font-sans);
+        --ccxp-lite-type-body-strong-color: var(--ccxp-lite-text);
+        --ccxp-lite-type-body: var(--ccxp-lite-font-weight-regular) var(--ccxp-lite-font-size-body)/1.55 var(--ccxp-lite-font-sans);
+        --ccxp-lite-type-body-color: var(--ccxp-lite-text);
+        --ccxp-lite-type-body-muted: var(--ccxp-lite-font-weight-regular) var(--ccxp-lite-font-size-body)/1.55 var(--ccxp-lite-font-sans);
+        --ccxp-lite-type-body-muted-color: var(--ccxp-lite-text-muted);
+        --ccxp-lite-type-utility: var(--ccxp-lite-font-weight-strong) var(--ccxp-lite-font-size-utility)/1.4 var(--ccxp-lite-font-sans);
+        --ccxp-lite-type-utility-color: var(--ccxp-lite-primary);
+        --ccxp-lite-type-nav: var(--ccxp-lite-font-weight-strong) var(--ccxp-lite-font-size-nav)/1.35 var(--ccxp-lite-font-sans);
+        --ccxp-lite-type-nav-color: var(--ccxp-lite-primary);
+        --ccxp-lite-type-caption: var(--ccxp-lite-font-weight-strong) var(--ccxp-lite-font-size-caption)/1.4 var(--ccxp-lite-font-sans);
+        --ccxp-lite-type-caption-color: var(--ccxp-lite-text-muted);
+        --ccxp-lite-type-section-label: var(--ccxp-lite-font-weight-heavy) var(--ccxp-lite-font-size-caption)/1.4 var(--ccxp-lite-font-sans);
+        --ccxp-lite-type-section-label-color: var(--ccxp-lite-primary);
       }
 
       html, body {
         margin: 0;
         padding: 0;
-        font-family: var(--better-ccxp-font-sans);
-        color: var(--better-ccxp-text);
+        font-family: var(--ccxp-lite-font-sans);
+        color: var(--ccxp-lite-text);
       }
 
       * {
@@ -1035,7 +1035,7 @@
       return;
     }
 
-    const sidebarList = shell.querySelector(".better-ccxp-sidebar-list");
+    const sidebarList = shell.querySelector(".ccxp-lite-sidebar-list");
 
     if (!sidebarList) {
       return;
@@ -1056,7 +1056,7 @@
       sidebarList.innerHTML = "";
 
       if (model.items.length === 0) {
-        sidebarList.innerHTML = `<div class="better-ccxp-empty">${STRINGS.emptyGroup}</div>`;
+        sidebarList.innerHTML = `<div class="ccxp-lite-empty">${STRINGS.emptyGroup}</div>`;
         return;
       }
 
@@ -1073,7 +1073,7 @@
           return;
         }
 
-        sidebarList.appendChild(createLinkButton(navFrame, item.linkItem, "better-ccxp-item", 0));
+        sidebarList.appendChild(createLinkButton(navFrame, item.linkItem, "ccxp-lite-item", 0));
       });
     };
 
@@ -1083,21 +1083,21 @@
   function createExpandableGroup(targetDocument, group, expandedItemIds, depth, onToggle) {
     const isExpanded = expandedItemIds.has(group.id);
     const linkList = targetDocument.createElement("div");
-    linkList.className = "better-ccxp-sidebar-group";
+    linkList.className = "ccxp-lite-sidebar-group";
 
     const button = targetDocument.createElement("button");
     button.type = "button";
-    button.className = "better-ccxp-row-button better-ccxp-expandable";
+    button.className = "ccxp-lite-row-button ccxp-lite-expandable";
     button.setAttribute("aria-expanded", isExpanded ? "true" : "false");
     button.style.paddingLeft = `${10 + depth * 24}px`;
 
     const leading = targetDocument.createElement("span");
-    leading.className = "better-ccxp-row-leading";
+    leading.className = "ccxp-lite-row-leading";
     leading.appendChild(createChevronIcon(targetDocument, isExpanded));
     button.appendChild(leading);
 
     const label = targetDocument.createElement("span");
-    label.className = "better-ccxp-row-label";
+    label.className = "ccxp-lite-row-label";
     label.textContent = group.label;
     button.appendChild(label);
 
@@ -1109,10 +1109,10 @@
 
     if (isExpanded) {
       const children = targetDocument.createElement("div");
-      children.className = "better-ccxp-link-list";
+      children.className = "ccxp-lite-link-list";
 
       group.directLinks.forEach((linkItem) => {
-        children.appendChild(createLinkButton(targetDocument, linkItem, "better-ccxp-item", depth + 1));
+        children.appendChild(createLinkButton(targetDocument, linkItem, "ccxp-lite-item", depth + 1));
       });
 
       group.sections.forEach((section) => {
@@ -1123,7 +1123,7 @@
         linkList.appendChild(children);
       } else {
         const empty = targetDocument.createElement("div");
-        empty.className = "better-ccxp-empty";
+        empty.className = "ccxp-lite-empty";
         empty.textContent = STRINGS.emptyGroup;
         linkList.appendChild(empty);
       }
@@ -1135,19 +1135,19 @@
   function createLinkButton(targetDocument, linkItem, toneClass, depth) {
     const button = targetDocument.createElement("button");
     button.type = "button";
-    button.className = `better-ccxp-row-button ${toneClass}`;
+    button.className = `ccxp-lite-row-button ${toneClass}`;
     button.style.paddingLeft = `${10 + depth * 24}px`;
 
     const leading = targetDocument.createElement("span");
-    leading.className = "better-ccxp-row-leading";
+    leading.className = "ccxp-lite-row-leading";
     const marker = targetDocument.createElement("span");
-    marker.className = "better-ccxp-row-marker";
+    marker.className = "ccxp-lite-row-marker";
     marker.textContent = "-";
     leading.appendChild(marker);
     button.appendChild(leading);
 
     const label = targetDocument.createElement("span");
-    label.className = "better-ccxp-row-label";
+    label.className = "ccxp-lite-row-label";
     label.textContent = linkItem.label;
     button.appendChild(label);
 
@@ -1222,7 +1222,7 @@
 
   function createExternalLinkIcon(targetDocument) {
     const icon = targetDocument.createElementNS("http://www.w3.org/2000/svg", "svg");
-    icon.setAttribute("class", "better-ccxp-link-icon");
+    icon.setAttribute("class", "ccxp-lite-link-icon");
     icon.setAttribute("viewBox", "0 0 24 24");
     icon.setAttribute("fill", "none");
     icon.setAttribute("stroke", "currentColor");
@@ -1246,7 +1246,7 @@
 
   function createChevronIcon(targetDocument, isExpanded) {
     const icon = targetDocument.createElementNS("http://www.w3.org/2000/svg", "svg");
-    icon.setAttribute("class", `better-ccxp-chevron${isExpanded ? " is-expanded" : ""}`);
+    icon.setAttribute("class", `ccxp-lite-chevron${isExpanded ? " is-expanded" : ""}`);
     icon.setAttribute("viewBox", "0 0 24 24");
     icon.setAttribute("fill", "none");
     icon.setAttribute("stroke", "currentColor");

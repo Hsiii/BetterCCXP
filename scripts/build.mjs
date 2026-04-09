@@ -7,8 +7,8 @@ import { fileURLToPath } from "node:url";
 const projectRoot = dirname(dirname(fileURLToPath(import.meta.url)));
 const srcDir = join(projectRoot, "src");
 const distDir = join(projectRoot, "dist");
-const outputZip = join(distDir, "BetterCCXP.zip");
-const stagingDir = mkdtempSync(join(tmpdir(), "better-ccxp-build-"));
+const outputZip = join(distDir, "ccxpLite.zip");
+const stagingDir = mkdtempSync(join(tmpdir(), "ccxp-lite-build-"));
 const filesToPack = ["manifest.json", "content.js"];
 
 try {
