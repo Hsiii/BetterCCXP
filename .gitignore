@@ -1,2 +1,4 @@
 .playwright-cli/
 fixtures/ccxp-snapshot/
+dist/
+.DS_Store
