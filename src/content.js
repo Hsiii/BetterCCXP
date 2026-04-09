@@ -10,6 +10,7 @@
     colorSidebarSurface: "#f5f7f9",
     colorSurfaceMuted: "#f5f7f9",
     colorBorder: "rgba(31, 41, 51, 0.12)",
+    colorSidebarDivider: "rgba(31, 41, 51, 0.22)",
     colorText: "#111827",
     colorTextMuted: "#52606d",
     spacingXs: "6px",
@@ -35,7 +36,7 @@
     sizeSidebarBrandLogo: "30px",
     spacingSidebarBrandWordGap: "0.5ch",
     sizeSidebarHeaderDividerWidth: "64px",
-    sizeSidebarHeaderDividerHeight: "1px",
+    sizeSidebarHeaderDividerHeight: "2px",
     fontSizePageTitle: "26px",
     fontSizeDisplay: "30px",
     landingMaxWidth: "960px",
@@ -639,7 +640,7 @@
           height: var(--ccxp-lite-size-sidebar-header-divider-height);
           margin: 0 0 14px 6px;
           border-radius: 999px;
-          background: var(--ccxp-lite-border);
+          background: var(--ccxp-lite-sidebar-divider-color);
         }
 
         .ccxp-lite-sidebar-list,
@@ -929,6 +930,7 @@
         --ccxp-lite-sidebar-surface: ${TOKENS.colorSidebarSurface};
         --ccxp-lite-surface-muted: ${TOKENS.colorSurfaceMuted};
         --ccxp-lite-border: ${TOKENS.colorBorder};
+        --ccxp-lite-sidebar-divider-color: ${TOKENS.colorSidebarDivider};
         --ccxp-lite-text: ${TOKENS.colorText};
         --ccxp-lite-text-muted: ${TOKENS.colorTextMuted};
         --ccxp-lite-spacing-xs: ${TOKENS.spacingXs};
