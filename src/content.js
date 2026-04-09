@@ -33,7 +33,7 @@
     fontSizeBody: "15px",
     fontSizeSidebarBrand: "20px",
     sizeSidebarBrandLogo: "30px",
-    spacingSidebarBrandWordGap: "0.75ch",
+    spacingSidebarBrandWordGap: "0.5ch",
     fontSizePageTitle: "26px",
     fontSizeDisplay: "30px",
     landingMaxWidth: "960px",
