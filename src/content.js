@@ -34,6 +34,8 @@
     fontSizeSidebarBrand: "20px",
     sizeSidebarBrandLogo: "30px",
     spacingSidebarBrandWordGap: "0.5ch",
+    sizeSidebarHeaderDividerWidth: "64px",
+    sizeSidebarHeaderDividerHeight: "1px",
     fontSizePageTitle: "26px",
     fontSizeDisplay: "30px",
     landingMaxWidth: "960px",
@@ -632,6 +634,14 @@
           letter-spacing: 0.01em;
         }
 
+        .ccxp-lite-sidebar-divider {
+          width: var(--ccxp-lite-size-sidebar-header-divider-width);
+          height: var(--ccxp-lite-size-sidebar-header-divider-height);
+          margin: 0 0 14px 6px;
+          border-radius: 999px;
+          background: var(--ccxp-lite-border);
+        }
+
         .ccxp-lite-sidebar-list,
         .ccxp-lite-link-list {
           display: flex;
@@ -742,11 +752,14 @@
       brand.className = "ccxp-lite-sidebar-brand";
       brand.appendChild(createBrandImage(navDocument, "ccxp-lite-sidebar-brand-logo", ASSETS.sidebarBrandLogoPath));
       brand.appendChild(createBrandCopy(navDocument, "ccxp-lite-sidebar-brand-copy", "ccxp-lite-sidebar-brand-title", STRINGS.sidebarTitle));
+      const divider = navDocument.createElement("div");
+      divider.className = "ccxp-lite-sidebar-divider";
 
       const list = navDocument.createElement("aside");
       list.className = "ccxp-lite-sidebar-list";
 
       shell.appendChild(brand);
+      shell.appendChild(divider);
       shell.appendChild(list);
 
       navDocument.body.replaceChildren(shell);
@@ -940,6 +953,8 @@
         --ccxp-lite-font-size-sidebar-brand: ${TOKENS.fontSizeSidebarBrand};
         --ccxp-lite-size-sidebar-brand-logo: ${TOKENS.sizeSidebarBrandLogo};
         --ccxp-lite-spacing-sidebar-brand-word-gap: ${TOKENS.spacingSidebarBrandWordGap};
+        --ccxp-lite-size-sidebar-header-divider-width: ${TOKENS.sizeSidebarHeaderDividerWidth};
+        --ccxp-lite-size-sidebar-header-divider-height: ${TOKENS.sizeSidebarHeaderDividerHeight};
         --ccxp-lite-font-size-page-title: ${TOKENS.fontSizePageTitle};
         --ccxp-lite-font-size-display: ${TOKENS.fontSizeDisplay};
         --ccxp-lite-sidebar-width: ${TOKENS.sidebarWidth};
