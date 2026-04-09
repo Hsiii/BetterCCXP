@@ -239,7 +239,7 @@ html[data-ccxp-lite-scope="nav"] body {
   min-width: var(--ccxp-lite-sidebar-width);
   min-height: 0;
   height: 100vh;
-  padding: 18px 14px 20px;
+  padding: 18px 10px 20px;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
