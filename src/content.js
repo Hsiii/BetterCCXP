@@ -35,7 +35,7 @@
     fontSizeSidebarBrand: "20px",
     sizeSidebarBrandLogo: "30px",
     spacingSidebarBrandWordGap: "0.5ch",
-    sizeSidebarHeaderDividerWidth: "72px",
+    sizeSidebarHeaderDividerWidth: "80%",
     sizeSidebarHeaderDividerHeight: "1px",
     fontSizePageTitle: "26px",
     fontSizeDisplay: "30px",
