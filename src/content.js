@@ -1584,25 +1584,31 @@
     icon.setAttribute("stroke-linejoin", "round");
     icon.setAttribute("aria-hidden", "true");
 
-    getCategoryIconPaths(iconName).forEach((pathData) => {
-      const path = targetDocument.createElementNS("http://www.w3.org/2000/svg", "path");
-      path.setAttribute("d", pathData);
-      icon.appendChild(path);
+    getCategoryIconShapes(iconName).forEach((shape) => {
+      const tagName = typeof shape === "string" ? "path" : shape.tag;
+      const attributes = typeof shape === "string" ? { d: shape } : shape.attributes;
+      const element = targetDocument.createElementNS("http://www.w3.org/2000/svg", tagName);
+
+      Object.entries(attributes).forEach(([name, value]) => {
+        element.setAttribute(name, value);
+      });
+
+      icon.appendChild(element);
     });
 
     return icon;
   }
 
-  function getCategoryIconPaths(iconName) {
-    const iconPathMap = {
+  function getCategoryIconShapes(iconName) {
+    const iconShapeMap = {
       "circle-user-round": [
         "M17.925 20.056a6 6 0 0 0-11.851.001",
-        "M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8",
-        "M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20"
+        { tag: "circle", attributes: { cx: "12", cy: "11", r: "4" } },
+        { tag: "circle", attributes: { cx: "12", cy: "12", r: "10" } }
       ],
       "user-round": [
-        "M12 13a5 5 0 1 0 0-10 5 5 0 0 0 0 10",
-        "M4 21a8 8 0 0 1 16 0"
+        { tag: "circle", attributes: { cx: "12", cy: "8", r: "5" } },
+        "M20 21a8 8 0 0 0-16 0"
       ],
       "calendar-range": [
         "M8 2v4",
@@ -1710,7 +1716,7 @@
       ]
     };
 
-    return iconPathMap[iconName] || iconPathMap.folders;
+    return iconShapeMap[iconName] || iconShapeMap.folders;
   }
 
   function parseSidebarTree(navDocument) {
