@@ -778,13 +778,11 @@
         .ccxp-lite-category > .ccxp-lite-row-button {
           padding-top: 13px;
           padding-bottom: 13px;
-          border: 1px solid rgba(121, 36, 133, 0.14);
-          background: rgba(121, 36, 133, 0.08);
           color: var(--ccxp-lite-brand);
         }
 
         .ccxp-lite-category > .ccxp-lite-row-button:hover {
-          background: rgba(121, 36, 133, 0.12);
+          background: transparent;
         }
 
         .ccxp-lite-category .ccxp-lite-row-label {
@@ -1380,7 +1378,7 @@
     button.type = "button";
     button.className = "ccxp-lite-row-button ccxp-lite-expandable";
     button.setAttribute("aria-expanded", isExpanded ? "true" : "false");
-    button.style.paddingLeft = `${10 + depth * 24}px`;
+    button.style.paddingLeft = `${getSidebarIndent(group.kind, depth)}px`;
 
     const leading = targetDocument.createElement("span");
     leading.className = "ccxp-lite-row-leading";
@@ -1435,7 +1433,7 @@
     const button = targetDocument.createElement("button");
     button.type = "button";
     button.className = `ccxp-lite-row-button ${toneClass}`;
-    button.style.paddingLeft = `${10 + depth * 24}px`;
+    button.style.paddingLeft = `${getSidebarIndent("link", depth)}px`;
 
     const leading = targetDocument.createElement("span");
     leading.className = "ccxp-lite-row-leading";
@@ -1489,6 +1487,18 @@
     }
 
     return (item.sections || []).some((childItem) => hasExpandableId(childItem, itemId));
+  }
+
+  function getSidebarIndent(kind, depth) {
+    if (kind === "category") {
+      return 10;
+    }
+
+    if (kind === "group" || kind === "section") {
+      return 18 + Math.max(0, depth - 1) * 16;
+    }
+
+    return 18 + Math.max(0, depth - 1) * 16;
   }
 
   function activateLegacyLink(linkItem, navDocument) {
