@@ -590,6 +590,8 @@
           gap: 0;
           overflow-y: auto;
           overflow-x: hidden;
+          overscroll-behavior: none;
+          -webkit-overflow-scrolling: auto;
           background: var(--ccxp-lite-sidebar-surface);
         }
 
