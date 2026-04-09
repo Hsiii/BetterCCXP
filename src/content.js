@@ -776,13 +776,7 @@
         }
 
         .ccxp-lite-category > .ccxp-lite-row-button {
-          padding-top: 13px;
-          padding-bottom: 13px;
           color: var(--ccxp-lite-brand);
-        }
-
-        .ccxp-lite-category > .ccxp-lite-row-button:hover {
-          background: transparent;
         }
 
         .ccxp-lite-category > .ccxp-lite-row-button .ccxp-lite-row-leading {
