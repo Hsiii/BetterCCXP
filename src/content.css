@@ -244,7 +244,7 @@ html[data-ccxp-lite-scope="nav"] body {
   flex-direction: column;
   overflow-y: auto;
   overflow-x: hidden;
-  scrollbar-gutter: stable;
+  scrollbar-gutter: stable both-edges;
   overscroll-behavior: none;
   background: var(--ccxp-lite-sidebar-surface);
 }
