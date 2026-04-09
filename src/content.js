@@ -1511,10 +1511,10 @@
     }
 
     if (kind === "group" || kind === "section") {
-      return 18 + Math.max(0, depth - 1) * 16;
+      return 10 + Math.max(0, depth - 1) * 16;
     }
 
-    return 18 + Math.max(0, depth - 1) * 16;
+    return 10 + Math.max(0, depth - 1) * 16;
   }
 
   function activateLegacyLink(linkItem, navDocument) {
