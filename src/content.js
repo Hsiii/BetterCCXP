@@ -33,6 +33,7 @@
     fontSizeBody: "15px",
     fontSizeSidebarBrand: "20px",
     sizeSidebarBrandLogo: "30px",
+    spacingSidebarBrandWordGap: "0.75ch",
     fontSizePageTitle: "26px",
     fontSizeDisplay: "30px",
     landingMaxWidth: "960px",
@@ -432,7 +433,19 @@
 
     const titleNode = targetDocument.createElement("div");
     titleNode.className = titleClassName;
-    titleNode.textContent = title;
+
+    if (titleClassName === "ccxp-lite-sidebar-brand-title" && title.includes(" ")) {
+      const titleWords = title.split(" ");
+
+      titleWords.forEach((word) => {
+        const wordNode = targetDocument.createElement("span");
+        wordNode.textContent = word;
+        titleNode.appendChild(wordNode);
+      });
+    } else {
+      titleNode.textContent = title;
+    }
+
     copy.appendChild(titleNode);
 
     return copy;
@@ -606,6 +619,9 @@
         }
 
         .ccxp-lite-sidebar-brand-title {
+          display: inline-flex;
+          align-items: baseline;
+          gap: var(--ccxp-lite-spacing-sidebar-brand-word-gap);
           color: var(--ccxp-lite-type-display-color);
           font-family: var(--ccxp-lite-font-brand);
           font-size: var(--ccxp-lite-sidebar-brand-font-size);
@@ -921,6 +937,7 @@
         --ccxp-lite-font-size-body: ${TOKENS.fontSizeBody};
         --ccxp-lite-font-size-sidebar-brand: ${TOKENS.fontSizeSidebarBrand};
         --ccxp-lite-size-sidebar-brand-logo: ${TOKENS.sizeSidebarBrandLogo};
+        --ccxp-lite-spacing-sidebar-brand-word-gap: ${TOKENS.spacingSidebarBrandWordGap};
         --ccxp-lite-font-size-page-title: ${TOKENS.fontSizePageTitle};
         --ccxp-lite-font-size-display: ${TOKENS.fontSizeDisplay};
         --ccxp-lite-sidebar-width: ${TOKENS.sidebarWidth};
