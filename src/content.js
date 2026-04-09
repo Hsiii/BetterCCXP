@@ -270,7 +270,7 @@
 
       .ccxp-lite-landing-brand-title {
         color: var(--ccxp-lite-type-display-color);
-        font: var(--ccxp-lite-type-body-strong);
+        font: var(--ccxp-lite-type-body);
         font-size: 28px;
         letter-spacing: 0.01em;
       }
@@ -699,7 +699,7 @@
           color: var(--ccxp-lite-type-display-color);
           font-family: var(--ccxp-lite-font-brand);
           font-size: var(--ccxp-lite-sidebar-brand-font-size);
-          font-weight: var(--ccxp-lite-font-weight-strong);
+          font-weight: var(--ccxp-lite-font-weight-regular);
           line-height: 1;
           letter-spacing: 0.01em;
         }
@@ -785,6 +785,11 @@
           background: transparent;
         }
 
+        .ccxp-lite-category > .ccxp-lite-row-button .ccxp-lite-row-leading {
+          width: 1.5em;
+          height: 1.5em;
+        }
+
         .ccxp-lite-category .ccxp-lite-row-label {
           font-weight: var(--ccxp-lite-font-weight-heavy);
         }
@@ -843,8 +848,8 @@
         }
 
         .ccxp-lite-category-icon {
-          width: 15px;
-          height: 15px;
+          width: 1.5em;
+          height: 1.5em;
           color: currentColor;
         }
 
