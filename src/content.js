@@ -32,6 +32,7 @@
     fontSizeUtility: "14px",
     fontSizeBody: "15px",
     fontSizeSidebarBrand: "20px",
+    sizeSidebarBrandLogo: "30px",
     fontSizePageTitle: "26px",
     fontSizeDisplay: "30px",
     landingMaxWidth: "960px",
@@ -582,7 +583,7 @@
         .ccxp-lite-sidebar-brand {
           --ccxp-lite-sidebar-brand-font-size: var(--ccxp-lite-font-size-sidebar-brand);
           display: grid;
-          grid-template-columns: calc(1.5cap) minmax(0, 1fr);
+          grid-template-columns: var(--ccxp-lite-size-sidebar-brand-logo) minmax(0, 1fr);
           align-items: center;
           gap: 8px;
           padding: 4px 6px 18px;
@@ -593,7 +594,7 @@
 
         .ccxp-lite-sidebar-brand-logo {
           width: auto;
-          height: calc(1.5cap);
+          height: var(--ccxp-lite-size-sidebar-brand-logo);
           max-width: 100%;
           border-radius: 12px;
           object-fit: contain;
@@ -919,6 +920,7 @@
         --ccxp-lite-font-size-utility: ${TOKENS.fontSizeUtility};
         --ccxp-lite-font-size-body: ${TOKENS.fontSizeBody};
         --ccxp-lite-font-size-sidebar-brand: ${TOKENS.fontSizeSidebarBrand};
+        --ccxp-lite-size-sidebar-brand-logo: ${TOKENS.sizeSidebarBrandLogo};
         --ccxp-lite-font-size-page-title: ${TOKENS.fontSizePageTitle};
         --ccxp-lite-font-size-display: ${TOKENS.fontSizeDisplay};
         --ccxp-lite-sidebar-width: ${TOKENS.sidebarWidth};
