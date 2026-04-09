@@ -35,8 +35,8 @@
     fontSizeSidebarBrand: "20px",
     sizeSidebarBrandLogo: "30px",
     spacingSidebarBrandWordGap: "0.5ch",
-    sizeSidebarHeaderDividerWidth: "96px",
-    sizeSidebarHeaderDividerHeight: "2px",
+    sizeSidebarHeaderDividerWidth: "120px",
+    sizeSidebarHeaderDividerHeight: "3px",
     fontSizePageTitle: "26px",
     fontSizeDisplay: "30px",
     landingMaxWidth: "960px",
@@ -636,12 +636,20 @@
         }
 
         .ccxp-lite-sidebar-divider {
-          display: block;
+          display: flex;
+          align-items: center;
           flex: 0 0 auto;
+          align-self: flex-start;
           width: var(--ccxp-lite-size-sidebar-header-divider-width);
-          min-height: var(--ccxp-lite-size-sidebar-header-divider-height);
           height: var(--ccxp-lite-size-sidebar-header-divider-height);
           margin: 0 0 14px 6px;
+        }
+
+        .ccxp-lite-sidebar-divider::before {
+          content: "";
+          display: block;
+          width: 100%;
+          height: 100%;
           border-radius: 999px;
           background: var(--ccxp-lite-sidebar-divider-color);
         }
