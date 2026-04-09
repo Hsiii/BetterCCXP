@@ -10,7 +10,7 @@
     colorSidebarSurface: "#f5f7f9",
     colorSurfaceMuted: "#f5f7f9",
     colorBorder: "rgba(31, 41, 51, 0.12)",
-    colorSidebarDivider: "rgba(31, 41, 51, 0.22)",
+    colorSidebarDivider: "rgba(31, 41, 51, 0.16)",
     colorText: "#111827",
     colorTextMuted: "#52606d",
     spacingXs: "6px",
@@ -35,8 +35,8 @@
     fontSizeSidebarBrand: "20px",
     sizeSidebarBrandLogo: "30px",
     spacingSidebarBrandWordGap: "0.5ch",
-    sizeSidebarHeaderDividerWidth: "120px",
-    sizeSidebarHeaderDividerHeight: "3px",
+    sizeSidebarHeaderDividerWidth: "72px",
+    sizeSidebarHeaderDividerHeight: "1px",
     fontSizePageTitle: "26px",
     fontSizeDisplay: "30px",
     landingMaxWidth: "960px",
@@ -639,10 +639,10 @@
           display: flex;
           align-items: center;
           flex: 0 0 auto;
-          align-self: flex-start;
+          align-self: center;
           width: var(--ccxp-lite-size-sidebar-header-divider-width);
           height: var(--ccxp-lite-size-sidebar-header-divider-height);
-          margin: 0 0 14px 6px;
+          margin: 0 0 14px;
         }
 
         .ccxp-lite-sidebar-divider::before {
