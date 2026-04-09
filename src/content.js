@@ -23,6 +23,7 @@
     radiusMd: "14px",
     radiusLg: "20px",
     fontSans: "\"Noto Sans TC\", \"PingFang TC\", \"Microsoft JhengHei\", sans-serif",
+    fontBrand: "\"Futura\", \"Futura PT\", \"Avenir Next\", sans-serif",
     fontWeightRegular: "400",
     fontWeightStrong: "700",
     fontWeightHeavy: "800",
@@ -30,6 +31,7 @@
     fontSizeNav: "13px",
     fontSizeUtility: "14px",
     fontSizeBody: "15px",
+    fontSizeSidebarBrand: "20px",
     fontSizePageTitle: "26px",
     fontSizeDisplay: "30px",
     landingMaxWidth: "960px",
@@ -578,16 +580,21 @@
         }
 
         .ccxp-lite-sidebar-brand {
-        display: grid;
-          grid-template-columns: 44px minmax(0, 1fr);
+          --ccxp-lite-sidebar-brand-font-size: var(--ccxp-lite-font-size-sidebar-brand);
+          display: grid;
+          grid-template-columns: calc(1.5cap) minmax(0, 1fr);
           align-items: center;
           gap: 8px;
           padding: 4px 6px 18px;
+          font-family: var(--ccxp-lite-font-brand);
+          font-size: var(--ccxp-lite-sidebar-brand-font-size);
+          line-height: 1;
         }
 
         .ccxp-lite-sidebar-brand-logo {
-          width: 44px;
-          height: 44px;
+          width: auto;
+          height: calc(1.5cap);
+          max-width: 100%;
           border-radius: 12px;
           object-fit: contain;
           filter: var(--ccxp-lite-brand-logo-filter);
@@ -599,8 +606,10 @@
 
         .ccxp-lite-sidebar-brand-title {
           color: var(--ccxp-lite-type-display-color);
-          font: var(--ccxp-lite-type-body-strong);
-          font-size: 20px;
+          font-family: var(--ccxp-lite-font-brand);
+          font-size: var(--ccxp-lite-sidebar-brand-font-size);
+          font-weight: var(--ccxp-lite-font-weight-strong);
+          line-height: 1;
           letter-spacing: 0.01em;
         }
 
@@ -901,6 +910,7 @@
         --ccxp-lite-radius-md: ${TOKENS.radiusMd};
         --ccxp-lite-radius-lg: ${TOKENS.radiusLg};
         --ccxp-lite-font-sans: ${TOKENS.fontSans};
+        --ccxp-lite-font-brand: ${TOKENS.fontBrand};
         --ccxp-lite-font-weight-regular: ${TOKENS.fontWeightRegular};
         --ccxp-lite-font-weight-strong: ${TOKENS.fontWeightStrong};
         --ccxp-lite-font-weight-heavy: ${TOKENS.fontWeightHeavy};
@@ -908,6 +918,7 @@
         --ccxp-lite-font-size-nav: ${TOKENS.fontSizeNav};
         --ccxp-lite-font-size-utility: ${TOKENS.fontSizeUtility};
         --ccxp-lite-font-size-body: ${TOKENS.fontSizeBody};
+        --ccxp-lite-font-size-sidebar-brand: ${TOKENS.fontSizeSidebarBrand};
         --ccxp-lite-font-size-page-title: ${TOKENS.fontSizePageTitle};
         --ccxp-lite-font-size-display: ${TOKENS.fontSizeDisplay};
         --ccxp-lite-sidebar-width: ${TOKENS.sidebarWidth};
