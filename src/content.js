@@ -1137,14 +1137,11 @@
 
   function buildCategorizedSidebarItems(items) {
     const buckets = new Map(SIDEBAR_CATEGORIES.map((category) => [category.id, []]));
-    const unmatchedItems = [];
 
     items.forEach((item) => {
       const category = findCategoryForItem(item);
       if (category) {
         buckets.get(category.id).push(item);
-      } else {
-        unmatchedItems.push(item);
       }
     });
 
@@ -1165,28 +1162,25 @@
           kind: "category"
         };
       })
-      .filter(Boolean)
-      .concat(unmatchedItems.length > 0
-        ? [{
-          id: "category-uncategorized",
-          label: "其他",
-          icon: "folders",
-          directLinks: unmatchedItems.filter((item) => item.kind === "link").map((item) => item.linkItem),
-          sections: unmatchedItems.filter((item) => item.kind !== "link"),
-          kind: "category"
-        }]
-        : []);
+      .filter(Boolean);
   }
 
   function findCategoryForItem(item) {
     const normalizedLabel = normalizeSidebarLabel(item.label);
     return SIDEBAR_CATEGORIES.find((category) =>
-      category.itemLabels.some((label) => normalizeSidebarLabel(label) === normalizedLabel)
+      category.itemLabels.some((label) => {
+        const normalizedCategoryLabel = normalizeSidebarLabel(label);
+        return normalizedCategoryLabel === normalizedLabel
+          || normalizedLabel.includes(normalizedCategoryLabel)
+          || normalizedCategoryLabel.includes(normalizedLabel);
+      })
     ) || null;
   }
 
   function normalizeSidebarLabel(label) {
     return String(label || "")
+      .replace(/[()（）]/g, " ")
+      .replace(/[,&]/g, " ")
       .replace(/\s*\/\s*/g, " ")
       .replace(/\s+/g, " ")
       .trim();
