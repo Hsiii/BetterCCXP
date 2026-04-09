@@ -12,7 +12,8 @@
   "web_accessible_resources": [
     {
       "resources": [
-        "assets/*"
+        "assets/*",
+        "content.css"
       ],
       "matches": [
         "https://www.ccxp.nthu.edu.tw/*"
@@ -28,6 +29,8 @@
       ],
       "run_at": "document_idle",
       "js": [
+        "content.shared.js",
+        "content.sidebar.js",
         "content.js"
       ]
     }

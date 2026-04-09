@@ -1,0 +1,291 @@
+(function registerCcxpLiteShared(globalScope) {
+  const namespace = globalScope.CCXP_LITE || (globalScope.CCXP_LITE = {});
+
+  const TOKENS = {
+    colorPrimary: "#1f2933",
+    colorAccent: "#d5dbe1",
+    colorBrand: "rgb(121, 36, 133)",
+    colorLegacyBlueText: "#2e4978",
+    colorLegacyRedText: "#b85c68",
+    colorBg: "#ffffff",
+    colorSurface: "#ffffff",
+    colorSidebarSurface: "#f5f7f9",
+    colorSurfaceMuted: "#f5f7f9",
+    colorBorder: "rgba(31, 41, 51, 0.12)",
+    colorSidebarDivider: "rgba(31, 41, 51, 0.16)",
+    colorText: "#111827",
+    colorTextMuted: "#52606d",
+    spacingXs: "6px",
+    spacingSm: "10px",
+    spacingMd: "16px",
+    spacingLg: "24px",
+    spacingXl: "32px",
+    sidebarRowPaddingY: "12px",
+    sidebarRowPaddingX: "10px",
+    sidebarRowGap: "6px",
+    sidebarTreeIndentStep: "16px",
+    radiusSm: "10px",
+    radiusMd: "14px",
+    radiusLg: "20px",
+    fontSans: "\"Noto Sans TC\", \"PingFang TC\", \"Microsoft JhengHei\", sans-serif",
+    fontBrand: "\"Futura\", \"Futura PT\", \"Avenir Next\", sans-serif",
+    fontWeightRegular: "400",
+    fontWeightStrong: "700",
+    fontWeightHeavy: "800",
+    fontSizeCaption: "12px",
+    fontSizeNav: "13px",
+    fontSizeUtility: "14px",
+    fontSizeBody: "15px",
+    fontSizeSidebarBrand: "20px",
+    sizeSidebarBrandLogo: "30px",
+    sizeSidebarCategoryLeading: "1.5em",
+    spacingSidebarBrandWordGap: "0.5ch",
+    sizeSidebarHeaderDividerWidth: "100%",
+    sizeSidebarHeaderDividerHeight: "1px",
+    fontSizePageTitle: "26px",
+    fontSizeDisplay: "30px",
+    landingMaxWidth: "960px",
+    sidebarWidth: "288px",
+    sidebarClass: "ccxp-lite-sidebar-shell",
+    mainClass: "ccxp-lite-main-skin",
+    landingClass: "ccxp-lite-landing-shell"
+  };
+
+  const STRINGS = {
+    sidebarTitle: "NTHU AIS",
+    landingTitle: "NTHU AIS",
+    emptyGroup: "此分類暫無可顯示項目"
+  };
+
+  const SIDEBAR_CATEGORIES = [
+    {
+      id: "profile",
+      label: "個人資料",
+      icon: "circle-user-round",
+      itemLabels: ["帳號相關維護", "個人資料維護", "導師聯繫資料", "原住民資料系統"]
+    },
+    {
+      id: "planning-and-enrollment",
+      label: "預排與選課",
+      icon: "calendar-range",
+      itemLabels: ["預排系統 Tentative schedule", "選課 Select courses", "校際/跨系統選修", "暑修 Summer courses"]
+    },
+    {
+      id: "courses-and-grades",
+      label: "課程成績",
+      icon: "notepad-text",
+      itemLabels: ["課程、成績 Courses, transcript", "學分&抵免學分"]
+    },
+    {
+      id: "teaching-feedback",
+      label: "教學意見",
+      icon: "message-square-more",
+      itemLabels: ["教學意見 Comments about courses", "傑出教學教師票選", "教學助理評量問卷"]
+    },
+    {
+      id: "status-changes",
+      label: "學籍異動",
+      icon: "refresh-cw",
+      itemLabels: ["申請復學", "保留生申請入學", "轉系所申請", "兵役業務"]
+    },
+    {
+      id: "graduation-and-defense",
+      label: "畢業與口試",
+      icon: "graduation-cap",
+      itemLabels: ["畢業審查", "研究生學位考試", "畢業生離校系統", "數位學位證書", "袍服借用申請"]
+    },
+    {
+      id: "payments-and-aid",
+      label: "繳費與補助",
+      icon: "dollar-sign",
+      itemLabels: ["繳費單相關作業(出納組)", "退費查詢", "所得相關查詢", "出納傳票付款查詢", "就學貸款", "弱勢助學作業", "學雜費減免作業", "國外差旅費"]
+    },
+    {
+      id: "housing-and-life",
+      label: "住宿與生活",
+      icon: "house",
+      itemLabels: ["學生請假系統", "外宿資料", "學生宿舍相關", "健康照護系統", "職涯諮詢與評測"]
+    },
+    {
+      id: "forms",
+      label: "表單系統",
+      icon: "notebook-pen",
+      itemLabels: ["電子表單系統", "計畫差勤及臨時工時登錄系統", "出國申請與報告繳交系統", "校外實習登錄平台"]
+    },
+    {
+      id: "campus-systems",
+      label: "校園系統",
+      icon: "school",
+      itemLabels: ["學習平台", "計通中心相關服務", "研發處資訊系統", "校內其他系統", "明燈平台"]
+    },
+    {
+      id: "announcements-and-voting",
+      label: "公告與投票",
+      icon: "megaphone",
+      itemLabels: ["會議紀錄", "校內業務公告", "線上投票系統", "線上投票系統(特殊投票)", "校園通報網"]
+    }
+  ];
+
+  const ASSETS = {
+    brandLogoPath: "assets/nthu.jpg",
+    sidebarBrandLogoPath: "assets/nthu.png",
+    stylesheetPath: "content.css"
+  };
+
+  function ensureThemeDocument(targetDocument, scope) {
+    if (!targetDocument || !targetDocument.head || !targetDocument.documentElement) {
+      return false;
+    }
+
+    targetDocument.documentElement.dataset.ccxpLiteScope = scope;
+
+    if (!targetDocument.head.querySelector("[data-ccxp-lite-stylesheet='true']")) {
+      const link = targetDocument.createElement("link");
+      link.rel = "stylesheet";
+      link.href = chrome.runtime.getURL(ASSETS.stylesheetPath);
+      link.dataset.ccxpLiteStylesheet = "true";
+      targetDocument.head.appendChild(link);
+    }
+
+    applyCssVariables(targetDocument.documentElement, buildCssVariables());
+    return true;
+  }
+
+  function buildCssVariables() {
+    return {
+      "--ccxp-lite-primary": TOKENS.colorPrimary,
+      "--ccxp-lite-accent": TOKENS.colorAccent,
+      "--ccxp-lite-brand": TOKENS.colorBrand,
+      "--ccxp-lite-brand-logo-filter": "brightness(0) saturate(100%) invert(19%) sepia(49%) saturate(2697%) hue-rotate(278deg) brightness(89%) contrast(92%)",
+      "--ccxp-lite-legacy-blue-text": TOKENS.colorLegacyBlueText,
+      "--ccxp-lite-legacy-red-text": TOKENS.colorLegacyRedText,
+      "--ccxp-lite-bg": TOKENS.colorBg,
+      "--ccxp-lite-surface": TOKENS.colorSurface,
+      "--ccxp-lite-sidebar-surface": TOKENS.colorSidebarSurface,
+      "--ccxp-lite-surface-muted": TOKENS.colorSurfaceMuted,
+      "--ccxp-lite-border": TOKENS.colorBorder,
+      "--ccxp-lite-sidebar-divider-color": TOKENS.colorSidebarDivider,
+      "--ccxp-lite-text": TOKENS.colorText,
+      "--ccxp-lite-text-muted": TOKENS.colorTextMuted,
+      "--ccxp-lite-spacing-xs": TOKENS.spacingXs,
+      "--ccxp-lite-spacing-sm": TOKENS.spacingSm,
+      "--ccxp-lite-spacing-md": TOKENS.spacingMd,
+      "--ccxp-lite-spacing-lg": TOKENS.spacingLg,
+      "--ccxp-lite-spacing-xl": TOKENS.spacingXl,
+      "--ccxp-lite-sidebar-row-padding-y": TOKENS.sidebarRowPaddingY,
+      "--ccxp-lite-sidebar-row-padding-x": TOKENS.sidebarRowPaddingX,
+      "--ccxp-lite-sidebar-row-gap": TOKENS.sidebarRowGap,
+      "--ccxp-lite-sidebar-tree-indent-step": TOKENS.sidebarTreeIndentStep,
+      "--ccxp-lite-radius-sm": TOKENS.radiusSm,
+      "--ccxp-lite-radius-md": TOKENS.radiusMd,
+      "--ccxp-lite-radius-lg": TOKENS.radiusLg,
+      "--ccxp-lite-font-sans": TOKENS.fontSans,
+      "--ccxp-lite-font-brand": TOKENS.fontBrand,
+      "--ccxp-lite-font-weight-regular": TOKENS.fontWeightRegular,
+      "--ccxp-lite-font-weight-strong": TOKENS.fontWeightStrong,
+      "--ccxp-lite-font-weight-heavy": TOKENS.fontWeightHeavy,
+      "--ccxp-lite-font-size-caption": TOKENS.fontSizeCaption,
+      "--ccxp-lite-font-size-nav": TOKENS.fontSizeNav,
+      "--ccxp-lite-font-size-utility": TOKENS.fontSizeUtility,
+      "--ccxp-lite-font-size-body": TOKENS.fontSizeBody,
+      "--ccxp-lite-font-size-sidebar-brand": TOKENS.fontSizeSidebarBrand,
+      "--ccxp-lite-size-sidebar-brand-logo": TOKENS.sizeSidebarBrandLogo,
+      "--ccxp-lite-size-sidebar-category-leading": TOKENS.sizeSidebarCategoryLeading,
+      "--ccxp-lite-spacing-sidebar-brand-word-gap": TOKENS.spacingSidebarBrandWordGap,
+      "--ccxp-lite-size-sidebar-header-divider-width": TOKENS.sizeSidebarHeaderDividerWidth,
+      "--ccxp-lite-size-sidebar-header-divider-height": TOKENS.sizeSidebarHeaderDividerHeight,
+      "--ccxp-lite-font-size-page-title": TOKENS.fontSizePageTitle,
+      "--ccxp-lite-font-size-display": TOKENS.fontSizeDisplay,
+      "--ccxp-lite-sidebar-width": TOKENS.sidebarWidth,
+      "--ccxp-lite-landing-max-width": TOKENS.landingMaxWidth,
+      "--ccxp-lite-type-display": "var(--ccxp-lite-font-weight-heavy) var(--ccxp-lite-font-size-display)/1.1 var(--ccxp-lite-font-sans)",
+      "--ccxp-lite-type-display-color": "var(--ccxp-lite-text)",
+      "--ccxp-lite-type-page-title": "var(--ccxp-lite-font-weight-strong) var(--ccxp-lite-font-size-page-title)/1.2 var(--ccxp-lite-font-sans)",
+      "--ccxp-lite-type-page-title-color": "var(--ccxp-lite-text)",
+      "--ccxp-lite-type-primary-link": "var(--ccxp-lite-font-weight-strong) var(--ccxp-lite-font-size-body)/1.5 var(--ccxp-lite-font-sans)",
+      "--ccxp-lite-type-primary-link-color": "var(--ccxp-lite-primary)",
+      "--ccxp-lite-type-info": "var(--ccxp-lite-font-weight-strong) var(--ccxp-lite-font-size-body)/1.5 var(--ccxp-lite-font-sans)",
+      "--ccxp-lite-type-info-color": "var(--ccxp-lite-legacy-blue-text)",
+      "--ccxp-lite-type-danger": "var(--ccxp-lite-font-weight-strong) var(--ccxp-lite-font-size-body)/1.5 var(--ccxp-lite-font-sans)",
+      "--ccxp-lite-type-danger-color": "var(--ccxp-lite-legacy-red-text)",
+      "--ccxp-lite-type-body-strong": "var(--ccxp-lite-font-weight-strong) var(--ccxp-lite-font-size-body)/1.55 var(--ccxp-lite-font-sans)",
+      "--ccxp-lite-type-body-strong-color": "var(--ccxp-lite-text)",
+      "--ccxp-lite-type-body": "var(--ccxp-lite-font-weight-regular) var(--ccxp-lite-font-size-body)/1.55 var(--ccxp-lite-font-sans)",
+      "--ccxp-lite-type-body-color": "var(--ccxp-lite-text)",
+      "--ccxp-lite-type-body-muted": "var(--ccxp-lite-font-weight-regular) var(--ccxp-lite-font-size-body)/1.55 var(--ccxp-lite-font-sans)",
+      "--ccxp-lite-type-body-muted-color": "var(--ccxp-lite-text-muted)",
+      "--ccxp-lite-type-utility": "var(--ccxp-lite-font-weight-strong) var(--ccxp-lite-font-size-utility)/1.4 var(--ccxp-lite-font-sans)",
+      "--ccxp-lite-type-utility-color": "var(--ccxp-lite-primary)",
+      "--ccxp-lite-type-nav": "var(--ccxp-lite-font-weight-strong) var(--ccxp-lite-font-size-nav)/1.35 var(--ccxp-lite-font-sans)",
+      "--ccxp-lite-type-nav-color": "var(--ccxp-lite-primary)",
+      "--ccxp-lite-type-caption": "var(--ccxp-lite-font-weight-strong) var(--ccxp-lite-font-size-caption)/1.4 var(--ccxp-lite-font-sans)",
+      "--ccxp-lite-type-caption-color": "var(--ccxp-lite-text-muted)",
+      "--ccxp-lite-type-section-label": "var(--ccxp-lite-font-weight-heavy) var(--ccxp-lite-font-size-caption)/1.4 var(--ccxp-lite-font-sans)",
+      "--ccxp-lite-type-section-label-color": "var(--ccxp-lite-primary)"
+    };
+  }
+
+  function applyCssVariables(targetElement, variables) {
+    Object.entries(variables).forEach(([name, value]) => {
+      targetElement.style.setProperty(name, value);
+    });
+  }
+
+  function createBrandImage(targetDocument, className, assetPath = ASSETS.brandLogoPath) {
+    const image = targetDocument.createElement("img");
+    image.className = className;
+    image.alt = STRINGS.sidebarTitle;
+    image.src = chrome.runtime.getURL(assetPath);
+    return image;
+  }
+
+  function createBrandCopy(targetDocument, containerClassName, titleClassName, title) {
+    const copy = targetDocument.createElement("div");
+    copy.className = containerClassName;
+
+    const titleNode = targetDocument.createElement("div");
+    titleNode.className = titleClassName;
+
+    if (titleClassName === "ccxp-lite-sidebar-brand-title" && title.includes(" ")) {
+      title.split(" ").forEach((word) => {
+        const wordNode = targetDocument.createElement("span");
+        wordNode.textContent = word;
+        titleNode.appendChild(wordNode);
+      });
+    } else {
+      titleNode.textContent = title;
+    }
+
+    copy.appendChild(titleNode);
+    return copy;
+  }
+
+  function moveChildNodes(sourceNode, targetNode) {
+    while (sourceNode.firstChild) {
+      targetNode.appendChild(sourceNode.firstChild);
+    }
+  }
+
+  function removeNode(node) {
+    if (node && node.parentNode) {
+      node.parentNode.removeChild(node);
+    }
+  }
+
+  function isDocumentComplete(targetDocument) {
+    return targetDocument.readyState === "complete";
+  }
+
+  namespace.shared = {
+    TOKENS,
+    STRINGS,
+    SIDEBAR_CATEGORIES,
+    ASSETS,
+    ensureThemeDocument,
+    createBrandImage,
+    createBrandCopy,
+    moveChildNodes,
+    removeNode,
+    isDocumentComplete
+  };
+})(window);

@@ -9,7 +9,14 @@ const srcDir = join(projectRoot, "src");
 const distDir = join(projectRoot, "dist");
 const outputZip = join(distDir, "ccxpLite.zip");
 const stagingDir = mkdtempSync(join(tmpdir(), "ccxp-lite-build-"));
-const filesToPack = ["manifest.json", "content.js", "assets"];
+const filesToPack = [
+  "manifest.json",
+  "content.js",
+  "content.shared.js",
+  "content.sidebar.js",
+  "content.css",
+  "assets"
+];
 
 try {
   mkdirSync(distDir, { recursive: true });
