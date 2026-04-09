@@ -2,6 +2,7 @@
   const TOKENS = {
     colorPrimary: "#1f2933",
     colorAccent: "#d5dbe1",
+    colorBrand: "rgb(121, 36, 133)",
     colorLegacyBlueText: "#2e4978",
     colorLegacyRedText: "#b85c68",
     colorBg: "#ffffff",
@@ -45,7 +46,8 @@
   };
 
   const ASSETS = {
-    brandLogoPath: "assets/nthu.jpg"
+    brandLogoPath: "assets/nthu.jpg",
+    sidebarBrandLogoPath: "assets/nthu.png"
   };
 
   const RETRY_LIMIT = 40;
@@ -413,11 +415,11 @@
     return section;
   }
 
-  function createBrandImage(targetDocument, className) {
+  function createBrandImage(targetDocument, className, assetPath = ASSETS.brandLogoPath) {
     const image = targetDocument.createElement("img");
     image.className = className;
     image.alt = STRINGS.sidebarTitle;
-    image.src = chrome.runtime.getURL(ASSETS.brandLogoPath);
+    image.src = chrome.runtime.getURL(assetPath);
     return image;
   }
 
@@ -587,7 +589,8 @@
           width: 44px;
           height: 44px;
           border-radius: 12px;
-          object-fit: cover;
+          object-fit: contain;
+          filter: var(--ccxp-lite-brand-logo-filter);
         }
 
         .ccxp-lite-sidebar-brand-copy {
@@ -709,7 +712,7 @@
       shell.className = TOKENS.sidebarClass;
       const brand = navDocument.createElement("div");
       brand.className = "ccxp-lite-sidebar-brand";
-      brand.appendChild(createBrandImage(navDocument, "ccxp-lite-sidebar-brand-logo"));
+      brand.appendChild(createBrandImage(navDocument, "ccxp-lite-sidebar-brand-logo", ASSETS.sidebarBrandLogoPath));
       brand.appendChild(createBrandCopy(navDocument, "ccxp-lite-sidebar-brand-copy", "ccxp-lite-sidebar-brand-title", STRINGS.sidebarTitle));
 
       const list = navDocument.createElement("aside");
@@ -876,6 +879,8 @@
       :root {
         --ccxp-lite-primary: ${TOKENS.colorPrimary};
         --ccxp-lite-accent: ${TOKENS.colorAccent};
+        --ccxp-lite-brand: ${TOKENS.colorBrand};
+        --ccxp-lite-brand-logo-filter: brightness(0) saturate(100%) invert(19%) sepia(49%) saturate(2697%) hue-rotate(278deg) brightness(89%) contrast(92%);
         --ccxp-lite-legacy-blue-text: ${TOKENS.colorLegacyBlueText};
         --ccxp-lite-legacy-red-text: ${TOKENS.colorLegacyRedText};
         --ccxp-lite-bg: ${TOKENS.colorBg};
