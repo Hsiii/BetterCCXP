@@ -288,12 +288,22 @@ html[data-ccxp-lite-scope="landing"] a:hover {
 
 .ccxp-lite-landing-login .inputtext {
   width: min(100%, 320px) !important;
-  padding: 8px 0 !important;
-  border: 0 !important;
-  border-bottom: 1px solid var(--ccxp-lite-border) !important;
-  background: transparent;
+  padding: 10px 12px !important;
+  border: 1px solid var(--ccxp-lite-border) !important;
+  border-radius: 8px;
+  outline: none;
+  background: var(--ccxp-lite-surface);
   color: var(--ccxp-lite-type-body-color);
   font: var(--ccxp-lite-type-body);
+}
+
+.ccxp-lite-landing-login .inputtext:focus {
+  outline: none;
+}
+
+.ccxp-lite-landing-login .inputtext:focus-visible {
+  outline: 2px solid var(--ccxp-lite-primary);
+  outline-offset: 1px;
 }
 
 .ccxp-lite-password-field {
@@ -305,7 +315,7 @@ html[data-ccxp-lite-scope="landing"] a:hover {
 
 .ccxp-lite-password-field .inputtext {
   width: 100% !important;
-  padding-right: 34px !important;
+  padding-right: 36px !important;
 }
 
 .ccxp-lite-password-toggle {
