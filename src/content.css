@@ -159,6 +159,11 @@ html[data-ccxp-lite-scope="landing"] a:hover {
   font: var(--ccxp-lite-type-utility);
 }
 
+.ccxp-lite-landing-utility-link:hover,
+.ccxp-lite-landing-utility-link:focus-visible {
+  font: var(--ccxp-lite-type-utility) !important;
+}
+
 .ccxp-lite-landing-utility-separator {
   color: var(--ccxp-lite-type-body-muted-color);
   font: var(--ccxp-lite-type-utility);
@@ -545,6 +550,7 @@ html[data-ccxp-lite-scope="landing"] a:hover {
 
 .ccxp-lite-landing-service-link:hover {
   color: var(--ccxp-lite-type-utility-color);
+  font: var(--ccxp-lite-type-utility) !important;
   transform: none !important;
   text-decoration: none;
 }
