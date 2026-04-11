@@ -818,8 +818,10 @@
       removeNode(leftCell);
       removeNode(spacerCell);
 
-      rightCell.setAttribute("width", "35%");
-      rightCell.style.width = "35%";
+      rightCell.removeAttribute("width");
+      rightCell.style.width = "100%";
+      rightCell.style.minWidth = "0";
+      rightCell.colSpan = Math.max(1, Number(rightCell.colSpan || 1));
 
       Array.from(row.children)
         .filter((node) => node.tagName === "TD")
