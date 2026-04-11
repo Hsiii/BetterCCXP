@@ -324,7 +324,6 @@
     const brandSection = createLandingSection(targetDocument, "ccxp-lite-landing-brand");
     const langSection = createLandingSection(targetDocument, "ccxp-lite-landing-lang");
     const loginSection = createLandingSection(targetDocument, "ccxp-lite-landing-login");
-    const linksSection = createLandingSection(targetDocument, "ccxp-lite-landing-links");
     const tabsSection = createLandingSection(targetDocument, "ccxp-lite-landing-tabs");
     const noticesSection = createLandingSection(targetDocument, "ccxp-lite-landing-notices");
 
@@ -351,14 +350,18 @@
       headerSection.appendChild(langSection);
     }
 
+    const utilityHeaderLinks = buildHeaderUtilityLinks(targetDocument, utilityLinks);
+    if (utilityHeaderLinks) {
+      if (languageLinks) {
+        headerSection.insertBefore(utilityHeaderLinks, langSection);
+      } else {
+        headerSection.appendChild(utilityHeaderLinks);
+      }
+    }
+
     topSection.appendChild(headerSection);
     topSection.appendChild(loginSection);
     shell.appendChild(topSection);
-
-    if (utilityLinks) {
-      linksSection.appendChild(utilityLinks);
-      shell.appendChild(linksSection);
-    }
 
     tabsSection.appendChild(tabNavigation);
     tabContents.forEach((tabContent) => {
@@ -521,6 +524,64 @@
   function findServiceLink(targetDocument) {
     const anchor = targetDocument.querySelector("a[href*='inquire_cpr.html']");
     return anchor ? anchor.closest("div") : null;
+  }
+
+  function buildHeaderUtilityLinks(targetDocument, utilityLinksTable) {
+    if (!utilityLinksTable) {
+      return null;
+    }
+
+    const anchors = Array.from(utilityLinksTable.querySelectorAll("a[href]"))
+      .filter((anchor) => anchor.textContent && anchor.textContent.trim().length > 0)
+      .slice(0, 3);
+
+    if (anchors.length === 0) {
+      return null;
+    }
+
+    const nav = targetDocument.createElement("nav");
+    nav.className = "ccxp-lite-landing-utility";
+    nav.setAttribute("aria-label", "External links");
+
+    anchors.forEach((sourceAnchor, index) => {
+      const anchor = targetDocument.createElement("a");
+      anchor.href = sourceAnchor.href;
+      anchor.target = "_blank";
+      anchor.rel = "noopener noreferrer";
+      anchor.className = "ccxp-lite-landing-utility-link";
+      anchor.textContent = sourceAnchor.textContent.trim();
+      anchor.appendChild(createLandingExternalLinkIcon(targetDocument));
+      nav.appendChild(anchor);
+
+      if (index < anchors.length - 1) {
+        const separator = targetDocument.createElement("span");
+        separator.className = "ccxp-lite-landing-utility-separator";
+        separator.textContent = "|";
+        nav.appendChild(separator);
+      }
+    });
+
+    return nav;
+  }
+
+  function createLandingExternalLinkIcon(targetDocument) {
+    const icon = targetDocument.createElementNS("http://www.w3.org/2000/svg", "svg");
+    icon.setAttribute("class", "ccxp-lite-landing-link-icon");
+    icon.setAttribute("viewBox", "0 0 24 24");
+    icon.setAttribute("fill", "none");
+    icon.setAttribute("stroke", "currentColor");
+    icon.setAttribute("stroke-width", "2");
+    icon.setAttribute("stroke-linecap", "round");
+    icon.setAttribute("stroke-linejoin", "round");
+    icon.setAttribute("aria-hidden", "true");
+
+    ["M15 3h6v6", "M10 14 21 3", "M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"].forEach((pathData) => {
+      const path = targetDocument.createElementNS("http://www.w3.org/2000/svg", "path");
+      path.setAttribute("d", pathData);
+      icon.appendChild(path);
+    });
+
+    return icon;
   }
 
   function enhancePasswordVisibilityToggle(targetDocument, rootNode) {

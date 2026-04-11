@@ -70,7 +70,7 @@ html[data-ccxp-lite-scope="landing"] a:hover {
 
 .ccxp-lite-landing-header {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
   gap: var(--ccxp-lite-spacing-md);
   padding-bottom: var(--ccxp-lite-spacing-sm);
@@ -81,6 +81,7 @@ html[data-ccxp-lite-scope="landing"] a:hover {
   display: flex;
   align-items: center;
   gap: var(--ccxp-lite-spacing-md);
+  justify-self: start;
 }
 
 .ccxp-lite-landing-brand-logo {
@@ -135,6 +136,32 @@ html[data-ccxp-lite-scope="landing"] a:hover {
 .ccxp-lite-landing-lang {
   display: flex;
   justify-content: flex-end;
+  justify-self: end;
+}
+
+.ccxp-lite-landing-utility {
+  justify-self: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ccxp-lite-landing-utility-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--ccxp-lite-type-primary-link-color);
+  font: var(--ccxp-lite-type-utility);
+}
+
+.ccxp-lite-landing-utility-separator {
+  color: var(--ccxp-lite-type-body-muted-color);
+  font: var(--ccxp-lite-type-utility);
+}
+
+.ccxp-lite-landing-link-icon {
+  width: 13px;
+  height: 13px;
 }
 
 .ccxp-lite-landing-lang ul,
