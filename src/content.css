@@ -148,6 +148,63 @@ html[data-ccxp-lite-scope="landing"] a:hover {
   font-size: var(--ccxp-lite-font-size-body);
 }
 
+.ccxp-lite-landing-login font {
+  color: inherit !important;
+  font: inherit !important;
+}
+
+.ccxp-lite-landing-login td[style*="color:navy" i],
+.ccxp-lite-landing-login td[style*="color: navy" i],
+.ccxp-lite-landing-login a[style*="color:#032274" i],
+.ccxp-lite-landing-login a[style*="color: #032274" i],
+.ccxp-lite-landing-login a[style*="color:navy" i],
+.ccxp-lite-landing-login a[style*="color: navy" i],
+.ccxp-lite-landing-login font[color="#032274" i],
+.ccxp-lite-landing-login font[color="navy" i],
+.ccxp-lite-landing-login [color="#032274" i],
+.ccxp-lite-landing-login [color="navy" i],
+.ccxp-lite-landing-login [style*="color:#032274" i],
+.ccxp-lite-landing-login [style*="color: #032274" i],
+.ccxp-lite-landing-login [style*="color:navy" i],
+.ccxp-lite-landing-login [style*="color: navy" i] {
+  color: var(--ccxp-lite-type-info-color) !important;
+  font-weight: var(--ccxp-lite-font-weight-strong) !important;
+}
+
+.ccxp-lite-landing-login td[style*="color:#ff0000" i],
+.ccxp-lite-landing-login td[style*="color: #ff0000" i],
+.ccxp-lite-landing-login td[style*="color:#ff4444" i],
+.ccxp-lite-landing-login td[style*="color: #ff4444" i],
+.ccxp-lite-landing-login td[style*="color:red" i],
+.ccxp-lite-landing-login td[style*="color: red" i],
+.ccxp-lite-landing-login a[style*="color:#ff4444" i],
+.ccxp-lite-landing-login a[style*="color: #ff4444" i],
+.ccxp-lite-landing-login a[style*="color:#ff0000" i],
+.ccxp-lite-landing-login a[style*="color: #ff0000" i],
+.ccxp-lite-landing-login a[style*="color:red" i],
+.ccxp-lite-landing-login a[style*="color: red" i],
+.ccxp-lite-landing-login font[color="#ff4444" i],
+.ccxp-lite-landing-login font[color="#ff0000" i],
+.ccxp-lite-landing-login font[color="red" i],
+.ccxp-lite-landing-login [color="#ff4444" i],
+.ccxp-lite-landing-login [color="#ff0000" i],
+.ccxp-lite-landing-login [color="red" i],
+.ccxp-lite-landing-login [style*="color:#ff4444" i],
+.ccxp-lite-landing-login [style*="color: #ff4444" i],
+.ccxp-lite-landing-login [style*="color:#ff0000" i],
+.ccxp-lite-landing-login [style*="color: #ff0000" i],
+.ccxp-lite-landing-login [style*="color:red" i],
+.ccxp-lite-landing-login [style*="color: red" i] {
+  color: var(--ccxp-lite-type-danger-color) !important;
+  font-weight: var(--ccxp-lite-font-weight-strong) !important;
+}
+
+.ccxp-lite-landing-login font[size="2" i],
+.ccxp-lite-landing-login [size="2" i] {
+  color: var(--ccxp-lite-type-caption-color) !important;
+  font: var(--ccxp-lite-type-caption) !important;
+}
+
 .ccxp-lite-landing-lang {
   grid-column: 3;
   display: flex;
