@@ -211,24 +211,29 @@ html[data-ccxp-lite-scope="landing"] a:hover {
 
 .ccxp-lite-landing-login form {
   width: min(100%, 320px);
-  margin-inline: auto;
 }
 
 .ccxp-lite-landing-login form.ccxp-lite-login-form {
   display: flex;
   flex-direction: column;
-  gap: 0;
+  gap: 10px;
+}
+
+.ccxp-lite-landing-login form.ccxp-lite-login-form,
+.ccxp-lite-landing-login form.ccxp-lite-login-form * {
+  margin: 0 !important;
 }
 
 .ccxp-lite-landing-login table.ccxp-lite-login-form-table {
   width: 100%;
-  margin-inline: auto;
   border-collapse: separate;
   border-spacing: 0;
 }
 
 .ccxp-lite-landing-login table.ccxp-lite-login-form-table tbody {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .ccxp-lite-landing-login tr.ccxp-lite-login-field-row > td {
@@ -243,7 +248,6 @@ html[data-ccxp-lite-scope="landing"] a:hover {
 
 .ccxp-lite-landing-login tr.ccxp-lite-login-field-row {
   display: block;
-  margin-bottom: 10px;
 }
 
 .ccxp-lite-landing-login .ccxp-lite-login-field {
@@ -276,18 +280,18 @@ html[data-ccxp-lite-scope="landing"] a:hover {
 }
 
 .ccxp-lite-landing-login div[style*="login_mid.png"] {
-  margin: 0 !important;
   padding: 0 !important;
   background-image: none !important;
 }
 
 .ccxp-lite-landing-login div[style*="margin-left:1em"] {
-  margin-left: 0 !important;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .ccxp-lite-landing-login .inputtext {
   width: min(100%, 320px) !important;
-  margin: 6px 0 12px !important;
   padding: 8px 0 !important;
   border: 0 !important;
   border-bottom: 1px solid var(--ccxp-lite-border) !important;
@@ -375,7 +379,7 @@ html[data-ccxp-lite-scope="landing"] a:hover {
 .ccxp-lite-landing-login .ccxp-lite-image-action-button + .ccxp-lite-image-link-button,
 .ccxp-lite-landing-login .ccxp-lite-image-link-button + .ccxp-lite-image-action-button,
 .ccxp-lite-landing-login .ccxp-lite-image-link-button + .ccxp-lite-image-link-button {
-  margin-left: 8px;
+  margin-left: 0;
 }
 
 .ccxp-lite-landing-login .ccxp-lite-login-action-group > .ccxp-lite-image-action-button + .ccxp-lite-image-action-button,
@@ -443,7 +447,6 @@ html[data-ccxp-lite-scope="landing"] a:hover {
 }
 
 .ccxp-lite-landing-login table[border="1"] {
-  margin-top: var(--ccxp-lite-spacing-sm);
   border-color: var(--ccxp-lite-border);
 }
 
@@ -547,16 +550,18 @@ html[data-ccxp-lite-scope="landing"] a:hover {
 
 .ccxp-lite-landing-tabs .tab > * + * {
   position: relative;
+  margin-left: 10px;
 }
 
 .ccxp-lite-landing-tabs .tab > * + *::before {
   content: "";
   position: absolute;
-  left: 0;
+  left: -5px;
   top: 25%;
   bottom: 25%;
   width: 1px;
   background: var(--ccxp-lite-border);
+  pointer-events: none;
 }
 
 .ccxp-lite-landing-tabs .tab button.active,
