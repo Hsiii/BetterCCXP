@@ -47,6 +47,7 @@ html[data-ccxp-lite-scope="landing"] a {
 }
 
 html[data-ccxp-lite-scope="landing"] a:hover {
+  transform: none !important;
   text-decoration: underline;
 }
 
@@ -527,6 +528,7 @@ html[data-ccxp-lite-scope="landing"] a:hover {
 
 .ccxp-lite-landing-service-link:hover {
   color: var(--ccxp-lite-type-utility-color);
+  transform: none !important;
   text-decoration: none;
 }
 
@@ -781,6 +783,7 @@ html[data-ccxp-lite-scope="main"] a {
 
 html[data-ccxp-lite-scope="main"] a:hover {
   color: var(--ccxp-lite-type-primary-link-color);
+  transform: none !important;
   text-decoration: underline;
 }
 
