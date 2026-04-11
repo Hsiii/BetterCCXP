@@ -384,8 +384,8 @@ html[data-ccxp-lite-scope="landing"] a:hover {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: var(--ccxp-lite-surface-muted);
-  color: var(--ccxp-lite-primary);
+  background: transparent;
+  color: var(--ccxp-lite-type-utility-color);
   vertical-align: middle;
 }
 
