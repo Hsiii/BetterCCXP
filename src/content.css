@@ -292,9 +292,18 @@ html[data-ccxp-lite-scope="landing"] a:hover {
   font-family: var(--ccxp-lite-font-sans) !important;
 }
 
-.ccxp-lite-landing-links table,
-.ccxp-lite-landing-notices table {
+.ccxp-lite-landing-links table {
   width: 100% !important;
+}
+
+.ccxp-lite-landing-notices {
+  display: flex;
+  justify-content: center;
+}
+
+.ccxp-lite-landing-notices > table {
+  width: min(100%, 920px) !important;
+  margin-inline: auto;
 }
 
 .ccxp-lite-landing-notices table[width],
