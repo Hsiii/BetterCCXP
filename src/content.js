@@ -190,7 +190,11 @@
       langSection.appendChild(languageLinks);
     }
 
-    moveChildNodes(loginSourceCell, loginSection);
+    if (loginForm) {
+      loginSection.appendChild(loginForm);
+    } else {
+      moveChildNodes(loginSourceCell, loginSection);
+    }
     removeNode(findCalendarTable(loginSection));
     removeNode(loginSection.querySelector("#twcaseal")?.closest("table"));
 
@@ -283,7 +287,7 @@
 
   function findLoginSourceCell(targetDocument, loginForm) {
     if (loginForm) {
-      return loginForm.closest("td, table, div, section, article") || loginForm;
+      return loginForm.closest("td, table, section, article") || loginForm;
     }
 
     return Array.from(targetDocument.querySelectorAll("td, table, div, section, article"))
