@@ -487,7 +487,7 @@ html[data-ccxp-lite-scope="landing"] a:hover {
   overflow-x: auto;
   overflow-y: hidden;
   min-width: 0 !important;
-  border-bottom: 1px solid var(--ccxp-lite-border);
+  border-bottom: 0;
   background: color-mix(in srgb, var(--ccxp-lite-surface) 90%, white);
 }
 
@@ -498,6 +498,7 @@ html[data-ccxp-lite-scope="landing"] a:hover {
   gap: var(--ccxp-lite-spacing-sm);
   min-height: 44px;
   padding: 0 var(--ccxp-lite-spacing-sm);
+  border-bottom: 1px solid var(--ccxp-lite-border);
 }
 
 .ccxp-lite-landing-tabs-header .tab {
