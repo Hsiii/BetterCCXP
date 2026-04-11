@@ -406,6 +406,7 @@
     shell.appendChild(tabsSection);
 
     if (announcementTable) {
+      prepareAnnouncementTable(announcementTable);
       noticesSection.appendChild(announcementTable);
       shell.appendChild(noticesSection);
     }
@@ -680,33 +681,41 @@
   function findAnnouncementTable(targetDocument) {
     const tables = Array.from(targetDocument.querySelectorAll("table"));
 
+    const isAnnouncementTable = (table) => {
+      const heading = table.querySelector(".board_item");
+      const headingText = normalizeAnnouncementHeading(heading && heading.textContent);
+
+      if (headingText.includes("系統公告") || headingText.includes("system notice")) {
+        return true;
+      }
+
+      const boardHeaderCells = table.querySelectorAll(".board_subject");
+      const boardRows = table.querySelectorAll("td.board_0, td.board_1");
+      if (boardHeaderCells.length < 2 || boardRows.length < 2) {
+        return false;
+      }
+
+      const dateLikeCell = Array.from(boardRows).find((cell) => {
+        const rawText = String(cell.textContent || "").replace(/\s+/g, "").trim();
+        return /^\d{4}\/\d{2}\/\d{2}$/.test(rawText);
+      });
+
+      return Boolean(dateLikeCell);
+    };
+
     const preferred = tables.find((table) => {
       if (table.closest(".tabcontent")) {
         return false;
       }
 
-      const heading = table.querySelector(".board_item");
-      if (!heading) {
-        return false;
-      }
-
-      const headingText = normalizeAnnouncementHeading(heading.textContent);
-      return headingText === "系統公告" || headingText === "system notice";
+      return isAnnouncementTable(table);
     });
 
     if (preferred) {
       return preferred;
     }
 
-    return tables.find((table) => {
-      const heading = table.querySelector(".board_item");
-      if (!heading) {
-        return false;
-      }
-
-      const headingText = normalizeAnnouncementHeading(heading.textContent);
-      return headingText === "系統公告" || headingText === "system notice";
-    }) || null;
+    return tables.find((table) => isAnnouncementTable(table)) || null;
   }
 
   function normalizeAnnouncementHeading(rawText) {
@@ -714,6 +723,66 @@
       .replace(/\s+/g, " ")
       .trim()
       .toLowerCase();
+  }
+
+  function prepareAnnouncementTable(table) {
+    if (!table || table.dataset.ccxpLiteAnnouncementPrepared === "true") {
+      return;
+    }
+
+    table.classList.add("ccxp-lite-announcement-table");
+
+    const rows = Array.from(table.querySelectorAll(":scope > tbody > tr, :scope > tr"));
+    rows.forEach((row) => {
+      const cells = Array.from(row.querySelectorAll(":scope > td, :scope > th"));
+      if (cells.length === 0) {
+        return;
+      }
+
+      const hasOnlyDecorativeCells = cells.every((cell) => {
+        const hasBgColor = String(cell.getAttribute("bgcolor") || "").trim().length > 0;
+        const text = String(cell.textContent || "").replace(/\s+/g, "").trim();
+        return hasBgColor && text.length === 0;
+      });
+
+      if (hasOnlyDecorativeCells) {
+        removeNode(row);
+      }
+    });
+
+    const headerCell = table.querySelector(".board_item");
+    if (headerCell) {
+      headerCell.classList.add("ccxp-lite-announcement-title");
+    }
+
+    const headerRow = Array.from(table.querySelectorAll("tr"))
+      .find((row) => row.querySelector(".board_subject"));
+    if (headerRow) {
+      headerRow.classList.add("ccxp-lite-announcement-head-row");
+      Array.from(headerRow.querySelectorAll("td, th")).forEach((cell) => {
+        cell.classList.add("ccxp-lite-announcement-head-cell");
+      });
+    }
+
+    Array.from(table.querySelectorAll("tr")).forEach((row) => {
+      const cells = Array.from(row.querySelectorAll(":scope > td"));
+      if (cells.length < 2) {
+        return;
+      }
+
+      const rawDate = String(cells[0].textContent || "").replace(/\s+/g, "").trim();
+      if (!/^\d{4}\/\d{2}\/\d{2}$/.test(rawDate)) {
+        return;
+      }
+
+      row.classList.add("ccxp-lite-announcement-row");
+      cells[0].classList.add("ccxp-lite-announcement-date");
+      cells[1].classList.add("ccxp-lite-announcement-topic");
+      cells[0].setAttribute("data-label", "日期");
+      cells[1].setAttribute("data-label", "新聞主題");
+    });
+
+    table.dataset.ccxpLiteAnnouncementPrepared = "true";
   }
 
   function findUtilityLinksTable(targetDocument) {

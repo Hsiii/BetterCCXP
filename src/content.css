@@ -72,11 +72,13 @@ html[data-ccxp-lite-scope="landing"] a:hover {
 .ccxp-lite-landing-header {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  width: 100vw;
+  margin-inline: calc(50% - 50vw);
   align-items: center;
   gap: var(--ccxp-lite-spacing-md);
   min-height: 40px;
   padding-block: var(--ccxp-lite-spacing-md);
-  padding-inline: var(--ccxp-lite-spacing-md);
+  padding-inline: max(var(--ccxp-lite-spacing-md), calc((100vw - var(--ccxp-lite-landing-max-width)) / 2 + var(--ccxp-lite-spacing-md)));
   border-bottom: 1px solid var(--ccxp-lite-border);
 }
 
@@ -470,27 +472,117 @@ html[data-ccxp-lite-scope="landing"] a:hover {
 .ccxp-lite-landing-notices {
   display: flex;
   justify-content: center;
+  margin-top: 2px;
 }
 
-.ccxp-lite-landing-notices > table {
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table {
   width: min(100%, 960px) !important;
-  margin-inline: auto;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  border: 1px solid rgba(17, 24, 39, 0.12);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(17, 24, 39, 0.07);
 }
 
-.ccxp-lite-landing-notices td[width],
-.ccxp-lite-landing-notices th[width] {
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table td,
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table th {
   width: auto !important;
 }
 
-.ccxp-lite-landing-notices table {
-  width: min(100%, 960px) !important;
-  margin-inline: auto;
-  table-layout: auto;
+.ccxp-lite-landing-notices .ccxp-lite-announcement-title {
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(17, 24, 39, 0.12);
+  color: #0f2d77;
+  font: var(--ccxp-lite-type-body-strong);
+  letter-spacing: 0.01em;
+  background: linear-gradient(90deg, #f0f4ff 0%, #f9fbff 100%);
 }
 
-.ccxp-lite-landing-notices td:first-child,
-.ccxp-lite-landing-notices th:first-child {
-  width: 8rem !important;
+.ccxp-lite-landing-notices .ccxp-lite-announcement-title img {
+  margin-right: 6px;
+}
+
+.ccxp-lite-landing-notices .ccxp-lite-announcement-head-cell {
+  padding: 10px 12px;
+  color: #ffffff;
+  font: var(--ccxp-lite-type-caption);
+  letter-spacing: 0.04em;
+  background: linear-gradient(90deg, #0f2d77 0%, #13388f 100%);
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.ccxp-lite-landing-notices .ccxp-lite-announcement-head-cell:last-child {
+  border-right: 0;
+}
+
+.ccxp-lite-landing-notices .ccxp-lite-announcement-row td {
+  vertical-align: top;
+  padding: 12px;
+  border-top: 1px solid rgba(17, 24, 39, 0.12);
+  background: #ffffff;
+}
+
+.ccxp-lite-landing-notices .ccxp-lite-announcement-row:nth-of-type(even) td {
+  background: #f9fbff;
+}
+
+.ccxp-lite-landing-notices .ccxp-lite-announcement-date {
+  width: 8.5rem !important;
+  white-space: nowrap;
+  color: #0f172a;
+  font: var(--ccxp-lite-type-body-strong);
+}
+
+.ccxp-lite-landing-notices .ccxp-lite-announcement-topic {
+  color: #1f2937;
+  font: var(--ccxp-lite-type-body);
+}
+
+.ccxp-lite-landing-notices .ccxp-lite-announcement-topic > b {
+  display: inline-block;
+  margin-bottom: 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px dotted rgba(17, 24, 39, 0.35);
+}
+
+.ccxp-lite-landing-notices .ccxp-lite-announcement-topic p {
+  margin: 0;
+}
+
+.ccxp-lite-landing-notices .ccxp-lite-announcement-topic a {
+  font-weight: var(--ccxp-lite-font-weight-strong);
+}
+
+@media (max-width: 720px) {
+  .ccxp-lite-landing-notices .ccxp-lite-announcement-head-row {
+    display: none;
+  }
+
+  .ccxp-lite-landing-notices .ccxp-lite-announcement-row {
+    display: block;
+  }
+
+  .ccxp-lite-landing-notices .ccxp-lite-announcement-row td {
+    display: block;
+    width: 100% !important;
+    padding: 10px 12px;
+    border-top: 0;
+  }
+
+  .ccxp-lite-landing-notices .ccxp-lite-announcement-row td + td {
+    padding-top: 2px;
+  }
+
+  .ccxp-lite-landing-notices .ccxp-lite-announcement-row td::before {
+    content: attr(data-label);
+    display: block;
+    margin-bottom: 2px;
+    color: var(--ccxp-lite-type-caption-color);
+    font: var(--ccxp-lite-type-caption);
+    letter-spacing: 0.04em;
+  }
 }
 
 .ccxp-lite-landing-links table[background],
@@ -647,6 +739,7 @@ html[data-ccxp-lite-scope="landing"] a:hover {
 
 .ccxp-lite-landing-notices td {
   word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 html[data-ccxp-lite-scope="nav"],
