@@ -567,6 +567,8 @@
       return;
     }
 
+    structureLandingTabNavigation(targetDocument, tabNavigation, buttonPanelMap);
+
     tabNavigation.setAttribute("role", "tablist");
     tabNavigation.setAttribute("aria-label", "Portal sections");
 
@@ -652,6 +654,31 @@
     });
 
     activateTabAt(getActiveIndex());
+  }
+
+  function structureLandingTabNavigation(targetDocument, tabNavigation, buttonPanelMap) {
+    if (!targetDocument || !tabNavigation || !Array.isArray(buttonPanelMap) || buttonPanelMap.length === 0) {
+      return;
+    }
+
+    const fragment = targetDocument.createDocumentFragment();
+
+    buttonPanelMap.forEach((entry, index) => {
+      const item = targetDocument.createElement("span");
+      item.className = "ccxp-lite-tab-item";
+
+      if (index > 0) {
+        const divider = targetDocument.createElement("span");
+        divider.className = "ccxp-lite-tab-divider";
+        divider.setAttribute("aria-hidden", "true");
+        item.appendChild(divider);
+      }
+
+      item.appendChild(entry.button);
+      fragment.appendChild(item);
+    });
+
+    tabNavigation.replaceChildren(fragment);
   }
 
   function applyTabPanelSemanticClass(button, panel) {

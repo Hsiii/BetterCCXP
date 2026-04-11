@@ -670,20 +670,20 @@ html[data-ccxp-lite-scope="landing"] a:hover {
   font: var(--ccxp-lite-type-nav);
 }
 
-.ccxp-lite-landing-tabs .tab > * + * {
-  position: relative;
-  margin-left: 10px;
+.ccxp-lite-landing-tabs .tab .ccxp-lite-tab-item {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  min-width: 0;
 }
 
-.ccxp-lite-landing-tabs .tab > * + *::before {
-  content: "";
-  position: absolute;
-  left: -5px;
-  top: 25%;
-  bottom: 25%;
+.ccxp-lite-landing-tabs .tab .ccxp-lite-tab-divider {
+  display: inline-flex;
+  flex: 0 0 auto;
   width: 1px;
+  height: 18px;
+  margin: 0 8px;
   background: var(--ccxp-lite-border);
-  pointer-events: none;
 }
 
 .ccxp-lite-landing-tabs .tab button.active,
