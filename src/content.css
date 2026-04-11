@@ -316,12 +316,12 @@ html[data-ccxp-lite-scope="landing"] a:hover {
 
 .ccxp-lite-password-field .inputtext {
   width: 100% !important;
-  padding-right: 36px !important;
+  padding-right: 44px !important;
 }
 
 .ccxp-lite-password-toggle {
   position: absolute;
-  right: 0;
+  right: 10px;
   top: 50%;
   transform: translateY(-55%);
   border: 0;
