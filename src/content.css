@@ -326,6 +326,13 @@ html[data-ccxp-lite-scope="landing"] a:hover {
   font: var(--ccxp-lite-type-body-strong);
 }
 
+.ccxp-lite-landing-login .ccxp-lite-image-action-button + .ccxp-lite-image-action-button,
+.ccxp-lite-landing-login .ccxp-lite-image-action-button + .ccxp-lite-image-link-button,
+.ccxp-lite-landing-login .ccxp-lite-image-link-button + .ccxp-lite-image-action-button,
+.ccxp-lite-landing-login .ccxp-lite-image-link-button + .ccxp-lite-image-link-button {
+  margin-left: 8px;
+}
+
 .ccxp-lite-landing-login .ccxp-lite-audio-icon-button,
 .ccxp-lite-landing-login .ccxp-lite-audio-icon-link {
   width: 36px;
@@ -490,6 +497,22 @@ html[data-ccxp-lite-scope="landing"] a:hover {
   font: var(--ccxp-lite-type-utility);
   text-decoration: none;
   white-space: nowrap;
+}
+
+.ccxp-lite-landing-support-links {
+  display: inline-flex;
+  align-items: center;
+  margin-left: auto;
+  flex: 0 0 auto;
+}
+
+.ccxp-lite-landing-support-links .ccxp-lite-landing-service-link {
+  margin-left: 0;
+}
+
+.ccxp-lite-landing-support-links .ccxp-lite-landing-service-link:first-child {
+  border-left: 0;
+  padding-left: 0;
 }
 
 .ccxp-lite-landing-service-link:hover {

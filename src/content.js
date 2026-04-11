@@ -305,6 +305,7 @@
     const languageLinks = targetDocument.querySelector("ul.links");
     const announcementTable = findAnnouncementTable(targetDocument);
     const utilityLinks = findUtilityLinksTable(targetDocument);
+    const cannotLoginLink = findCannotLoginLink(utilityLinks);
     const serviceLink = findServiceLink(targetDocument);
 
     if (!loginSourceCell || !tabNavigation || tabContents.length === 0) {
@@ -356,7 +357,7 @@
       headerSection.appendChild(langSection);
     }
 
-    const utilityHeaderLinks = buildHeaderUtilityLinks(targetDocument, utilityLinks);
+    const utilityHeaderLinks = buildHeaderUtilityLinks(targetDocument, utilityLinks, cannotLoginLink);
     if (utilityHeaderLinks) {
       if (languageLinks) {
         headerSection.insertBefore(utilityHeaderLinks, langSection);
@@ -376,12 +377,13 @@
     tabsHeader.className = "ccxp-lite-landing-tabs-header";
     tabsHeader.appendChild(tabNavigation);
 
+    const supportLinks = buildLandingSupportLinks(targetDocument, serviceLink, cannotLoginLink);
+    if (supportLinks) {
+      tabsHeader.appendChild(supportLinks);
+    }
+
     if (serviceLink) {
-      const servicePhoneLink = buildServicePhoneLink(targetDocument, serviceLink);
-      if (servicePhoneLink) {
-        tabsHeader.appendChild(servicePhoneLink);
-        collapseLegacyServiceRow(serviceLink);
-      }
+      collapseLegacyServiceRow(serviceLink);
     }
 
     tabsSection.appendChild(tabsHeader);
@@ -574,6 +576,27 @@
     return anchor ? anchor.closest("div") : null;
   }
 
+  function findCannotLoginLink(utilityLinksTable) {
+    if (!utilityLinksTable) {
+      return null;
+    }
+
+    const anchors = Array.from(utilityLinksTable.querySelectorAll("a[href]"));
+    return anchors.find((anchor) => isCannotLoginLabel(anchor.textContent)) || null;
+  }
+
+  function isCannotLoginLabel(label) {
+    const normalized = String(label || "")
+      .replace(/\s+/g, "")
+      .toLowerCase();
+
+    return normalized.includes("無法登入")
+      || normalized.includes("无法登入")
+      || normalized.includes("cannotlogin")
+      || normalized.includes("can'tlogin")
+      || normalized.includes("cantlogin");
+  }
+
   function buildServicePhoneLink(targetDocument, serviceLinkNode) {
     if (!serviceLinkNode) {
       return null;
@@ -583,6 +606,19 @@
       ? serviceLinkNode
       : serviceLinkNode.querySelector("a[href]");
 
+    return buildLandingSupportLink(targetDocument, sourceAnchor, "服務電話", "phone");
+  }
+
+  function buildCannotLoginLink(targetDocument, sourceAnchor) {
+    if (!sourceAnchor) {
+      return null;
+    }
+
+    const labelText = String(sourceAnchor.textContent || "").trim() || "無法登入";
+    return buildLandingSupportLink(targetDocument, sourceAnchor, labelText, "external");
+  }
+
+  function buildLandingSupportLink(targetDocument, sourceAnchor, labelText, iconType) {
     if (!sourceAnchor) {
       return null;
     }
@@ -592,13 +628,39 @@
     anchor.href = sourceAnchor.href;
     anchor.target = sourceAnchor.target || "_blank";
     anchor.rel = "noopener noreferrer";
-    anchor.appendChild(createLandingPhoneIcon(targetDocument));
+    if (iconType === "phone") {
+      anchor.appendChild(createLandingPhoneIcon(targetDocument));
+    } else {
+      anchor.appendChild(createLandingExternalLinkIcon(targetDocument));
+    }
 
     const label = targetDocument.createElement("span");
-    label.textContent = "服務電話";
+    label.textContent = labelText;
     anchor.appendChild(label);
 
     return anchor;
+  }
+
+  function buildLandingSupportLinks(targetDocument, serviceLinkNode, cannotLoginAnchor) {
+    const servicePhoneLink = buildServicePhoneLink(targetDocument, serviceLinkNode);
+    const cannotLoginLink = buildCannotLoginLink(targetDocument, cannotLoginAnchor);
+
+    if (!servicePhoneLink && !cannotLoginLink) {
+      return null;
+    }
+
+    const wrap = targetDocument.createElement("div");
+    wrap.className = "ccxp-lite-landing-support-links";
+
+    if (servicePhoneLink) {
+      wrap.appendChild(servicePhoneLink);
+    }
+
+    if (cannotLoginLink) {
+      wrap.appendChild(cannotLoginLink);
+    }
+
+    return wrap;
   }
 
   function collapseLegacyServiceRow(serviceLinkNode) {
@@ -634,12 +696,13 @@
     }
   }
 
-  function buildHeaderUtilityLinks(targetDocument, utilityLinksTable) {
+  function buildHeaderUtilityLinks(targetDocument, utilityLinksTable, excludedAnchor) {
     if (!utilityLinksTable) {
       return null;
     }
 
     const anchors = Array.from(utilityLinksTable.querySelectorAll("a[href]"))
+      .filter((anchor) => anchor !== excludedAnchor)
       .filter((anchor) => anchor.textContent && anchor.textContent.trim().length > 0)
       .slice(0, 3);
 
