@@ -550,14 +550,8 @@ html[data-ccxp-lite-scope="landing"] a:hover {
   background: #f9fbff;
 }
 
-.ccxp-lite-landing-notices .ccxp-lite-announcement-date {
-  width: 8.5rem !important;
-  white-space: nowrap;
-  color: #0f172a;
-  font: var(--ccxp-lite-type-body-strong);
-}
 
-.ccxp-lite-landing-notices .ccxp-lite-announcement-topic {
+  width: min(100%, 960px) !important;
   color: #1f2937;
   font: var(--ccxp-lite-type-body);
 }
@@ -578,11 +572,6 @@ html[data-ccxp-lite-scope="landing"] a:hover {
 }
 
 @media (max-width: 720px) {
-  .ccxp-lite-landing-notices .ccxp-lite-announcement-panel {
-    width: 100%;
-    min-width: 0;
-  }
-
   .ccxp-lite-landing-notices .ccxp-lite-announcement-head-row {
     display: none;
   }
@@ -716,8 +705,8 @@ html[data-ccxp-lite-scope="landing"] a:hover {
 }
 
 .ccxp-lite-landing-tabs .ccxp-lite-student-alumni-panel table {
-  width: min(100%, 980px) !important;
-  max-width: 980px;
+  width: 60% !important;
+  max-width: 60%;
 }
 
 .ccxp-lite-landing-tabs .tabcontent[hidden] {
