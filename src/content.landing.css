@@ -407,6 +407,8 @@ html[data-ccxp-lite-scope="landing"] [size="2" i] {
 
 .ccxp-lite-landing-login {
   display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
   width: 100%;
   max-width: 100%;
