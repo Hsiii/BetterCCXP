@@ -1041,6 +1041,11 @@
         return;
       }
 
+      if (isClearActionLabel(label)) {
+        removeNode(inputNode);
+        return;
+      }
+
       const button = targetDocument.createElement("button");
       button.type = "submit";
       button.className = "button ccxp-lite-image-action-button";
@@ -1098,6 +1103,11 @@
 
       const label = resolveLegacyImageButtonLabel(imageNode);
       if (!label) {
+        return;
+      }
+
+      if (isClearActionLabel(label)) {
+        removeNode(anchor);
         return;
       }
 
@@ -1176,6 +1186,17 @@
     return String(rawLabel || "")
       .replace(/\s+/g, " ")
       .trim();
+  }
+
+  function isClearActionLabel(label) {
+    const normalized = String(label || "")
+      .replace(/\s+/g, "")
+      .toLowerCase();
+
+    return normalized.includes("清除")
+      || normalized.includes("clear")
+      || normalized.includes("重填")
+      || normalized.includes("reset");
   }
 
   function isVerificationAudioControl(node) {
