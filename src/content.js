@@ -1099,6 +1099,11 @@
         return;
       }
 
+      if (isAdjacentLoginClearControl(inputNode)) {
+        removeNode(inputNode);
+        return;
+      }
+
       const label = resolveLegacyImageButtonLabel(inputNode);
       if (!label) {
         return;
@@ -1161,6 +1166,11 @@
         anchor.setAttribute("aria-label", resolveLegacyImageButtonLabel(imageNode) || "Play verification audio");
         anchor.replaceChildren(createAudioIcon(targetDocument));
         anchor.dataset.ccxpLiteImageButtonReplaced = "true";
+        return;
+      }
+
+      if (isAdjacentLoginClearControl(imageNode)) {
+        removeNode(anchor);
         return;
       }
 
@@ -1282,6 +1292,102 @@
       .join(" ");
 
     return /(voice|audio|sound|speak|listen|語音|朗讀|播放)/.test(hintText);
+  }
+
+  function isAdjacentLoginClearControl(node) {
+    if (!node) {
+      return false;
+    }
+
+    const row = node.closest("tr");
+    if (!row || row.querySelector("input[name='passwd2']")) {
+      return false;
+    }
+
+    if (isClearLikeControl(node)) {
+      return true;
+    }
+
+    const controls = collectLegacyActionControls(row);
+    if (controls.length < 2) {
+      return false;
+    }
+
+    const loginIndex = controls.findIndex((controlNode) => isLoginLikeControl(controlNode));
+    const currentIndex = controls.findIndex((controlNode) => controlNode === node || controlNode.contains(node));
+
+    if (loginIndex < 0 || currentIndex < 0 || currentIndex <= loginIndex) {
+      return false;
+    }
+
+    const isTwoImagePair = controls.length === 2
+      && controls.every((controlNode) => isImageActionControl(controlNode));
+
+    return isTwoImagePair;
+  }
+
+  function collectLegacyActionControls(row) {
+    return Array.from(row.querySelectorAll("input[type='image'], input[type='submit'], input[type='reset'], button, a > img"))
+      .filter((node) => {
+        if (node.matches("a > img")) {
+          return true;
+        }
+
+        const type = String(node.getAttribute("type") || "").toLowerCase();
+        if (node.tagName === "BUTTON" && !type) {
+          return true;
+        }
+
+        return ["image", "submit", "reset", "button"].includes(type);
+      });
+  }
+
+  function isImageActionControl(node) {
+    if (!node) {
+      return false;
+    }
+
+    if (node.matches("a > img")) {
+      return true;
+    }
+
+    return String(node.getAttribute("type") || "").toLowerCase() === "image";
+  }
+
+  function isLoginLikeControl(node) {
+    const hints = extractControlHints(node);
+    return /(登入|login|sign\s*-?\s*in|submit)/i.test(hints);
+  }
+
+  function isClearLikeControl(node) {
+    const type = String(node.getAttribute("type") || "").toLowerCase();
+    if (type === "reset") {
+      return true;
+    }
+
+    const hints = extractControlHints(node);
+    return /(清除|重填|clear|reset)/i.test(hints);
+  }
+
+  function extractControlHints(node) {
+    const anchor = node.matches("a > img") ? node.closest("a") : null;
+
+    return [
+      node.getAttribute("alt"),
+      node.getAttribute("title"),
+      node.getAttribute("name"),
+      node.getAttribute("id"),
+      node.getAttribute("value"),
+      node.getAttribute("src"),
+      node.getAttribute("onclick"),
+      node.textContent,
+      anchor && anchor.getAttribute("href"),
+      anchor && anchor.getAttribute("onclick"),
+      anchor && anchor.textContent
+    ]
+      .map((value) => String(value || ""))
+      .join(" ")
+      .toLowerCase();
   }
 
   function createAudioIconButtonFromImageInput(targetDocument, inputNode) {
