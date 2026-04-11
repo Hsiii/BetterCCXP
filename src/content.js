@@ -1298,30 +1298,96 @@
   }
 
   function normalizeLoginFormLayout(rootNode) {
-    const fields = Array.from(rootNode.querySelectorAll("form input"))
-      .filter((field) => {
-        const inputType = (field.getAttribute("type") || "text").toLowerCase();
-        if (["hidden", "submit", "button", "image", "checkbox", "radio", "file"].includes(inputType)) {
-          return false;
-        }
+    const forms = Array.from(rootNode.querySelectorAll("form"));
 
-        return Boolean(field.closest("tr"));
-      });
+    forms.forEach((formNode) => {
+      if (formNode.dataset.ccxpLiteFormStructured !== "true") {
+        structureLoginFormRows(rootNode.ownerDocument, formNode);
+      }
 
-    fields.forEach((field) => {
-      const row = field.closest("tr");
-      if (!row || row.dataset.ccxpLiteLoginRow === "true") {
+      formNode.classList.add("ccxp-lite-login-form");
+      formNode.dataset.ccxpLiteFormStructured = "true";
+    });
+  }
+
+  function structureLoginFormRows(targetDocument, formNode) {
+    const rows = Array.from(formNode.querySelectorAll("tr"));
+
+    rows.forEach((rowNode, rowIndex) => {
+      if (!rowNode || rowNode.dataset.ccxpLiteLoginRow === "true") {
         return;
       }
 
-      row.classList.add("ccxp-lite-login-field-row");
-      row.dataset.ccxpLiteLoginRow = "true";
+      const fieldNode = findPrimaryFieldControl(rowNode);
+      if (!fieldNode) {
+        return;
+      }
 
-      const table = row.closest("table");
+      const cells = Array.from(rowNode.querySelectorAll(":scope > th, :scope > td"));
+      if (cells.length === 0) {
+        return;
+      }
+
+      const labelCell = cells[0];
+      const fieldCell = cells[cells.length - 1];
+      const labelText = String(labelCell.textContent || "")
+        .replace(/\s+/g, " ")
+        .trim();
+
+      const fieldId = ensureFieldId(fieldNode, rowIndex);
+
+      const fieldGroup = targetDocument.createElement("div");
+      fieldGroup.className = "ccxp-lite-login-field";
+
+      const label = targetDocument.createElement("label");
+      label.className = "ccxp-lite-login-field-label";
+      label.setAttribute("for", fieldId);
+      label.textContent = labelText || String(fieldNode.getAttribute("name") || "");
+
+      const controlWrap = targetDocument.createElement("div");
+      controlWrap.className = "ccxp-lite-login-field-control";
+      moveChildNodes(fieldCell, controlWrap);
+
+      fieldGroup.appendChild(label);
+      fieldGroup.appendChild(controlWrap);
+
+      const mergedCell = targetDocument.createElement("td");
+      mergedCell.className = "ccxp-lite-login-field-cell";
+      mergedCell.colSpan = Math.max(1, cells.length);
+      mergedCell.appendChild(fieldGroup);
+
+      rowNode.replaceChildren(mergedCell);
+      rowNode.classList.add("ccxp-lite-login-field-row");
+      rowNode.dataset.ccxpLiteLoginRow = "true";
+
+      const table = rowNode.closest("table");
       if (table) {
         table.classList.add("ccxp-lite-login-form-table");
       }
     });
+  }
+
+  function findPrimaryFieldControl(rowNode) {
+    const candidates = Array.from(rowNode.querySelectorAll("input, select, textarea"));
+
+    return candidates.find((field) => {
+      const inputType = (field.getAttribute("type") || "text").toLowerCase();
+      return !["hidden", "submit", "button", "image", "checkbox", "radio", "file"].includes(inputType);
+    }) || null;
+  }
+
+  function ensureFieldId(fieldNode, rowIndex) {
+    if (fieldNode.id) {
+      return fieldNode.id;
+    }
+
+    const baseName = String(fieldNode.getAttribute("name") || "field")
+      .trim()
+      .replace(/[^a-zA-Z0-9_-]+/g, "-")
+      .replace(/^-+|-+$/g, "") || "field";
+    const generatedId = `ccxp-lite-${baseName}-${rowIndex + 1}`;
+    fieldNode.id = generatedId;
+    return generatedId;
   }
 
   function removeLoginResetControls(rootNode) {

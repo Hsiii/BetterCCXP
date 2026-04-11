@@ -214,10 +214,17 @@ html[data-ccxp-lite-scope="landing"] a:hover {
   margin-inline: auto;
 }
 
+.ccxp-lite-landing-login form.ccxp-lite-login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
 .ccxp-lite-landing-login table.ccxp-lite-login-form-table {
+  width: 100%;
   margin-inline: auto;
   border-collapse: separate;
-  border-spacing: 0 6px;
+  border-spacing: 0;
 }
 
 .ccxp-lite-landing-login table.ccxp-lite-login-form-table tbody {
@@ -229,22 +236,37 @@ html[data-ccxp-lite-scope="landing"] a:hover {
   vertical-align: middle;
 }
 
+.ccxp-lite-landing-login td.ccxp-lite-login-field-cell {
+  width: 100%;
+  padding: 0;
+}
+
 .ccxp-lite-landing-login tr.ccxp-lite-login-field-row {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.ccxp-lite-landing-login .ccxp-lite-login-field {
   display: flex;
   flex-direction: column;
   align-items: stretch;
   gap: 6px;
-  margin-bottom: 10px;
 }
 
-.ccxp-lite-landing-login tr.ccxp-lite-login-field-row > td:first-child {
+.ccxp-lite-landing-login .ccxp-lite-login-field-label {
+  display: block;
   width: 100%;
   text-align: left;
-  padding-right: 0;
   white-space: normal;
+  color: var(--ccxp-lite-type-body-strong-color);
+  font: var(--ccxp-lite-type-body-strong);
 }
 
-.ccxp-lite-landing-login tr.ccxp-lite-login-field-row > td:last-child {
+.ccxp-lite-landing-login .ccxp-lite-login-field-control {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
   width: 100%;
   min-width: 0;
 }
