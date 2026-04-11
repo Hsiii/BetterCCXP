@@ -690,17 +690,37 @@
       }
 
       const boardHeaderCells = table.querySelectorAll(".board_subject");
-      const boardRows = table.querySelectorAll("td.board_0, td.board_1");
-      if (boardHeaderCells.length < 2 || boardRows.length < 2) {
+      if (boardHeaderCells.length < 2) {
         return false;
       }
 
-      const dateLikeCell = Array.from(boardRows).find((cell) => {
-        const rawText = String(cell.textContent || "").replace(/\s+/g, "").trim();
-        return /^\d{4}\/\d{2}\/\d{2}$/.test(rawText);
+      const dateRows = Array.from(table.querySelectorAll("tr")).filter((row) => {
+        const cells = Array.from(row.querySelectorAll(":scope > td"));
+        if (cells.length < 2) {
+          return false;
+        }
+
+        const firstCell = cells[0];
+        const secondCell = cells[1];
+        const firstClass = firstCell.classList;
+        const secondClass = secondCell.classList;
+        const isBoardPair = (firstClass.contains("board_0") && secondClass.contains("board_0"))
+          || (firstClass.contains("board_1") && secondClass.contains("board_1"));
+
+        if (!isBoardPair) {
+          return false;
+        }
+
+        const rawDate = String(firstCell.textContent || "").replace(/\s+/g, "").trim();
+        if (!/^\d{4}\/\d{2}\/\d{2}$/.test(rawDate)) {
+          return false;
+        }
+
+        const topicText = String(secondCell.textContent || "").replace(/\s+/g, " ").trim();
+        return topicText.length > 8;
       });
 
-      return Boolean(dateLikeCell);
+      return dateRows.length >= 3;
     };
 
     const preferred = tables.find((table) => {
