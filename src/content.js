@@ -347,6 +347,8 @@
     removeNode(findCalendarTable(loginSection));
     removeNode(loginSection.querySelector("#twcaseal")?.closest("table"));
 
+    collapseLegacyThreeColumnRows(targetDocument.body);
+
     headerSection.appendChild(brandSection);
     if (languageLinks) {
       headerSection.appendChild(langSection);
@@ -381,7 +383,7 @@
 
     tabsSection.appendChild(tabsHeader);
     tabContents.forEach((tabContent) => {
-      collapseLegacyTabLayout(tabContent);
+      collapseLegacyThreeColumnRows(tabContent);
       tabsSection.appendChild(tabContent);
     });
 
@@ -721,7 +723,7 @@
     return normalizedText.length === 0 && cell.querySelector("table, iframe, form, input, button, a") === null;
   }
 
-  function collapseLegacyTabLayout(rootNode) {
+  function collapseLegacyThreeColumnRows(rootNode) {
     if (!rootNode) {
       return;
     }
@@ -741,6 +743,10 @@
         return;
       }
 
+      if (!isLikelyEmptyCell(leftCell)) {
+        return;
+      }
+
       const spacerCell = cells.find((cell) => isLegacySpacerCell(cell) || normalizeLegacyWidth(cell.getAttribute("width") || cell.style.width) === "3%");
 
       removeNode(leftCell);
@@ -749,6 +755,14 @@
       rightCell.removeAttribute("width");
       rightCell.style.width = "100%";
       rightCell.colSpan = Math.max(1, Number(rightCell.colSpan || 1));
+
+      Array.from(row.children)
+        .filter((node) => node.tagName === "TD")
+        .forEach((cell) => {
+          if (cell !== rightCell) {
+            cell.removeAttribute("width");
+          }
+        });
     });
   }
 
@@ -769,6 +783,23 @@
 
     const widthText = normalizeLegacyWidth(cell.getAttribute("width") || cell.style.width);
     return widthText === "35%";
+  }
+
+  function isLikelyEmptyCell(cell) {
+    if (!cell) {
+      return false;
+    }
+
+    const normalizedText = String(cell.textContent || "")
+      .replace(/\u00a0/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+
+    if (normalizedText.length > 0) {
+      return false;
+    }
+
+    return cell.querySelector("img, iframe, form, input, button, select, textarea, a, object, embed, video, audio") === null;
   }
 
   function normalizeLegacyWidth(rawValue) {
