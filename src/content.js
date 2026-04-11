@@ -1176,6 +1176,20 @@
       return;
     }
 
+    const inlineScope = passwordField.closest("form") || passwordField.parentElement;
+    if (inlineScope) {
+      const legacyInlineToggles = Array.from(inlineScope.querySelectorAll("svg#showPassword, svg#hidePassword, svg[onclick*='togglePassword']"));
+
+      legacyInlineToggles.forEach((node) => {
+        const relation = node.compareDocumentPosition(passwordField);
+        const isBeforeField = Boolean(relation & Node.DOCUMENT_POSITION_FOLLOWING);
+
+        if (isBeforeField) {
+          node.remove();
+        }
+      });
+    }
+
     const row = passwordField.closest("tr");
     if (!row || row.dataset.ccxpLitePasswordLabelCleaned === "true") {
       return;
