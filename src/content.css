@@ -449,6 +449,7 @@ html[data-ccxp-lite-scope="landing"] a:hover {
   overflow-x: auto;
   overflow-y: hidden;
   min-width: 0 !important;
+  border-bottom: 1px solid var(--ccxp-lite-border);
 }
 
 .ccxp-lite-landing-tabs-header {
@@ -463,27 +464,43 @@ html[data-ccxp-lite-scope="landing"] a:hover {
   flex: 1 1 auto;
 }
 
-.ccxp-lite-landing-tabs .tab button {
+.ccxp-lite-landing-tabs .tab button,
+.ccxp-lite-landing-tabs .tab [role="tab"] {
   flex: 0 0 auto;
   float: none;
   padding: 8px 12px;
-  border: 1px solid var(--ccxp-lite-border);
-  border-radius: 999px;
+  border: 1px solid transparent;
+  border-radius: 8px 8px 0 0;
+  border-bottom: 0;
   background: transparent;
   color: var(--ccxp-lite-type-body-color);
   font: var(--ccxp-lite-type-nav);
 }
 
-.ccxp-lite-landing-tabs .tab button.active {
-  background: var(--ccxp-lite-surface-muted);
+.ccxp-lite-landing-tabs .tab button.active,
+.ccxp-lite-landing-tabs .tab [role="tab"].active,
+.ccxp-lite-landing-tabs .tab [role="tab"][aria-selected="true"] {
+  background: var(--ccxp-lite-surface);
+  border-color: var(--ccxp-lite-border);
   color: var(--ccxp-lite-type-body-strong-color);
 }
 
+.ccxp-lite-landing-tabs .tab [role="tab"]:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--ccxp-lite-primary) 45%, white);
+  outline-offset: 1px;
+}
+
 .ccxp-lite-landing-tabs .tabcontent {
-  margin-top: var(--ccxp-lite-spacing-md);
+  margin-top: 0;
   padding: var(--ccxp-lite-spacing-md);
   border: 1px solid var(--ccxp-lite-border);
+  border-top: 0;
+  border-radius: 0 8px 8px 8px;
   background: var(--ccxp-lite-surface);
+}
+
+.ccxp-lite-landing-tabs .tabcontent[hidden] {
+  display: none !important;
 }
 
 .ccxp-lite-landing-tabs .tabcontent h3,

@@ -393,6 +393,8 @@
       tabsSection.appendChild(tabContent);
     });
 
+    wireLandingTabs(targetDocument, tabNavigation, tabContents);
+
     shell.appendChild(tabsSection);
 
     if (announcementTable) {
@@ -505,6 +507,147 @@
     const section = targetDocument.createElement("section");
     section.className = `ccxp-lite-landing-section ${className}`;
     return section;
+  }
+
+  function wireLandingTabs(targetDocument, tabNavigation, tabContents) {
+    if (!tabNavigation || !Array.isArray(tabContents) || tabContents.length === 0) {
+      return;
+    }
+
+    const tabButtons = Array.from(tabNavigation.querySelectorAll("button, a[href^='#'], [role='tab']"));
+    if (tabButtons.length === 0) {
+      return;
+    }
+
+    const tabPanels = tabContents.map((panel, index) => {
+      panel.id = panel.id || `ccxp-lite-tabpanel-${index + 1}`;
+      panel.setAttribute("role", "tabpanel");
+      panel.setAttribute("tabindex", "0");
+      return panel;
+    });
+
+    const resolvePanelByLegacyTarget = (button) => {
+      const directControl = button.getAttribute("aria-controls");
+      if (directControl) {
+        return tabPanels.find((panel) => panel.id === directControl) || null;
+      }
+
+      const href = String(button.getAttribute("href") || "").trim();
+      if (href.startsWith("#")) {
+        const hashId = href.slice(1);
+        const fromHash = tabPanels.find((panel) => panel.id === hashId);
+        if (fromHash) {
+          return fromHash;
+        }
+      }
+
+      const legacyTarget = extractLegacyTabTarget(button);
+      if (!legacyTarget) {
+        return null;
+      }
+
+      return tabPanels.find((panel) => panel.id === legacyTarget) || null;
+    };
+
+    const buttonPanelMap = tabButtons.map((button, index) => {
+      const panel = resolvePanelByLegacyTarget(button) || tabPanels[index] || null;
+      return { button, panel };
+    }).filter((entry) => Boolean(entry.panel));
+
+    if (buttonPanelMap.length === 0) {
+      return;
+    }
+
+    tabNavigation.setAttribute("role", "tablist");
+    tabNavigation.setAttribute("aria-label", "Portal sections");
+
+    const uniquePanels = Array.from(new Set(buttonPanelMap.map((entry) => entry.panel)));
+
+    buttonPanelMap.forEach((entry, index) => {
+      const { button, panel } = entry;
+      const tabId = button.id || `ccxp-lite-tab-${index + 1}`;
+      button.id = tabId;
+      button.setAttribute("role", "tab");
+      button.setAttribute("aria-controls", panel.id);
+      button.setAttribute("aria-selected", "false");
+      button.setAttribute("tabindex", "-1");
+      if (button.tagName === "BUTTON") {
+        button.type = "button";
+      }
+
+      panel.setAttribute("aria-labelledby", tabId);
+      panel.hidden = true;
+      panel.style.display = "none";
+    });
+
+    uniquePanels.forEach((panel) => {
+      panel.hidden = true;
+      panel.style.display = "none";
+    });
+
+    const getActiveIndex = () => {
+      const byButtonClass = buttonPanelMap.findIndex(({ button }) => button.classList.contains("active"));
+      if (byButtonClass >= 0) {
+        return byButtonClass;
+      }
+
+      const byPanelVisibility = buttonPanelMap.findIndex(({ panel }) => panel.style.display !== "none" && !panel.hidden);
+      if (byPanelVisibility >= 0) {
+        return byPanelVisibility;
+      }
+
+      return 0;
+    };
+
+    const activateTabAt = (targetIndex, options = {}) => {
+      const safeIndex = Math.max(0, Math.min(targetIndex, buttonPanelMap.length - 1));
+
+      buttonPanelMap.forEach((entry, index) => {
+        const isActive = index === safeIndex;
+        entry.button.classList.toggle("active", isActive);
+        entry.button.setAttribute("aria-selected", isActive ? "true" : "false");
+        entry.button.setAttribute("tabindex", isActive ? "0" : "-1");
+        entry.panel.hidden = !isActive;
+        entry.panel.style.display = isActive ? "block" : "none";
+      });
+
+      if (options.focusButton) {
+        buttonPanelMap[safeIndex].button.focus();
+      }
+    };
+
+    buttonPanelMap.forEach((entry, index) => {
+      const { button } = entry;
+
+      button.addEventListener("click", (event) => {
+        event.preventDefault();
+        activateTabAt(index);
+      });
+
+      button.addEventListener("keydown", (event) => {
+        if (event.key === "ArrowRight") {
+          event.preventDefault();
+          activateTabAt((index + 1) % buttonPanelMap.length, { focusButton: true });
+        } else if (event.key === "ArrowLeft") {
+          event.preventDefault();
+          activateTabAt((index - 1 + buttonPanelMap.length) % buttonPanelMap.length, { focusButton: true });
+        } else if (event.key === "Home") {
+          event.preventDefault();
+          activateTabAt(0, { focusButton: true });
+        } else if (event.key === "End") {
+          event.preventDefault();
+          activateTabAt(buttonPanelMap.length - 1, { focusButton: true });
+        }
+      });
+    });
+
+    activateTabAt(getActiveIndex());
+  }
+
+  function extractLegacyTabTarget(button) {
+    const onclickValue = String(button.getAttribute("onclick") || "");
+    const targetMatch = onclickValue.match(/['\"]([^'\"]+)['\"]/);
+    return targetMatch ? targetMatch[1] : "";
   }
 
   function findLoginSourceCell(targetDocument, loginForm) {
