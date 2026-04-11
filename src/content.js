@@ -694,6 +694,13 @@
         return;
       }
 
+      if (isVerificationAudioControl(inputNode)) {
+        const audioButton = createAudioIconButtonFromImageInput(targetDocument, inputNode);
+        inputNode.replaceWith(audioButton);
+        audioButton.dataset.ccxpLiteImageButtonReplaced = "true";
+        return;
+      }
+
       const label = resolveLegacyImageButtonLabel(inputNode);
       if (!label) {
         return;
@@ -746,6 +753,14 @@
         return;
       }
 
+      if (isVerificationAudioControl(imageNode)) {
+        anchor.classList.add("ccxp-lite-audio-icon-link");
+        anchor.setAttribute("aria-label", resolveLegacyImageButtonLabel(imageNode) || "Play verification audio");
+        anchor.replaceChildren(createAudioIcon(targetDocument));
+        anchor.dataset.ccxpLiteImageButtonReplaced = "true";
+        return;
+      }
+
       const label = resolveLegacyImageButtonLabel(imageNode);
       if (!label) {
         return;
@@ -790,6 +805,79 @@
     return String(rawLabel || "")
       .replace(/\s+/g, " ")
       .trim();
+  }
+
+  function isVerificationAudioControl(node) {
+    if (!node) {
+      return false;
+    }
+
+    const row = node.closest("tr");
+    if (row && row.querySelector("input[name='passwd2']")) {
+      return true;
+    }
+
+    const hintText = [
+      node.getAttribute("alt"),
+      node.getAttribute("title"),
+      node.getAttribute("src"),
+      node.getAttribute("onclick")
+    ]
+      .map((value) => String(value || "").toLowerCase())
+      .join(" ");
+
+    return /(voice|audio|sound|speak|listen|語音|朗讀|播放)/.test(hintText);
+  }
+
+  function createAudioIconButtonFromImageInput(targetDocument, inputNode) {
+    const button = targetDocument.createElement("button");
+    button.type = "button";
+    button.className = "ccxp-lite-audio-icon-button";
+    button.appendChild(createAudioIcon(targetDocument));
+
+    const label = resolveLegacyImageButtonLabel(inputNode) || "Play verification audio";
+    button.setAttribute("aria-label", label);
+    button.title = label;
+
+    if (inputNode.id) {
+      button.id = inputNode.id;
+    }
+
+    if (inputNode.className) {
+      button.className = `${button.className} ${inputNode.className}`.trim();
+    }
+
+    if (inputNode.disabled) {
+      button.disabled = true;
+    }
+
+    ["onclick", "tabindex"].forEach((attributeName) => {
+      const value = inputNode.getAttribute(attributeName);
+      if (value) {
+        button.setAttribute(attributeName, value);
+      }
+    });
+
+    return button;
+  }
+
+  function createAudioIcon(targetDocument) {
+    const icon = targetDocument.createElementNS("http://www.w3.org/2000/svg", "svg");
+    icon.setAttribute("viewBox", "0 0 24 24");
+    icon.setAttribute("fill", "none");
+    icon.setAttribute("stroke", "currentColor");
+    icon.setAttribute("stroke-width", "2");
+    icon.setAttribute("stroke-linecap", "round");
+    icon.setAttribute("stroke-linejoin", "round");
+    icon.setAttribute("aria-hidden", "true");
+
+    ["M11 5 6 9H2v6h4l5 4z", "M15.5 8.5a5 5 0 0 1 0 7", "M18.5 5.5a9 9 0 0 1 0 13"].forEach((pathData) => {
+      const path = targetDocument.createElementNS("http://www.w3.org/2000/svg", "path");
+      path.setAttribute("d", pathData);
+      icon.appendChild(path);
+    });
+
+    return icon;
   }
 
   function cssEscape(value) {

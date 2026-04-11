@@ -326,6 +326,36 @@ html[data-ccxp-lite-scope="landing"] a:hover {
   font: var(--ccxp-lite-type-body-strong);
 }
 
+.ccxp-lite-landing-login .ccxp-lite-audio-icon-button,
+.ccxp-lite-landing-login .ccxp-lite-audio-icon-link {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  padding: 0;
+  border: 1px solid var(--ccxp-lite-border);
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--ccxp-lite-surface-muted);
+  color: var(--ccxp-lite-primary);
+  vertical-align: middle;
+}
+
+.ccxp-lite-landing-login .ccxp-lite-audio-icon-button {
+  cursor: pointer;
+}
+
+.ccxp-lite-landing-login .ccxp-lite-audio-icon-link {
+  text-decoration: none;
+}
+
+.ccxp-lite-landing-login .ccxp-lite-audio-icon-button svg,
+.ccxp-lite-landing-login .ccxp-lite-audio-icon-link svg {
+  width: 16px;
+  height: 16px;
+}
+
 .ccxp-lite-landing-section img,
 .ccxp-lite-landing-section table,
 .ccxp-lite-landing-section iframe {
