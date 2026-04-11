@@ -135,6 +135,11 @@
       langSection.appendChild(languageLinks);
     }
 
+    const loginHeaderLabel = targetDocument.createElement("h1");
+    loginHeaderLabel.className = "ccxp-lite-landing-login-label";
+    loginHeaderLabel.textContent = STRINGS.landingTitle;
+    loginSection.appendChild(loginHeaderLabel);
+
     if (loginForm) {
       loginSection.appendChild(loginForm);
     } else {
