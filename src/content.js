@@ -360,6 +360,7 @@
         headerSection.appendChild(utilityHeaderLinks);
       }
 
+      collapseLegacyUtilityRow(utilityLinks);
       removeNode(utilityLinks);
     }
 
@@ -617,6 +618,52 @@
     });
 
     return icon;
+  }
+
+  function collapseLegacyUtilityRow(utilityLinksTable) {
+    if (!utilityLinksTable) {
+      return;
+    }
+
+    const sourceCell = utilityLinksTable.closest("td");
+    if (!sourceCell) {
+      return;
+    }
+
+    const sourceRow = sourceCell.closest("tr");
+    if (!sourceRow) {
+      return;
+    }
+
+    removeNode(sourceCell);
+
+    const rowCells = Array.from(sourceRow.children).filter((node) => node.tagName === "TD");
+    rowCells.forEach((cell) => {
+      if (isLegacySpacerCell(cell)) {
+        removeNode(cell);
+      }
+    });
+
+    const remainingCells = Array.from(sourceRow.children).filter((node) => node.tagName === "TD");
+    if (remainingCells.length === 1) {
+      remainingCells[0].setAttribute("width", "100%");
+      remainingCells[0].style.width = "100%";
+    }
+  }
+
+  function isLegacySpacerCell(cell) {
+    if (!cell) {
+      return false;
+    }
+
+    const widthText = String(cell.getAttribute("width") || "").trim().toLowerCase();
+    const normalizedText = String(cell.textContent || "").replace(/\u00a0/g, " ").trim();
+
+    if ((widthText === "3%" || widthText === "3") && normalizedText.length === 0) {
+      return true;
+    }
+
+    return normalizedText.length === 0 && cell.querySelector("table, iframe, form, input, button, a") === null;
   }
 
   function enhancePasswordVisibilityToggle(targetDocument, rootNode) {
