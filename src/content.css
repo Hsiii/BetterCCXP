@@ -275,10 +275,6 @@ html[data-ccxp-lite-scope="landing"] a:hover {
   min-width: 0;
 }
 
-.ccxp-lite-landing-login .ccxp-lite-login-field-control .inputtext {
-  margin: 0 !important;
-}
-
 .ccxp-lite-landing-login div[style*="login_mid.png"] {
   padding: 0 !important;
   background-image: none !important;
@@ -373,20 +369,6 @@ html[data-ccxp-lite-scope="landing"] a:hover {
   width: 100%;
   min-width: 0;
   justify-content: center;
-}
-
-.ccxp-lite-landing-login .ccxp-lite-image-action-button + .ccxp-lite-image-action-button,
-.ccxp-lite-landing-login .ccxp-lite-image-action-button + .ccxp-lite-image-link-button,
-.ccxp-lite-landing-login .ccxp-lite-image-link-button + .ccxp-lite-image-action-button,
-.ccxp-lite-landing-login .ccxp-lite-image-link-button + .ccxp-lite-image-link-button {
-  margin-left: 0;
-}
-
-.ccxp-lite-landing-login .ccxp-lite-login-action-group > .ccxp-lite-image-action-button + .ccxp-lite-image-action-button,
-.ccxp-lite-landing-login .ccxp-lite-login-action-group > .ccxp-lite-image-action-button + .ccxp-lite-image-link-button,
-.ccxp-lite-landing-login .ccxp-lite-login-action-group > .ccxp-lite-image-link-button + .ccxp-lite-image-action-button,
-.ccxp-lite-landing-login .ccxp-lite-login-action-group > .ccxp-lite-image-link-button + .ccxp-lite-image-link-button {
-  margin-left: 0;
 }
 
 .ccxp-lite-landing-login .ccxp-lite-audio-icon-button,
