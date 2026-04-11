@@ -1794,10 +1794,12 @@
       button.type = "submit";
       button.className = "ccxp-lite-image-action-button";
       button.textContent = label;
+      button.value = label;
+      button.setAttribute("value", label);
 
       Array.from(inputNode.attributes).forEach((attribute) => {
         const attributeName = attribute.name.toLowerCase();
-        if (attributeName === "type" || attributeName === "value" || attributeName === "class") {
+        if (attributeName === "type" || attributeName === "class") {
           return;
         }
 
