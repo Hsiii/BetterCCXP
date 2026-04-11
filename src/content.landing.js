@@ -20,6 +20,51 @@
     return Boolean(targetDocument.querySelector(".tab, .tabcontent"));
   }
 
+  function resolveLandingLocale(targetDocument, languageLinks, loginSourceCell) {
+    const htmlLang = ((targetDocument.documentElement && targetDocument.documentElement.lang) || "").toLowerCase();
+    if (htmlLang.startsWith("en")) {
+      return "en";
+    }
+
+    if (htmlLang.startsWith("zh")) {
+      return "zh";
+    }
+
+    const search = ((targetDocument.location && targetDocument.location.search) || "").toLowerCase();
+    const langMatch = search.match(/[?&]lang=([^&]+)/);
+    if (langMatch) {
+      const langValue = decodeURIComponent(langMatch[1]);
+      if (/en/.test(langValue)) {
+        return "en";
+      }
+      if (/(zh|cht|chs|tw|cn)/.test(langValue)) {
+        return "zh";
+      }
+    }
+
+    if (languageLinks) {
+      const currentLangNode = languageLinks.querySelector(".active, .current, .selected, strong, b") || languageLinks;
+      const currentLangText = (currentLangNode.textContent || "").toLowerCase();
+      if (/english/.test(currentLangText)) {
+        return "en";
+      }
+      if (/中文|chinese/.test(currentLangText)) {
+        return "zh";
+      }
+    }
+
+    const sampleText = ((loginSourceCell && loginSourceCell.textContent) || "").trim();
+    return /[\u3400-\u9fff]/.test(sampleText) ? "zh" : "en";
+  }
+
+  function getLandingLoginTitle(targetDocument, languageLinks, loginSourceCell) {
+    const locale = resolveLandingLocale(targetDocument, languageLinks, loginSourceCell);
+    if (locale === "zh") {
+      return "NTHU AIS 登入";
+    }
+    return STRINGS.landingTitle;
+  }
+
   function getLoginForm(targetDocument) {
     const forms = Array.from(targetDocument.querySelectorAll("form"));
 
@@ -137,7 +182,7 @@
 
     const loginHeaderLabel = targetDocument.createElement("h1");
     loginHeaderLabel.className = "ccxp-lite-landing-login-label";
-    loginHeaderLabel.textContent = STRINGS.landingTitle;
+    loginHeaderLabel.textContent = getLandingLoginTitle(targetDocument, languageLinks, loginSourceCell);
     loginSection.appendChild(loginHeaderLabel);
 
     if (loginForm) {
