@@ -749,7 +749,15 @@
   }
 
   function normalizeLoginFormLayout(rootNode) {
-    const fields = Array.from(rootNode.querySelectorAll("input[name='account'], input[name='passwd'], input[name='passwd2']"));
+    const fields = Array.from(rootNode.querySelectorAll("form input"))
+      .filter((field) => {
+        const inputType = (field.getAttribute("type") || "text").toLowerCase();
+        if (["hidden", "submit", "button", "image", "checkbox", "radio", "file"].includes(inputType)) {
+          return false;
+        }
+
+        return Boolean(field.closest("tr"));
+      });
 
     fields.forEach((field) => {
       const row = field.closest("tr");
