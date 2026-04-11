@@ -230,6 +230,11 @@ html[data-ccxp-lite-scope="landing"] [size="2" i] {
   letter-spacing: 0.01em;
 }
 
+.ccxp-lite-landing-brand .ccxp-lite-sidebar-brand-title,
+.ccxp-lite-landing-brand .ccxp-lite-sidebar-brand-title span {
+  font-family: var(--ccxp-lite-font-brand) !important;
+}
+
 .ccxp-lite-landing-login .td26 {
   color: var(--ccxp-lite-type-page-title-color);
   font: var(--ccxp-lite-type-page-title);
