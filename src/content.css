@@ -18,7 +18,7 @@ html[data-ccxp-lite-scope="landing"] body {
 }
 
 html[data-ccxp-lite-scope="landing"] body {
-  padding: var(--ccxp-lite-spacing-lg) var(--ccxp-lite-spacing-md) 48px;
+  padding: 0;
   font: var(--ccxp-lite-type-body);
 }
 
@@ -75,7 +75,7 @@ html[data-ccxp-lite-scope="landing"] a:hover {
   align-items: center;
   gap: var(--ccxp-lite-spacing-md);
   min-height: 40px;
-  padding-bottom: var(--ccxp-lite-spacing-sm);
+  padding: var(--ccxp-lite-spacing-lg) var(--ccxp-lite-spacing-md) var(--ccxp-lite-spacing-sm);
   border-bottom: 1px solid var(--ccxp-lite-border);
 }
 
