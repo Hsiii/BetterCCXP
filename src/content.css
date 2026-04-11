@@ -508,7 +508,7 @@ html[data-ccxp-lite-scope="landing"] a:hover {
   gap: 0;
   align-items: center;
   min-height: 44px;
-  padding: 3px 4px 0;
+  padding: 0;
   overflow-x: auto;
   overflow-y: hidden;
   min-width: 0 !important;
@@ -535,24 +535,34 @@ html[data-ccxp-lite-scope="landing"] a:hover {
   flex: 0 0 auto;
   float: none;
   position: relative;
-  top: 1px;
-  margin-bottom: -1px;
-  padding: 4px 7px;
-  border: 1px solid transparent;
-  border-radius: 8px 8px 0 0;
-  border-bottom: 1px solid transparent;
+  top: 0;
+  margin: 0;
+  padding: 10px 12px;
+  border: 0;
+  border-radius: 6px;
   background: transparent;
   color: var(--ccxp-lite-type-body-color);
   font: var(--ccxp-lite-type-nav);
+}
+
+.ccxp-lite-landing-tabs .tab > * + * {
+  position: relative;
+}
+
+.ccxp-lite-landing-tabs .tab > * + *::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 25%;
+  bottom: 25%;
+  width: 1px;
+  background: var(--ccxp-lite-border);
 }
 
 .ccxp-lite-landing-tabs .tab button.active,
 .ccxp-lite-landing-tabs .tab [role="tab"].active,
 .ccxp-lite-landing-tabs .tab [role="tab"][aria-selected="true"] {
   background: color-mix(in srgb, var(--ccxp-lite-surface) 72%, #d5dae1);
-  border-color: var(--ccxp-lite-border);
-  border-bottom-color: var(--ccxp-lite-surface);
-  z-index: 2;
   color: var(--ccxp-lite-type-body-strong-color);
 }
 
