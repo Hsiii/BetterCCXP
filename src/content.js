@@ -320,6 +320,7 @@
     shell.className = TOKENS.landingClass;
 
     const topSection = createLandingSection(targetDocument, "ccxp-lite-landing-top");
+    const headerSection = createLandingSection(targetDocument, "ccxp-lite-landing-header");
     const brandSection = createLandingSection(targetDocument, "ccxp-lite-landing-brand");
     const langSection = createLandingSection(targetDocument, "ccxp-lite-landing-lang");
     const loginSection = createLandingSection(targetDocument, "ccxp-lite-landing-login");
@@ -342,8 +343,12 @@
     removeNode(findCalendarTable(loginSection));
     removeNode(loginSection.querySelector("#twcaseal")?.closest("table"));
 
-    topSection.appendChild(brandSection);
-    topSection.appendChild(langSection);
+    headerSection.appendChild(brandSection);
+    if (languageLinks) {
+      headerSection.appendChild(langSection);
+    }
+
+    topSection.appendChild(headerSection);
     topSection.appendChild(loginSection);
     shell.appendChild(topSection);
 

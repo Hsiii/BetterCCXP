@@ -68,12 +68,19 @@ html[data-ccxp-lite-scope="landing"] a:hover {
   gap: var(--ccxp-lite-spacing-md);
 }
 
-.ccxp-lite-landing-brand {
-  display: flex;
+.ccxp-lite-landing-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   gap: var(--ccxp-lite-spacing-md);
   padding-bottom: var(--ccxp-lite-spacing-sm);
   border-bottom: 1px solid var(--ccxp-lite-border);
+}
+
+.ccxp-lite-landing-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--ccxp-lite-spacing-md);
 }
 
 .ccxp-lite-landing-brand-logo {
@@ -128,8 +135,6 @@ html[data-ccxp-lite-scope="landing"] a:hover {
 .ccxp-lite-landing-lang {
   display: flex;
   justify-content: flex-end;
-  padding-bottom: var(--ccxp-lite-spacing-sm);
-  border-bottom: 1px solid var(--ccxp-lite-border);
 }
 
 .ccxp-lite-landing-lang ul,
@@ -137,6 +142,20 @@ html[data-ccxp-lite-scope="landing"] a:hover {
   margin: 0;
   padding: 0;
   list-style: none;
+}
+
+.ccxp-lite-landing-lang ul.links {
+  width: auto;
+  display: inline-flex;
+  align-items: center;
+}
+
+.ccxp-lite-landing-lang ul.links a {
+  border-radius: 999px;
+  border: 1px solid var(--ccxp-lite-border);
+  background: transparent;
+  padding: 7px 14px;
+  white-space: nowrap;
 }
 
 .ccxp-lite-landing-lang a {
