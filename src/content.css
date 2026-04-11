@@ -375,6 +375,7 @@ html[data-ccxp-lite-scope="landing"] a:hover {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  margin-top: 8px;
 }
 
 .ccxp-lite-landing-login .ccxp-lite-login-action-group > .ccxp-lite-image-action-button,
