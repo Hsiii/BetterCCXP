@@ -800,6 +800,7 @@
     anchor.href = sourceAnchor.href;
     anchor.target = sourceAnchor.target || "_blank";
     anchor.rel = "noopener noreferrer";
+    copyLegacyAnchorHandlers(sourceAnchor, anchor);
 
     const label = targetDocument.createElement("span");
     label.textContent = labelText;
@@ -936,6 +937,7 @@
       anchor.target = "_blank";
       anchor.rel = "noopener noreferrer";
       anchor.className = "ccxp-lite-landing-utility-link";
+      copyLegacyAnchorHandlers(sourceAnchor, anchor);
       anchor.textContent = sourceAnchor.textContent.trim();
       anchor.appendChild(createLandingExternalLinkIcon(targetDocument));
       nav.appendChild(anchor);
@@ -949,6 +951,19 @@
     });
 
     return nav;
+  }
+
+  function copyLegacyAnchorHandlers(sourceAnchor, targetAnchor) {
+    if (!sourceAnchor || !targetAnchor) {
+      return;
+    }
+
+    ["onclick", "onmousedown", "onmouseup", "onmouseover", "onmouseout", "onmouseenter", "onmouseleave", "onkeydown", "onkeyup"].forEach((name) => {
+      const value = sourceAnchor.getAttribute(name);
+      if (value) {
+        targetAnchor.setAttribute(name, value);
+      }
+    });
   }
 
   function createLandingExternalLinkIcon(targetDocument) {
