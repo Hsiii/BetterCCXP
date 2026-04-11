@@ -421,7 +421,53 @@
       });
     });
 
+    form.addEventListener("submit", () => {
+      ensureLoginSubmissionPayload(form, targetDocument);
+    });
+
     form.dataset.ccxpLiteValidationBound = "true";
+  }
+
+  function ensureLoginSubmissionPayload(form, targetDocument) {
+    if (!form) {
+      return;
+    }
+
+    const normalizedAction = (form.getAttribute("action") || "").toLowerCase();
+    if (normalizedAction.includes("select_entry.php") && !normalizedAction.includes("pre_select_entry.php")) {
+      form.setAttribute("action", "pre_select_entry.php");
+    }
+
+    const authImage = form.querySelector("img[src*='auth_img.php?pwdstr=']");
+    const tokenFromImage = extractPwdstrFromImage(authImage, targetDocument);
+    let fnstrField = form.querySelector("input[name='fnstr']");
+
+    if (!fnstrField && tokenFromImage) {
+      fnstrField = targetDocument.createElement("input");
+      fnstrField.type = "hidden";
+      fnstrField.name = "fnstr";
+      form.appendChild(fnstrField);
+    }
+
+    if (fnstrField && tokenFromImage && fnstrField.value !== tokenFromImage) {
+      fnstrField.value = tokenFromImage;
+    }
+  }
+
+  function extractPwdstrFromImage(imageNode, targetDocument) {
+    if (!imageNode) {
+      return "";
+    }
+
+    const rawSrc = imageNode.getAttribute("src") || "";
+
+    try {
+      const parsed = new URL(rawSrc, targetDocument.location && targetDocument.location.href ? targetDocument.location.href : window.location.href);
+      return parsed.searchParams.get("pwdstr") || "";
+    } catch (_error) {
+      const match = rawSrc.match(/[?&]pwdstr=([^&]+)/i);
+      return match ? decodeURIComponent(match[1]) : "";
+    }
   }
 
   function createLandingSection(targetDocument, className) {
