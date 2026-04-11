@@ -111,6 +111,8 @@ html[data-ccxp-lite-scope="landing"] [style*="color: rgb(0, 0, 255)" i] {
 
 html[data-ccxp-lite-scope="landing"] td[style*="color:#ff0000" i],
 html[data-ccxp-lite-scope="landing"] td[style*="color: #ff0000" i],
+html[data-ccxp-lite-scope="landing"] td[style*="color:#dd0000" i],
+html[data-ccxp-lite-scope="landing"] td[style*="color: #dd0000" i],
 html[data-ccxp-lite-scope="landing"] td[style*="color:#f00" i],
 html[data-ccxp-lite-scope="landing"] td[style*="color: #f00" i],
 html[data-ccxp-lite-scope="landing"] td[style*="color:#ff4444" i],
@@ -125,6 +127,8 @@ html[data-ccxp-lite-scope="landing"] a[style*="color:#ff4444" i],
 html[data-ccxp-lite-scope="landing"] a[style*="color: #ff4444" i],
 html[data-ccxp-lite-scope="landing"] a[style*="color:#ff0000" i],
 html[data-ccxp-lite-scope="landing"] a[style*="color: #ff0000" i],
+html[data-ccxp-lite-scope="landing"] a[style*="color:#dd0000" i],
+html[data-ccxp-lite-scope="landing"] a[style*="color: #dd0000" i],
 html[data-ccxp-lite-scope="landing"] a[style*="color:#f00" i],
 html[data-ccxp-lite-scope="landing"] a[style*="color: #f00" i],
 html[data-ccxp-lite-scope="landing"] a[style*="color:red" i],
@@ -135,16 +139,20 @@ html[data-ccxp-lite-scope="landing"] a[style*="color:rgb(255, 0, 0)" i],
 html[data-ccxp-lite-scope="landing"] a[style*="color: rgb(255, 0, 0)" i],
 html[data-ccxp-lite-scope="landing"] font[color="#ff4444" i],
 html[data-ccxp-lite-scope="landing"] font[color="#ff0000" i],
+html[data-ccxp-lite-scope="landing"] font[color="#dd0000" i],
 html[data-ccxp-lite-scope="landing"] font[color="#f00" i],
 html[data-ccxp-lite-scope="landing"] font[color="red" i],
 html[data-ccxp-lite-scope="landing"] [color="#ff4444" i],
 html[data-ccxp-lite-scope="landing"] [color="#ff0000" i],
+html[data-ccxp-lite-scope="landing"] [color="#dd0000" i],
 html[data-ccxp-lite-scope="landing"] [color="#f00" i],
 html[data-ccxp-lite-scope="landing"] [color="red" i],
 html[data-ccxp-lite-scope="landing"] [style*="color:#ff4444" i],
 html[data-ccxp-lite-scope="landing"] [style*="color: #ff4444" i],
 html[data-ccxp-lite-scope="landing"] [style*="color:#ff0000" i],
 html[data-ccxp-lite-scope="landing"] [style*="color: #ff0000" i],
+html[data-ccxp-lite-scope="landing"] [style*="color:#dd0000" i],
+html[data-ccxp-lite-scope="landing"] [style*="color: #dd0000" i],
 html[data-ccxp-lite-scope="landing"] [style*="color:#f00" i],
 html[data-ccxp-lite-scope="landing"] [style*="color: #f00" i],
 html[data-ccxp-lite-scope="landing"] [style*="color:red" i],
@@ -449,6 +457,24 @@ html[data-ccxp-lite-scope="landing"] [size="2" i] {
   gap: 4px;
 }
 
+.ccxp-lite-landing-login .ccxp-lite-login-inline-field {
+  width: 100%;
+}
+
+.ccxp-lite-landing-login .ccxp-lite-login-inline-label {
+  display: block;
+  width: 100%;
+}
+
+.ccxp-lite-landing-login .ccxp-lite-login-inline-label > * {
+  display: block;
+  width: 100%;
+}
+
+.ccxp-lite-landing-login .ccxp-lite-login-inline-control {
+  width: 100%;
+}
+
 .ccxp-lite-landing-login .ccxp-lite-login-field-label {
   display: block;
   width: 100%;
@@ -734,6 +760,8 @@ html[data-ccxp-lite-scope="landing"] [size="2" i] {
 
 .ccxp-lite-landing-notices .ccxp-lite-announcement-table td[style*="color:#ff0000" i],
 .ccxp-lite-landing-notices .ccxp-lite-announcement-table td[style*="color: #ff0000" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table td[style*="color:#dd0000" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table td[style*="color: #dd0000" i],
 .ccxp-lite-landing-notices .ccxp-lite-announcement-table td[style*="color:#ff4444" i],
 .ccxp-lite-landing-notices .ccxp-lite-announcement-table td[style*="color: #ff4444" i],
 .ccxp-lite-landing-notices .ccxp-lite-announcement-table td[style*="color:red" i],
@@ -742,18 +770,24 @@ html[data-ccxp-lite-scope="landing"] [size="2" i] {
 .ccxp-lite-landing-notices .ccxp-lite-announcement-table a[style*="color: #ff4444" i],
 .ccxp-lite-landing-notices .ccxp-lite-announcement-table a[style*="color:#ff0000" i],
 .ccxp-lite-landing-notices .ccxp-lite-announcement-table a[style*="color: #ff0000" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table a[style*="color:#dd0000" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table a[style*="color: #dd0000" i],
 .ccxp-lite-landing-notices .ccxp-lite-announcement-table a[style*="color:red" i],
 .ccxp-lite-landing-notices .ccxp-lite-announcement-table a[style*="color: red" i],
 .ccxp-lite-landing-notices .ccxp-lite-announcement-table font[color="#ff4444" i],
 .ccxp-lite-landing-notices .ccxp-lite-announcement-table font[color="#ff0000" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table font[color="#dd0000" i],
 .ccxp-lite-landing-notices .ccxp-lite-announcement-table font[color="red" i],
 .ccxp-lite-landing-notices .ccxp-lite-announcement-table [color="#ff4444" i],
 .ccxp-lite-landing-notices .ccxp-lite-announcement-table [color="#ff0000" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table [color="#dd0000" i],
 .ccxp-lite-landing-notices .ccxp-lite-announcement-table [color="red" i],
 .ccxp-lite-landing-notices .ccxp-lite-announcement-table [style*="color:#ff4444" i],
 .ccxp-lite-landing-notices .ccxp-lite-announcement-table [style*="color: #ff4444" i],
 .ccxp-lite-landing-notices .ccxp-lite-announcement-table [style*="color:#ff0000" i],
 .ccxp-lite-landing-notices .ccxp-lite-announcement-table [style*="color: #ff0000" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table [style*="color:#dd0000" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table [style*="color: #dd0000" i],
 .ccxp-lite-landing-notices .ccxp-lite-announcement-table [style*="color:red" i],
 .ccxp-lite-landing-notices .ccxp-lite-announcement-table [style*="color: red" i] {
   color: var(--ccxp-lite-type-danger-color) !important;
