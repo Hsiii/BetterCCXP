@@ -332,11 +332,32 @@ html[data-ccxp-lite-scope="landing"] a:hover {
   font: var(--ccxp-lite-type-body-strong);
 }
 
+.ccxp-lite-landing-login .ccxp-lite-login-action-group {
+  width: min(100%, 320px);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ccxp-lite-landing-login .ccxp-lite-login-action-group > .ccxp-lite-image-action-button,
+.ccxp-lite-landing-login .ccxp-lite-login-action-group > .ccxp-lite-image-link-button {
+  width: 100%;
+  min-width: 0;
+  justify-content: center;
+}
+
 .ccxp-lite-landing-login .ccxp-lite-image-action-button + .ccxp-lite-image-action-button,
 .ccxp-lite-landing-login .ccxp-lite-image-action-button + .ccxp-lite-image-link-button,
 .ccxp-lite-landing-login .ccxp-lite-image-link-button + .ccxp-lite-image-action-button,
 .ccxp-lite-landing-login .ccxp-lite-image-link-button + .ccxp-lite-image-link-button {
   margin-left: 8px;
+}
+
+.ccxp-lite-landing-login .ccxp-lite-login-action-group > .ccxp-lite-image-action-button + .ccxp-lite-image-action-button,
+.ccxp-lite-landing-login .ccxp-lite-login-action-group > .ccxp-lite-image-action-button + .ccxp-lite-image-link-button,
+.ccxp-lite-landing-login .ccxp-lite-login-action-group > .ccxp-lite-image-link-button + .ccxp-lite-image-action-button,
+.ccxp-lite-landing-login .ccxp-lite-login-action-group > .ccxp-lite-image-link-button + .ccxp-lite-image-link-button {
+  margin-left: 0;
 }
 
 .ccxp-lite-landing-login .ccxp-lite-audio-icon-button,

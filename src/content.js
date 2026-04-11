@@ -345,6 +345,7 @@
     removeLoginResetControls(loginSection);
     forceCaptchaLabelDisplay(loginSection);
     replaceLoginFormImageButtons(targetDocument, loginSection);
+    wrapPrimaryLoginButtons(targetDocument, loginSection);
     alignCaptchaMediaRow(targetDocument, loginSection);
     enhancePasswordVisibilityToggle(targetDocument, loginSection);
 
@@ -1447,6 +1448,40 @@
       anchor.classList.add("ccxp-lite-image-link-button");
       anchor.replaceChildren(targetDocument.createTextNode(label));
       anchor.dataset.ccxpLiteImageButtonReplaced = "true";
+    });
+  }
+
+  function wrapPrimaryLoginButtons(targetDocument, rootNode) {
+    const forms = Array.from(rootNode.querySelectorAll("form"));
+
+    forms.forEach((formNode) => {
+      const allActionButtons = Array.from(formNode.querySelectorAll(".ccxp-lite-image-action-button, .ccxp-lite-image-link-button"));
+      if (allActionButtons.length === 0) {
+        return;
+      }
+
+      const targetButtons = allActionButtons.filter((buttonNode) => {
+        const label = String(buttonNode.textContent || "")
+          .replace(/\s+/g, "")
+          .trim();
+
+        return /簽到退|签到退|南大/.test(label);
+      });
+
+      if (targetButtons.length < 2) {
+        return;
+      }
+
+      let actionGroup = formNode.querySelector(".ccxp-lite-login-action-group");
+      if (!actionGroup) {
+        actionGroup = targetDocument.createElement("div");
+        actionGroup.className = "ccxp-lite-login-action-group";
+        targetButtons[0].parentNode?.insertBefore(actionGroup, targetButtons[0]);
+      }
+
+      targetButtons.forEach((buttonNode) => {
+        actionGroup.appendChild(buttonNode);
+      });
     });
   }
 
