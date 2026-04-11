@@ -109,12 +109,8 @@ html[data-ccxp-lite-scope="landing"] a:hover {
 }
 
 .ccxp-lite-landing-brand-title {
-  color: var(--ccxp-lite-type-display-color);
-  font-family: var(--ccxp-lite-font-brand);
-  font-size: var(--ccxp-lite-font-size-sidebar-brand);
-  font-weight: var(--ccxp-lite-font-weight-regular);
-  line-height: 1;
-  letter-spacing: 0.01em;
+  color: var(--ccxp-lite-type-page-title-color);
+  font: var(--ccxp-lite-type-page-title);
 }
 
 .ccxp-lite-landing-login .td26 {
