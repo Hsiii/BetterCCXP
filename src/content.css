@@ -470,6 +470,13 @@ html[data-ccxp-lite-scope="landing"] a:hover {
   background: none !important;
 }
 
+.ccxp-lite-landing-tabs {
+  border: 1px solid var(--ccxp-lite-border);
+  border-radius: 10px;
+  background: var(--ccxp-lite-surface);
+  overflow: hidden;
+}
+
 .ccxp-lite-landing-tabs .tab {
   display: flex;
   flex-wrap: nowrap;
@@ -480,10 +487,8 @@ html[data-ccxp-lite-scope="landing"] a:hover {
   overflow-x: auto;
   overflow-y: hidden;
   min-width: 0 !important;
-  border: 1px solid var(--ccxp-lite-border);
-  border-bottom: 0;
-  border-radius: 8px 8px 0 0;
-  background: color-mix(in srgb, var(--ccxp-lite-surface) 88%, white);
+  border-bottom: 1px solid var(--ccxp-lite-border);
+  background: color-mix(in srgb, var(--ccxp-lite-surface) 90%, white);
 }
 
 .ccxp-lite-landing-tabs-header {
@@ -492,6 +497,7 @@ html[data-ccxp-lite-scope="landing"] a:hover {
   justify-content: space-between;
   gap: var(--ccxp-lite-spacing-sm);
   min-height: 44px;
+  padding: 0 var(--ccxp-lite-spacing-sm);
 }
 
 .ccxp-lite-landing-tabs-header .tab {
@@ -529,9 +535,8 @@ html[data-ccxp-lite-scope="landing"] a:hover {
 .ccxp-lite-landing-tabs .tabcontent {
   margin-top: 0;
   padding: var(--ccxp-lite-spacing-md);
-  border: 1px solid var(--ccxp-lite-border);
-  border-top: 0;
-  border-radius: 0 8px 8px 8px;
+  border: 0;
+  border-radius: 0;
   background: var(--ccxp-lite-surface);
 }
 
