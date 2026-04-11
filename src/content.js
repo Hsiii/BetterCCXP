@@ -304,7 +304,6 @@
     const tabContents = Array.from(targetDocument.querySelectorAll(".tabcontent"));
     const languageLinks = targetDocument.querySelector("ul.links");
     const announcementTable = findAnnouncementTable(targetDocument);
-    const rebuiltAnnouncementTable = buildAnnouncementTableFromHtml(targetDocument, announcementTable);
     const utilityLinks = findUtilityLinksTable(targetDocument);
     const serviceLink = findServiceLink(targetDocument);
 
@@ -380,8 +379,8 @@
 
     shell.appendChild(tabsSection);
 
-    if (rebuiltAnnouncementTable) {
-      noticesSection.appendChild(rebuiltAnnouncementTable);
+    if (announcementTable) {
+      noticesSection.appendChild(announcementTable);
       shell.appendChild(noticesSection);
     }
 
@@ -517,125 +516,6 @@
         const heading = table.querySelector(".board_item");
         return heading && ["系統公告", "System Notice"].some((text) => heading.textContent.includes(text));
       });
-  }
-
-  function buildAnnouncementTableFromHtml(targetDocument, sourceTable) {
-    if (!sourceTable) {
-      return null;
-    }
-
-    const titleText = resolveAnnouncementTitle(sourceTable);
-    const sourceRows = Array.from(sourceTable.querySelectorAll("tr"));
-    const headerSourceRow = sourceRows.find((row) => row.querySelector(".board_subject") || row.matches(".board_subject"));
-    const dataSourceRows = sourceRows.filter((row) => isAnnouncementDataRow(row));
-
-    if (!headerSourceRow && dataSourceRows.length === 0) {
-      const fallback = sourceTable.cloneNode(true);
-      fallback.classList.add("ccxp-lite-announcement-table");
-      return fallback;
-    }
-
-    const table = targetDocument.createElement("table");
-    table.className = "ccxp-lite-announcement-table";
-
-    if (titleText) {
-      const caption = targetDocument.createElement("caption");
-      caption.className = "ccxp-lite-announcement-title";
-      caption.textContent = titleText;
-      table.appendChild(caption);
-    }
-
-    const headerCellSources = getAnnouncementCells(headerSourceRow || dataSourceRows[0]);
-    if (headerCellSources.length > 0) {
-      const thead = targetDocument.createElement("thead");
-      const headerRow = targetDocument.createElement("tr");
-      headerCellSources.forEach((sourceCell, index) => {
-        const headerCell = targetDocument.createElement("th");
-        copyCellMarkup(sourceCell, headerCell);
-        headerCell.classList.add(index === 0 ? "ccxp-lite-announcement-col-date" : "ccxp-lite-announcement-col-content");
-        headerRow.appendChild(headerCell);
-      });
-      thead.appendChild(headerRow);
-      table.appendChild(thead);
-    }
-
-    const tbody = targetDocument.createElement("tbody");
-    const bodyRows = headerSourceRow ? dataSourceRows : dataSourceRows.slice(1);
-    bodyRows.forEach((sourceRow, rowIndex) => {
-      const cells = getAnnouncementCells(sourceRow);
-      if (cells.length === 0) {
-        return;
-      }
-
-      const bodyRow = targetDocument.createElement("tr");
-      bodyRow.className = rowIndex % 2 === 0 ? "ccxp-lite-announcement-row-even" : "ccxp-lite-announcement-row-odd";
-      cells.forEach((sourceCell, index) => {
-        const bodyCell = targetDocument.createElement("td");
-        copyCellMarkup(sourceCell, bodyCell);
-        bodyCell.classList.add(index === 0 ? "ccxp-lite-announcement-col-date" : "ccxp-lite-announcement-col-content");
-        bodyRow.appendChild(bodyCell);
-      });
-      tbody.appendChild(bodyRow);
-    });
-
-    table.appendChild(tbody);
-    return table;
-  }
-
-  function resolveAnnouncementTitle(sourceTable) {
-    const headingNode = sourceTable.querySelector(".board_item");
-    if (headingNode && headingNode.textContent) {
-      return headingNode.textContent.replace(/\s+/g, " ").trim();
-    }
-
-    return "系統公告";
-  }
-
-  function isAnnouncementDataRow(row) {
-    if (!row) {
-      return false;
-    }
-
-    if (row.querySelector(".board_0, .board_1") || row.matches(".board_0, .board_1")) {
-      return true;
-    }
-
-    const cells = getAnnouncementCells(row);
-    if (cells.length < 2) {
-      return false;
-    }
-
-    return cells.some((cell) => Boolean(cell.querySelector("a")))
-      || /\d{4}[\/-]\d{1,2}[\/-]\d{1,2}/.test(row.textContent || "");
-  }
-
-  function getAnnouncementCells(row) {
-    if (!row) {
-      return [];
-    }
-
-    return Array.from(row.children)
-      .filter((node) => node && (node.tagName === "TD" || node.tagName === "TH"));
-  }
-
-  function copyCellMarkup(sourceCell, targetCell) {
-    if (!sourceCell || !targetCell) {
-      return;
-    }
-
-    targetCell.innerHTML = sourceCell.innerHTML;
-    const colspan = sourceCell.getAttribute("colspan");
-    if (colspan) {
-      targetCell.setAttribute("colspan", colspan);
-    }
-    const rowspan = sourceCell.getAttribute("rowspan");
-    if (rowspan) {
-      targetCell.setAttribute("rowspan", rowspan);
-    }
-    const align = sourceCell.getAttribute("align");
-    if (align) {
-      targetCell.setAttribute("align", align);
-    }
   }
 
   function findUtilityLinksTable(targetDocument) {
