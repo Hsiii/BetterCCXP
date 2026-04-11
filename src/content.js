@@ -368,15 +368,21 @@
     topSection.appendChild(loginSection);
     shell.appendChild(topSection);
 
-    tabsSection.appendChild(tabNavigation);
+    const tabsHeader = targetDocument.createElement("div");
+    tabsHeader.className = "ccxp-lite-landing-tabs-header";
+    tabsHeader.appendChild(tabNavigation);
+
+    if (serviceLink) {
+      const servicePhoneLink = buildServicePhoneLink(targetDocument, serviceLink);
+      if (servicePhoneLink) {
+        tabsHeader.appendChild(servicePhoneLink);
+      }
+    }
+
+    tabsSection.appendChild(tabsHeader);
     tabContents.forEach((tabContent) => {
       tabsSection.appendChild(tabContent);
     });
-
-    if (serviceLink) {
-      serviceLink.classList.add("ccxp-lite-landing-service");
-      tabsSection.appendChild(serviceLink);
-    }
 
     shell.appendChild(tabsSection);
 
@@ -562,6 +568,33 @@
     return anchor ? anchor.closest("div") : null;
   }
 
+  function buildServicePhoneLink(targetDocument, serviceLinkNode) {
+    if (!serviceLinkNode) {
+      return null;
+    }
+
+    const sourceAnchor = serviceLinkNode.matches("a[href]")
+      ? serviceLinkNode
+      : serviceLinkNode.querySelector("a[href]");
+
+    if (!sourceAnchor) {
+      return null;
+    }
+
+    const anchor = targetDocument.createElement("a");
+    anchor.className = "ccxp-lite-landing-service-link";
+    anchor.href = sourceAnchor.href;
+    anchor.target = sourceAnchor.target || "_blank";
+    anchor.rel = "noopener noreferrer";
+    anchor.appendChild(createLandingPhoneIcon(targetDocument));
+
+    const label = targetDocument.createElement("span");
+    label.textContent = "服務電話";
+    anchor.appendChild(label);
+
+    return anchor;
+  }
+
   function buildHeaderUtilityLinks(targetDocument, utilityLinksTable) {
     if (!utilityLinksTable) {
       return null;
@@ -616,6 +649,27 @@
       path.setAttribute("d", pathData);
       icon.appendChild(path);
     });
+
+    return icon;
+  }
+
+  function createLandingPhoneIcon(targetDocument) {
+    const icon = targetDocument.createElementNS("http://www.w3.org/2000/svg", "svg");
+    icon.setAttribute("class", "ccxp-lite-landing-phone-icon");
+    icon.setAttribute("viewBox", "0 0 24 24");
+    icon.setAttribute("fill", "none");
+    icon.setAttribute("stroke", "currentColor");
+    icon.setAttribute("stroke-width", "2");
+    icon.setAttribute("stroke-linecap", "round");
+    icon.setAttribute("stroke-linejoin", "round");
+    icon.setAttribute("aria-hidden", "true");
+
+    const path = targetDocument.createElementNS("http://www.w3.org/2000/svg", "path");
+    path.setAttribute(
+      "d",
+      "M22 16.92v3a2 2 0 0 1-2.18 2A19.8 19.8 0 0 1 11.19 19a19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.08 4.18 2 2 0 0 1 4.07 2h3a2 2 0 0 1 2 1.72c.12.9.33 1.77.63 2.6a2 2 0 0 1-.45 2.11L8 9.93a16 16 0 0 0 6.07 6.07l1.5-1.25a2 2 0 0 1 2.11-.45c.83.3 1.7.51 2.6.63A2 2 0 0 1 22 16.92z"
+    );
+    icon.appendChild(path);
 
     return icon;
   }
