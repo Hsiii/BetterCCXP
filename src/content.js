@@ -911,6 +911,7 @@
 
       seen.add(field);
       field.type = "password";
+  removeRedundantPasswordLabelEyeIcon(field);
 
       const wrapper = targetDocument.createElement("span");
       wrapper.className = "ccxp-lite-password-field";
@@ -938,6 +939,44 @@
       wrapper.appendChild(toggleButton);
       field.dataset.ccxpLitePasswordToggle = "true";
     });
+  }
+
+  function removeRedundantPasswordLabelEyeIcon(passwordField) {
+    if (!passwordField) {
+      return;
+    }
+
+    const row = passwordField.closest("tr");
+    if (!row || row.dataset.ccxpLitePasswordLabelCleaned === "true") {
+      return;
+    }
+
+    const labelCell = row.querySelector("th, td");
+    if (!labelCell) {
+      return;
+    }
+
+    const eyePattern = /(eye|show|hide|visible|visibility|view|顯示|隱藏|密碼)/i;
+    const candidates = Array.from(labelCell.querySelectorAll("img, svg, i, span, a, button"));
+
+    candidates.forEach((node) => {
+      const hints = [
+        node.getAttribute("alt"),
+        node.getAttribute("title"),
+        node.getAttribute("aria-label"),
+        node.getAttribute("class"),
+        node.getAttribute("src"),
+        node.textContent
+      ]
+        .map((value) => String(value || "").toLowerCase())
+        .join(" ");
+
+      if (hints.includes("👁") || eyePattern.test(hints)) {
+        node.remove();
+      }
+    });
+
+    row.dataset.ccxpLitePasswordLabelCleaned = "true";
   }
 
   function normalizeLoginFormLayout(rootNode) {
