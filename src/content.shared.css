@@ -1,0 +1,12 @@
+:root,
+html,
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--ccxp-lite-font-sans);
+  color: var(--ccxp-lite-text);
+}
+
+* {
+  box-sizing: border-box;
+}

@@ -14,7 +14,12 @@ const filesToPack = [
   "content.js",
   "content.shared.js",
   "content.sidebar.js",
+  "content.landing.js",
   "content.css",
+  "content.shared.css",
+  "content.landing.css",
+  "content.main.css",
+  "content.sidebar.css",
   "assets"
 ];
 

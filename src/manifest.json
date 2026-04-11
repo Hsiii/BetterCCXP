@@ -13,7 +13,11 @@
     {
       "resources": [
         "assets/*",
-        "content.css"
+        "content.css",
+        "content.shared.css",
+        "content.landing.css",
+        "content.main.css",
+        "content.sidebar.css"
       ],
       "matches": [
         "https://www.ccxp.nthu.edu.tw/*"
@@ -31,6 +35,7 @@
       "js": [
         "content.shared.js",
         "content.sidebar.js",
+        "content.landing.js",
         "content.js"
       ]
     }
