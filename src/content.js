@@ -287,9 +287,11 @@
     return forms.find((form) => {
       const action = (form.getAttribute("action") || "").toLowerCase();
       const hasKnownAction = action.includes("pre_select_entry.php") || action.includes("select_entry.php");
+      const hasPasswordField = Boolean(form.querySelector("input[type='password'], input[name='passwd'], input[name='passwd2']"));
+      const hasAccountLikeField = Boolean(form.querySelector("input[name='account'], input[name='id'], input[type='text']"));
       const hasCredentials = Boolean(form.querySelector("input[name='account']"))
         && Boolean(form.querySelector("input[name='passwd'], input[name='passwd2']"));
-      return hasKnownAction || hasCredentials;
+      return hasKnownAction || hasCredentials || (hasPasswordField && hasAccountLikeField);
     }) || null;
   }
 
@@ -318,7 +320,7 @@
     const cannotLoginLink = findCannotLoginLink(targetDocument, utilityLinks);
     const serviceLink = findServiceLink(targetDocument);
 
-    if (!loginSourceCell || !tabNavigation || tabContents.length === 0) {
+    if (!loginSourceCell) {
       retry();
       return;
     }
@@ -388,15 +390,7 @@
     topSection.appendChild(loginSection);
     shell.appendChild(topSection);
 
-    const tabsHeader = targetDocument.createElement("div");
-    tabsHeader.className = "ccxp-lite-landing-tabs-header";
-    tabsHeader.appendChild(tabNavigation);
-
     const supportLinks = buildLandingSupportLinks(targetDocument, serviceLink, cannotLoginLink);
-    if (supportLinks) {
-      tabsHeader.appendChild(supportLinks);
-    }
-
     if (serviceLink) {
       collapseLegacyServiceRow(serviceLink);
     }
@@ -405,15 +399,28 @@
       collapseLegacyCannotLoginLink(cannotLoginLink);
     }
 
-    tabsSection.appendChild(tabsHeader);
-    tabContents.forEach((tabContent) => {
-      collapseLegacyThreeColumnRows(tabContent);
-      tabsSection.appendChild(tabContent);
-    });
+    if (tabNavigation && tabContents.length > 0) {
+      const tabsHeader = targetDocument.createElement("div");
+      tabsHeader.className = "ccxp-lite-landing-tabs-header";
+      tabsHeader.appendChild(tabNavigation);
 
-    wireLandingTabs(targetDocument, tabNavigation, tabContents);
+      if (supportLinks) {
+        tabsHeader.appendChild(supportLinks);
+      }
 
-    shell.appendChild(tabsSection);
+      tabsSection.appendChild(tabsHeader);
+      tabContents.forEach((tabContent) => {
+        collapseLegacyThreeColumnRows(tabContent);
+        tabsSection.appendChild(tabContent);
+      });
+
+      wireLandingTabs(targetDocument, tabNavigation, tabContents);
+      shell.appendChild(tabsSection);
+    } else if (supportLinks) {
+      const supportSection = createLandingSection(targetDocument, "ccxp-lite-landing-support-only");
+      supportSection.appendChild(supportLinks);
+      shell.appendChild(supportSection);
+    }
 
     if (announcementTable) {
       prepareAnnouncementTable(announcementTable);
