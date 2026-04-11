@@ -53,7 +53,7 @@
 
   const STRINGS = {
     sidebarTitle: "NTHU AIS",
-    landingTitle: "NTHU AIS",
+    landingTitle: "NTHU AIS LOGIN",
     emptyGroup: "此分類暫無可顯示項目"
   };
 
