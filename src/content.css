@@ -607,11 +607,12 @@ html[data-ccxp-lite-scope="landing"] a:hover {
 }
 
 .ccxp-lite-landing-tabs {
+  width: 60%;
+  max-width: 60%;
   border: 1px solid var(--ccxp-lite-border);
   border-radius: 10px;
   background: var(--ccxp-lite-surface);
   overflow: hidden;
-  max-width: 100%;
   min-width: 0;
 }
 
