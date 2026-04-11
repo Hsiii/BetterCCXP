@@ -78,11 +78,12 @@ html[data-ccxp-lite-scope="landing"] a:hover {
   gap: var(--ccxp-lite-spacing-md);
   min-height: 40px;
   padding-block: var(--ccxp-lite-spacing-md);
-  padding-inline: max(var(--ccxp-lite-spacing-md), calc((100vw - var(--ccxp-lite-landing-max-width)) / 2 + var(--ccxp-lite-spacing-md)));
+  padding-inline: var(--ccxp-lite-spacing-md);
   border-bottom: 1px solid var(--ccxp-lite-border);
 }
 
 .ccxp-lite-landing-brand {
+  grid-column: 1;
   display: flex;
   align-items: center;
   gap: var(--ccxp-lite-spacing-md);
@@ -142,12 +143,14 @@ html[data-ccxp-lite-scope="landing"] a:hover {
 }
 
 .ccxp-lite-landing-lang {
+  grid-column: 3;
   display: flex;
   justify-content: flex-end;
   justify-self: end;
 }
 
 .ccxp-lite-landing-utility {
+  grid-column: 2;
   justify-self: center;
   display: inline-flex;
   align-items: center;
