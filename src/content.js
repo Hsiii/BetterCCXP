@@ -378,6 +378,7 @@
       const servicePhoneLink = buildServicePhoneLink(targetDocument, serviceLink);
       if (servicePhoneLink) {
         tabsHeader.appendChild(servicePhoneLink);
+        collapseLegacyServiceRow(serviceLink);
       }
     }
 
@@ -598,6 +599,39 @@
     return anchor;
   }
 
+  function collapseLegacyServiceRow(serviceLinkNode) {
+    if (!serviceLinkNode) {
+      return;
+    }
+
+    const sourceAnchor = serviceLinkNode.matches("a[href]")
+      ? serviceLinkNode
+      : serviceLinkNode.querySelector("a[href*='inquire_cpr.html'], a[href]");
+
+    if (!sourceAnchor) {
+      return;
+    }
+
+    const sourceRow = sourceAnchor.closest("tr");
+    if (!sourceRow) {
+      removeNode(sourceAnchor.closest("div"));
+      return;
+    }
+
+    const previousRow = sourceRow.previousElementSibling;
+    const nextRow = sourceRow.nextElementSibling;
+
+    removeNode(sourceRow);
+
+    if (isLikelySpacerRow(previousRow)) {
+      removeNode(previousRow);
+    }
+
+    if (isLikelySpacerRow(nextRow)) {
+      removeNode(nextRow);
+    }
+  }
+
   function buildHeaderUtilityLinks(targetDocument, utilityLinksTable) {
     if (!utilityLinksTable) {
       return null;
@@ -706,6 +740,37 @@
       remainingCells[0].setAttribute("width", "100%");
       remainingCells[0].style.width = "100%";
     }
+  }
+
+  function isLikelySpacerRow(row) {
+    if (!row || row.tagName !== "TR") {
+      return false;
+    }
+
+    const cells = Array.from(row.children).filter((node) => node.tagName === "TD");
+    if (cells.length === 0) {
+      return false;
+    }
+
+    const hasInteractiveContent = cells.some((cell) => cell.querySelector("a, button, input, select, textarea, table, iframe"));
+    if (hasInteractiveContent) {
+      return false;
+    }
+
+    const text = cells
+      .map((cell) => String(cell.textContent || "").replace(/\u00a0/g, " "))
+      .join(" ")
+      .replace(/\s+/g, " ")
+      .trim();
+
+    if (text.length > 0) {
+      return false;
+    }
+
+    const rowHeight = String(row.getAttribute("height") || "").trim();
+    const cellHasHeight = cells.some((cell) => String(cell.getAttribute("height") || "").trim().length > 0);
+
+    return rowHeight.length > 0 || cellHasHeight;
   }
 
   function isLegacySpacerCell(cell) {
