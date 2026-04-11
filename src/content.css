@@ -609,6 +609,7 @@ html[data-ccxp-lite-scope="landing"] a:hover {
 .ccxp-lite-landing-tabs {
   width: 60%;
   max-width: 60%;
+  margin-inline: auto;
   border: 1px solid var(--ccxp-lite-border);
   border-radius: 10px;
   background: var(--ccxp-lite-surface);
