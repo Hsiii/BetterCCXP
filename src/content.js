@@ -828,7 +828,24 @@
         return hasBgColor && text.length === 0;
       });
 
+      const hasOnlyEmptySpacerCells = cells.every((cell) => {
+        const text = String(cell.textContent || "").replace(/\s+/g, "").trim();
+        if (text.length > 0) {
+          return false;
+        }
+
+        return !cell.querySelector("img, iframe, table, form, input, button, a, ul, ol, p");
+      });
+
+      const hasLegacySpacerHeight = String(row.getAttribute("height") || "").trim().length > 0
+        || cells.some((cell) => String(cell.getAttribute("height") || "").trim().length > 0);
+
       if (hasOnlyDecorativeCells) {
+        removeNode(row);
+        return;
+      }
+
+      if (hasOnlyEmptySpacerCells && hasLegacySpacerHeight) {
         removeNode(row);
       }
     });
