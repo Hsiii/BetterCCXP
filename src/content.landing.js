@@ -43,19 +43,34 @@
     }
 
     if (languageLinks) {
-      const currentLangNode = languageLinks.querySelector(".active, .current, .selected, strong, b") || languageLinks;
-      const currentLangText = (currentLangNode.textContent || "").toLowerCase();
-      if (/english/.test(currentLangText)) {
-        return "en";
-      }
-      if (/中文|chinese/.test(currentLangText)) {
-        return "zh";
+      const currentLangNode = languageLinks.querySelector(".active, .current, .selected, [aria-current='page'], strong, b");
+      if (currentLangNode) {
+        const currentLangText = (currentLangNode.textContent || "").toLowerCase();
+        if (/english/.test(currentLangText)) {
+          return "en";
+        }
+        if (/中文|chinese/.test(currentLangText)) {
+          return "zh";
+        }
       }
     }
 
+    const formInputTextSample = loginForm
+      ? Array.from(loginForm.querySelectorAll("input, select, textarea, button"))
+        .map((node) => [
+          node.getAttribute("placeholder") || "",
+          node.getAttribute("value") || "",
+          node.getAttribute("title") || "",
+          node.getAttribute("aria-label") || "",
+          node.getAttribute("name") || ""
+        ].join(" "))
+        .join(" ")
+      : "";
+
     const loginTextSample = [
       loginForm && loginForm.textContent,
-      loginSourceCell && loginSourceCell.textContent
+      loginSourceCell && loginSourceCell.textContent,
+      formInputTextSample
     ]
       .filter(Boolean)
       .join(" ")
