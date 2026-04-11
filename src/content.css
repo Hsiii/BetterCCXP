@@ -54,7 +54,7 @@ html[data-ccxp-lite-scope="landing"] a:hover {
 }
 
 .ccxp-lite-landing-shell {
-  width: min(100%, var(--ccxp-lite-landing-max-width));
+  width: 100%;
   max-width: 100%;
   margin: 0;
   display: flex;
