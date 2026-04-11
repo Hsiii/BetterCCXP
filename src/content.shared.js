@@ -2,7 +2,7 @@
   const namespace = globalScope.CCXP_LITE || (globalScope.CCXP_LITE = {});
 
   const TOKENS = {
-    colorPrimary: "#1f2933",
+    colorPrimary: "rgb(121, 36, 133)",
     colorAccent: "#d5dbe1",
     colorBrand: "rgb(121, 36, 133)",
     colorLegacyBlueText: "#2e4978",

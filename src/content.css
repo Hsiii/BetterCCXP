@@ -289,7 +289,7 @@ html[data-ccxp-lite-scope="landing"] a:hover {
   padding: 10px 18px;
   border-radius: 999px;
   border: 0;
-  background: var(--ccxp-lite-text);
+  background: var(--ccxp-lite-primary);
   color: var(--ccxp-lite-bg);
   font: var(--ccxp-lite-type-body-strong);
 }
@@ -307,7 +307,7 @@ html[data-ccxp-lite-scope="landing"] a:hover {
   min-width: 112px;
   padding: 10px 18px;
   border-radius: 999px;
-  background: var(--ccxp-lite-text);
+  background: var(--ccxp-lite-primary);
   color: var(--ccxp-lite-bg);
   font: var(--ccxp-lite-type-body-strong);
 }
