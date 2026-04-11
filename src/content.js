@@ -342,6 +342,7 @@
     }
 
     normalizeLoginFormLayout(loginSection);
+    removeLoginResetControls(loginSection);
     forceCaptchaLabelDisplay(loginSection);
     replaceLoginFormImageButtons(targetDocument, loginSection);
     alignCaptchaMediaRow(targetDocument, loginSection);
@@ -1067,6 +1068,14 @@
       if (table) {
         table.classList.add("ccxp-lite-login-form-table");
       }
+    });
+  }
+
+  function removeLoginResetControls(rootNode) {
+    const resetControls = Array.from(rootNode.querySelectorAll("form input[type='reset'], form button[type='reset']"));
+
+    resetControls.forEach((controlNode) => {
+      removeNode(controlNode);
     });
   }
 
