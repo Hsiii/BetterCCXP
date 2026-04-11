@@ -381,6 +381,7 @@
 
     tabsSection.appendChild(tabsHeader);
     tabContents.forEach((tabContent) => {
+      collapseLegacyTabLayout(tabContent);
       tabsSection.appendChild(tabContent);
     });
 
@@ -718,6 +719,62 @@
     }
 
     return normalizedText.length === 0 && cell.querySelector("table, iframe, form, input, button, a") === null;
+  }
+
+  function collapseLegacyTabLayout(rootNode) {
+    if (!rootNode) {
+      return;
+    }
+
+    const rows = Array.from(rootNode.querySelectorAll("tr"));
+
+    rows.forEach((row) => {
+      const cells = Array.from(row.children).filter((node) => node.tagName === "TD");
+      if (cells.length < 2) {
+        return;
+      }
+
+      const leftCell = cells.find((cell) => isLegacyWideLeftCell(cell));
+      const rightCell = cells.find((cell) => isLegacyRightPanelCell(cell));
+
+      if (!leftCell || !rightCell) {
+        return;
+      }
+
+      const spacerCell = cells.find((cell) => isLegacySpacerCell(cell) || normalizeLegacyWidth(cell.getAttribute("width") || cell.style.width) === "3%");
+
+      removeNode(leftCell);
+      removeNode(spacerCell);
+
+      rightCell.removeAttribute("width");
+      rightCell.style.width = "100%";
+      rightCell.colSpan = Math.max(1, Number(rightCell.colSpan || 1));
+    });
+  }
+
+  function isLegacyWideLeftCell(cell) {
+    if (!cell) {
+      return false;
+    }
+
+    const widthText = normalizeLegacyWidth(cell.getAttribute("width") || cell.style.width);
+    const styleText = String(cell.getAttribute("style") || "").toLowerCase();
+    return widthText === "60%" && styleText.includes("min-width") && styleText.includes("30em");
+  }
+
+  function isLegacyRightPanelCell(cell) {
+    if (!cell) {
+      return false;
+    }
+
+    const widthText = normalizeLegacyWidth(cell.getAttribute("width") || cell.style.width);
+    return widthText === "35%";
+  }
+
+  function normalizeLegacyWidth(rawValue) {
+    return String(rawValue || "")
+      .replace(/\s+/g, "")
+      .toLowerCase();
   }
 
   function enhancePasswordVisibilityToggle(targetDocument, rootNode) {
