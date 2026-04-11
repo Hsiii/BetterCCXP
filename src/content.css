@@ -420,10 +420,17 @@ html[data-ccxp-lite-scope="landing"] a:hover {
 }
 
 .ccxp-lite-landing-login .ccxp-lite-captcha-media-row {
-  display: inline-flex;
+  display: flex;
   align-items: center;
+  justify-content: center;
+  width: 100%;
   gap: 8px;
   vertical-align: middle;
+}
+
+.ccxp-lite-landing-login .ccxp-lite-captcha-row .ccxp-lite-image-action-button,
+.ccxp-lite-landing-login .ccxp-lite-captcha-row .ccxp-lite-image-link-button {
+  margin-inline: auto;
 }
 
 .ccxp-lite-landing-login .ccxp-lite-captcha-media-row > img,
