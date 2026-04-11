@@ -167,6 +167,16 @@ html[data-ccxp-lite-scope="landing"] a:hover {
   display: none;
 }
 
+.ccxp-lite-landing-login {
+  display: flex;
+  justify-content: center;
+}
+
+.ccxp-lite-landing-login form {
+  width: min(100%, 420px);
+  margin-inline: auto;
+}
+
 .ccxp-lite-landing-login div[style*="login_mid.png"] {
   margin: 0 !important;
   padding: 0 !important;
