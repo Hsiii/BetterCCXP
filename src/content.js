@@ -797,6 +797,10 @@
     const rows = Array.from(rootNode.querySelectorAll("tr"));
 
     rows.forEach((row) => {
+      if (shouldSkipLegacyRowCollapse(row)) {
+        return;
+      }
+
       const cells = Array.from(row.children).filter((node) => node.tagName === "TD");
       if (cells.length < 2) {
         return;
@@ -866,7 +870,28 @@
       return false;
     }
 
-    return cell.querySelector("img, iframe, form, input, button, select, textarea, a, object, embed, video, audio") === null;
+    return cell.querySelector("img, iframe, form, input, button, select, textarea, a, object, embed, video, audio, table, div, span, ul, ol, p") === null;
+  }
+
+  function shouldSkipLegacyRowCollapse(row) {
+    if (!row) {
+      return true;
+    }
+
+    const table = row.closest("table");
+    if (!table) {
+      return false;
+    }
+
+    if (table.classList.contains("ccxp-lite-announcement-table")) {
+      return true;
+    }
+
+    if (table.querySelector(".board_item, .board_subject, .board_0, .board_1")) {
+      return true;
+    }
+
+    return false;
   }
 
   function normalizeLegacyWidth(rawValue) {
