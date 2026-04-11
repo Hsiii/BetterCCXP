@@ -237,6 +237,7 @@ html[data-ccxp-lite-scope="landing"] [size="2" i] {
 
 .ccxp-lite-landing-login-label {
   margin: 0 0 var(--ccxp-lite-spacing-sm);
+  padding-block: var(--ccxp-lite-spacing-sm);
   color: var(--ccxp-lite-type-page-title-color);
   font: var(--ccxp-lite-type-page-title);
 }
