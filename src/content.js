@@ -1542,39 +1542,49 @@
         return;
       }
 
-      const mergedCell = targetDocument.createElement("td");
-      mergedCell.className = "ccxp-lite-login-field-cell";
-      mergedCell.colSpan = Math.max(1, cells.length);
-
-      fieldPairs.forEach((fieldPair, pairIndex) => {
+      const replacementRows = fieldPairs.map((fieldPair, pairIndex) => {
         const fieldId = ensureFieldId(fieldPair.fieldNode, rowIndex, pairIndex);
-
-        const fieldGroup = targetDocument.createElement("div");
-        fieldGroup.className = "ccxp-lite-login-field";
-
-        const label = targetDocument.createElement("label");
-        label.className = "ccxp-lite-login-field-label";
-        label.setAttribute("for", fieldId);
-        label.textContent = fieldPair.labelText || String(fieldPair.fieldNode.getAttribute("name") || "");
-
-        const controlWrap = targetDocument.createElement("div");
-        controlWrap.className = "ccxp-lite-login-field-control";
-        moveChildNodes(fieldPair.fieldCell, controlWrap);
-
-        fieldGroup.appendChild(label);
-        fieldGroup.appendChild(controlWrap);
-        mergedCell.appendChild(fieldGroup);
+        return buildLoginFieldRow(targetDocument, fieldPair, fieldId, Math.max(1, cells.length));
       });
 
-      rowNode.replaceChildren(mergedCell);
-      rowNode.classList.add("ccxp-lite-login-field-row");
-      rowNode.dataset.ccxpLiteLoginRow = "true";
+      rowNode.replaceWith(...replacementRows);
+      replacementRows.forEach((replacementRow) => {
+        replacementRow.dataset.ccxpLiteLoginRow = "true";
+      });
 
       const table = rowNode.closest("table");
       if (table) {
         table.classList.add("ccxp-lite-login-form-table");
       }
     });
+  }
+
+  function buildLoginFieldRow(targetDocument, fieldPair, fieldId, columnCount) {
+    const row = targetDocument.createElement("tr");
+    row.className = "ccxp-lite-login-field-row";
+
+    const mergedCell = targetDocument.createElement("td");
+    mergedCell.className = "ccxp-lite-login-field-cell";
+    mergedCell.colSpan = columnCount;
+
+    const fieldGroup = targetDocument.createElement("div");
+    fieldGroup.className = "ccxp-lite-login-field";
+
+    const label = targetDocument.createElement("label");
+    label.className = "ccxp-lite-login-field-label";
+    label.setAttribute("for", fieldId);
+    label.textContent = fieldPair.labelText || String(fieldPair.fieldNode.getAttribute("name") || "");
+
+    const controlWrap = targetDocument.createElement("div");
+    controlWrap.className = "ccxp-lite-login-field-control";
+    moveChildNodes(fieldPair.fieldCell, controlWrap);
+
+    fieldGroup.appendChild(label);
+    fieldGroup.appendChild(controlWrap);
+    mergedCell.appendChild(fieldGroup);
+    row.appendChild(mergedCell);
+
+    return row;
   }
 
   function collectLoginFieldPairs(rowNode, cells) {
