@@ -1517,6 +1517,7 @@
     forms.forEach((formNode) => {
       if (formNode.dataset.ccxpLiteFormStructured !== "true") {
         structureLoginFormRows(rootNode.ownerDocument, formNode);
+        groupLoginFieldRows(rootNode.ownerDocument, formNode);
       }
 
       formNode.classList.add("ccxp-lite-login-form");
@@ -1585,6 +1586,44 @@
     row.appendChild(mergedCell);
 
     return row;
+  }
+
+  function groupLoginFieldRows(targetDocument, formNode) {
+    if (!formNode || formNode.dataset.ccxpLiteFieldRowsGrouped === "true") {
+      return;
+    }
+
+    const fieldRows = Array.from(formNode.querySelectorAll("tr.ccxp-lite-login-field-row"));
+    if (fieldRows.length === 0) {
+      return;
+    }
+
+    const fieldsContainer = targetDocument.createElement("div");
+    fieldsContainer.className = "ccxp-lite-login-fields";
+
+    const firstTable = fieldRows[0].closest("table");
+    if (firstTable && firstTable.parentNode) {
+      firstTable.parentNode.insertBefore(fieldsContainer, firstTable);
+    } else {
+      formNode.insertBefore(fieldsContainer, formNode.firstChild);
+    }
+
+    fieldRows.forEach((rowNode) => {
+      const fieldGroup = rowNode.querySelector(".ccxp-lite-login-field");
+      if (fieldGroup) {
+        fieldsContainer.appendChild(fieldGroup);
+      }
+
+      removeNode(rowNode);
+    });
+
+    Array.from(formNode.querySelectorAll("table.ccxp-lite-login-form-table")).forEach((tableNode) => {
+      if (!tableNode.querySelector("tr")) {
+        removeNode(tableNode);
+      }
+    });
+
+    formNode.dataset.ccxpLiteFieldRowsGrouped = "true";
   }
 
   function collectLoginFieldPairs(rowNode, cells) {

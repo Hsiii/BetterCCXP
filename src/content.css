@@ -296,6 +296,13 @@ html[data-ccxp-lite-scope="landing"] a:hover {
   margin: 0 !important;
 }
 
+.ccxp-lite-landing-login .ccxp-lite-login-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
 .ccxp-lite-landing-login table.ccxp-lite-login-form-table {
   width: 100%;
   border-collapse: separate;
