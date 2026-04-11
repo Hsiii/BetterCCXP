@@ -217,7 +217,7 @@ html[data-ccxp-lite-scope="landing"] a:hover {
 .ccxp-lite-landing-login form.ccxp-lite-login-form {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 0;
 }
 
 .ccxp-lite-landing-login table.ccxp-lite-login-form-table {
@@ -250,7 +250,7 @@ html[data-ccxp-lite-scope="landing"] a:hover {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: 6px;
+  gap: 4px;
 }
 
 .ccxp-lite-landing-login .ccxp-lite-login-field-label {
@@ -266,9 +266,13 @@ html[data-ccxp-lite-scope="landing"] a:hover {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 6px;
+  gap: 0;
   width: 100%;
   min-width: 0;
+}
+
+.ccxp-lite-landing-login .ccxp-lite-login-field-control .inputtext {
+  margin: 0 !important;
 }
 
 .ccxp-lite-landing-login div[style*="login_mid.png"] {
