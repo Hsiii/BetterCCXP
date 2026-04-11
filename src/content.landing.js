@@ -127,7 +127,7 @@
         targetDocument,
         "ccxp-lite-landing-brand-copy ccxp-lite-sidebar-brand-copy",
         "ccxp-lite-sidebar-brand-title",
-        STRINGS.landingTitle
+        STRINGS.sidebarTitle
       )
     );
 
