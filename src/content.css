@@ -535,6 +535,8 @@ html[data-ccxp-lite-scope="landing"] a:hover {
 .ccxp-lite-landing-tabs .tab [role="tab"] {
   flex: 0 0 auto;
   float: none;
+  position: relative;
+  top: 1px;
   margin-bottom: -1px;
   padding: 8px 14px;
   border: 1px solid transparent;
@@ -551,8 +553,6 @@ html[data-ccxp-lite-scope="landing"] a:hover {
   background: color-mix(in srgb, var(--ccxp-lite-surface) 72%, #d5dae1);
   border-color: var(--ccxp-lite-border);
   border-bottom-color: var(--ccxp-lite-surface);
-  position: relative;
-  top: 1px;
   z-index: 2;
   color: var(--ccxp-lite-type-body-strong-color);
 }
