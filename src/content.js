@@ -341,6 +341,7 @@
     }
 
     normalizeLoginFormLayout(loginSection);
+    replaceLoginFormImageButtons(targetDocument, loginSection);
     enhancePasswordVisibilityToggle(targetDocument, loginSection);
 
     removeNode(findCalendarTable(loginSection));
@@ -644,6 +645,118 @@
         table.classList.add("ccxp-lite-login-form-table");
       }
     });
+  }
+
+  function replaceLoginFormImageButtons(targetDocument, rootNode) {
+    const imageSubmitInputs = Array.from(rootNode.querySelectorAll("form input[type='image']"));
+
+    imageSubmitInputs.forEach((inputNode) => {
+      if (inputNode.dataset.ccxpLiteImageButtonReplaced === "true") {
+        return;
+      }
+
+      const label = resolveLegacyImageButtonLabel(inputNode);
+      if (!label) {
+        return;
+      }
+
+      const button = targetDocument.createElement("button");
+      button.type = "submit";
+      button.className = "button ccxp-lite-image-action-button";
+      button.textContent = label;
+
+      if (inputNode.id) {
+        button.id = inputNode.id;
+      }
+
+      if (inputNode.name) {
+        button.name = inputNode.name;
+      }
+
+      if (inputNode.title) {
+        button.title = inputNode.title;
+      }
+
+      if (inputNode.className) {
+        button.className = `${button.className} ${inputNode.className}`.trim();
+      }
+
+      if (inputNode.disabled) {
+        button.disabled = true;
+      }
+
+      ["onclick", "formaction", "formmethod", "formenctype", "formtarget", "tabindex"].forEach((attributeName) => {
+        const value = inputNode.getAttribute(attributeName);
+        if (value) {
+          button.setAttribute(attributeName, value);
+        }
+      });
+
+      if (inputNode.hasAttribute("formnovalidate")) {
+        button.setAttribute("formnovalidate", "");
+      }
+
+      inputNode.replaceWith(button);
+      button.dataset.ccxpLiteImageButtonReplaced = "true";
+    });
+
+    const imageAnchors = Array.from(rootNode.querySelectorAll("form a > img[alt]"));
+    imageAnchors.forEach((imageNode) => {
+      const anchor = imageNode.closest("a");
+      if (!anchor || anchor.dataset.ccxpLiteImageButtonReplaced === "true") {
+        return;
+      }
+
+      const label = resolveLegacyImageButtonLabel(imageNode);
+      if (!label) {
+        return;
+      }
+
+      anchor.classList.add("ccxp-lite-image-link-button");
+      anchor.replaceChildren(targetDocument.createTextNode(label));
+      anchor.dataset.ccxpLiteImageButtonReplaced = "true";
+    });
+  }
+
+  function resolveLegacyImageButtonLabel(node) {
+    if (!node) {
+      return "";
+    }
+
+    const explicitAlt = normalizeLegacyButtonLabel(node.getAttribute("alt"));
+    if (explicitAlt) {
+      return explicitAlt;
+    }
+
+    if (node.tagName && node.tagName.toLowerCase() === "input") {
+      const parentForm = node.form;
+      const pairedImage = parentForm
+        ? parentForm.querySelector(`img[alt][src='${cssEscape(node.getAttribute("src") || "")}]`)
+        : null;
+      const pairedAlt = normalizeLegacyButtonLabel(pairedImage && pairedImage.getAttribute("alt"));
+      if (pairedAlt) {
+        return pairedAlt;
+      }
+    }
+
+    const titleLabel = normalizeLegacyButtonLabel(node.getAttribute("title"));
+    if (titleLabel) {
+      return titleLabel;
+    }
+
+    return "";
+  }
+
+  function normalizeLegacyButtonLabel(rawLabel) {
+    return String(rawLabel || "")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  function cssEscape(value) {
+    return String(value || "")
+      .replace(/\\/g, "\\\\")
+      .replace(/'/g, "\\'");
   }
 
   function createPasswordVisibilityIcon(targetDocument, visible) {
