@@ -356,6 +356,13 @@ html[data-ccxp-lite-scope="landing"] a:hover {
   height: 16px;
 }
 
+.ccxp-lite-landing-login tr.ccxp-lite-captcha-row .ccxp-lite-captcha-media-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  vertical-align: middle;
+}
+
 .ccxp-lite-landing-section img,
 .ccxp-lite-landing-section table,
 .ccxp-lite-landing-section iframe {
