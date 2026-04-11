@@ -341,6 +341,7 @@ html[data-ccxp-lite-scope="landing"] a:hover {
 
 .ccxp-lite-landing-login .ccxp-lite-audio-icon-button,
 .ccxp-lite-landing-login .ccxp-lite-audio-icon-link {
+  position: relative;
   width: 36px;
   height: 36px;
   min-width: 36px;
@@ -366,10 +367,13 @@ html[data-ccxp-lite-scope="landing"] a:hover {
 
 .ccxp-lite-landing-login .ccxp-lite-audio-icon-button svg,
 .ccxp-lite-landing-login .ccxp-lite-audio-icon-link svg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   width: 16px;
   height: 16px;
   display: block;
-  margin: auto;
 }
 
 .ccxp-lite-landing-login .ccxp-lite-captcha-media-row {
