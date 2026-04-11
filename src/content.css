@@ -490,7 +490,9 @@ html[data-ccxp-lite-scope="landing"] a:hover {
 }
 
 .ccxp-lite-landing-notices .ccxp-lite-announcement-table {
-  width: 100% !important;
+  width: 60% !important;
+  max-width: 60%;
+  margin-inline: auto;
   border-collapse: separate;
   border-spacing: 0;
   background: var(--ccxp-lite-surface);
@@ -582,6 +584,11 @@ html[data-ccxp-lite-scope="landing"] a:hover {
 }
 
 @media (max-width: 720px) {
+  .ccxp-lite-landing-notices .ccxp-lite-announcement-table {
+    width: 100% !important;
+    max-width: 100%;
+  }
+
   .ccxp-lite-landing-notices .ccxp-lite-announcement-head-row {
     display: none;
   }
