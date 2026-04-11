@@ -330,14 +330,15 @@ html[data-ccxp-lite-scope="landing"] a:hover {
   height: 16px;
 }
 
-.ccxp-lite-landing-login .button {
+.ccxp-lite-landing-login .ccxp-lite-image-action-button,
+.ccxp-lite-landing-login .ccxp-lite-image-link-button {
   min-width: 112px;
   padding: 10px 18px;
   border-radius: 999px;
-  border: 0;
-  background: var(--ccxp-lite-primary);
-  color: var(--ccxp-lite-bg);
-  font: var(--ccxp-lite-type-body-strong);
+  border: 1px solid var(--ccxp-lite-border);
+  background: transparent;
+  color: var(--ccxp-lite-type-utility-color);
+  font: var(--ccxp-lite-type-utility);
 }
 
 .ccxp-lite-landing-login .ccxp-lite-image-action-button,
@@ -349,10 +350,8 @@ html[data-ccxp-lite-scope="landing"] a:hover {
   text-decoration: none;
 }
 
-.ccxp-lite-landing-login .ccxp-lite-image-link-button {
-  min-width: 112px;
-  padding: 10px 18px;
-  border-radius: 999px;
+.ccxp-lite-landing-login .ccxp-lite-login-primary-button {
+  border: 0;
   background: var(--ccxp-lite-primary);
   color: var(--ccxp-lite-bg);
   font: var(--ccxp-lite-type-body-strong);

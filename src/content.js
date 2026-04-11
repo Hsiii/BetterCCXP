@@ -1502,30 +1502,44 @@
         return;
       }
 
-      const targetButtons = allActionButtons.filter((buttonNode) => {
-        const label = String(buttonNode.textContent || "")
-          .replace(/\s+/g, "")
-          .trim();
-
-        return /簽到退|签到退|南大/.test(label);
-      });
-
-      const selectedButtons = targetButtons.length > 0 ? targetButtons : allActionButtons;
-      if (selectedButtons.length === 0) {
-        return;
-      }
-
       let actionGroup = formNode.querySelector(".ccxp-lite-login-action-group");
       if (!actionGroup) {
         actionGroup = targetDocument.createElement("div");
         actionGroup.className = "ccxp-lite-login-action-group";
-        selectedButtons[0].parentNode?.insertBefore(actionGroup, selectedButtons[0]);
+        allActionButtons[0].parentNode?.insertBefore(actionGroup, allActionButtons[0]);
       }
 
-      selectedButtons.forEach((buttonNode) => {
+      const primaryCandidates = allActionButtons.filter((buttonNode) => isPrimaryLoginActionLabel(buttonNode.textContent));
+      const primaryButton = primaryCandidates[0] || allActionButtons[0];
+      const orderedButtons = [
+        primaryButton,
+        ...allActionButtons.filter((buttonNode) => buttonNode !== primaryButton)
+      ];
+
+      orderedButtons.forEach((buttonNode) => {
+        buttonNode.classList.remove("ccxp-lite-login-primary-button", "ccxp-lite-login-secondary-button");
+        if (buttonNode === primaryButton) {
+          buttonNode.classList.add("ccxp-lite-login-primary-button");
+        } else {
+          buttonNode.classList.add("ccxp-lite-login-secondary-button");
+        }
+
         actionGroup.appendChild(buttonNode);
       });
     });
+  }
+
+  function isPrimaryLoginActionLabel(rawLabel) {
+    const normalizedLabel = String(rawLabel || "")
+      .replace(/\s+/g, "")
+      .trim()
+      .toLowerCase();
+
+    if (!normalizedLabel) {
+      return false;
+    }
+
+    return /(登入|登录|login|signin|logon|送出|確定|确定|submit)/i.test(normalizedLabel);
   }
 
   function removeLoginSpacingArtifacts(targetDocument, rootNode) {
