@@ -1191,29 +1191,29 @@
   }
 
   function alignCaptchaMediaRow(targetDocument, rootNode) {
-    const captchaRows = Array.from(rootNode.querySelectorAll("tr"))
-      .filter((rowNode) => rowNode.querySelector("input[name='passwd2']"));
+    const captchaImages = Array.from(rootNode.querySelectorAll("img[src*='auth_img.php']"));
 
-    captchaRows.forEach((rowNode) => {
-      rowNode.classList.add("ccxp-lite-captcha-row");
-
-      const valueCell = rowNode.querySelector("td:last-child");
-      if (!valueCell) {
+    captchaImages.forEach((captchaImage) => {
+      const host = captchaImage.parentElement;
+      if (!host) {
         return;
       }
 
-      const captchaImage = valueCell.querySelector("img[src*='auth_img.php']");
-      const audioControl = valueCell.querySelector(".ccxp-lite-audio-icon-button, .ccxp-lite-audio-icon-link");
-
-      if (!captchaImage || !audioControl) {
+      const audioControl = host.querySelector(".ccxp-lite-audio-icon-button, .ccxp-lite-audio-icon-link");
+      if (!audioControl) {
         return;
       }
 
-      let mediaRow = valueCell.querySelector(".ccxp-lite-captcha-media-row");
+      const rowNode = captchaImage.closest("tr");
+      if (rowNode) {
+        rowNode.classList.add("ccxp-lite-captcha-row");
+      }
+
+      let mediaRow = host.querySelector(":scope > .ccxp-lite-captcha-media-row");
       if (!mediaRow) {
         mediaRow = targetDocument.createElement("span");
         mediaRow.className = "ccxp-lite-captcha-media-row";
-        valueCell.insertBefore(mediaRow, audioControl);
+        host.insertBefore(mediaRow, captchaImage);
       }
 
       if (captchaImage.parentNode !== mediaRow) {
