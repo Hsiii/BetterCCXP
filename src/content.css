@@ -339,6 +339,7 @@ html[data-ccxp-lite-scope="landing"] a:hover {
   height: 36px;
   min-width: 36px;
   padding: 0;
+  line-height: 0;
   border: 1px solid var(--ccxp-lite-border);
   border-radius: 999px;
   display: inline-flex;
@@ -361,6 +362,8 @@ html[data-ccxp-lite-scope="landing"] a:hover {
 .ccxp-lite-landing-login .ccxp-lite-audio-icon-link svg {
   width: 16px;
   height: 16px;
+  display: block;
+  margin: auto;
 }
 
 .ccxp-lite-landing-login .ccxp-lite-captcha-media-row {
