@@ -305,7 +305,7 @@
     const languageLinks = targetDocument.querySelector("ul.links");
     const announcementTable = findAnnouncementTable(targetDocument);
     const utilityLinks = findUtilityLinksTable(targetDocument);
-    const cannotLoginLink = findCannotLoginLink(utilityLinks);
+    const cannotLoginLink = findCannotLoginLink(targetDocument, utilityLinks);
     const serviceLink = findServiceLink(targetDocument);
 
     if (!loginSourceCell || !tabNavigation || tabContents.length === 0) {
@@ -574,16 +574,30 @@
 
   function findServiceLink(targetDocument) {
     const anchor = targetDocument.querySelector("a[href*='inquire_cpr.html']");
-    return anchor ? anchor.closest("div") : null;
+    return anchor ? (anchor.closest("div") || anchor) : null;
   }
 
-  function findCannotLoginLink(utilityLinksTable) {
+  function findCannotLoginLink(targetDocument, utilityLinksTable) {
+    const isCannotLoginAnchor = (anchor) => {
+      if (!anchor) {
+        return false;
+      }
+
+      const href = String(anchor.getAttribute("href") || "").toLowerCase();
+      if (href.includes("inquire_cpr.html")) {
+        return true;
+      }
+
+      return isCannotLoginLabel(anchor.textContent);
+    };
+
     if (!utilityLinksTable) {
-      return null;
+      const fallbackAnchor = targetDocument.querySelector("a[href*='inquire_cpr.html']");
+      return fallbackAnchor || null;
     }
 
     const anchors = Array.from(utilityLinksTable.querySelectorAll("a[href]"));
-    return anchors.find((anchor) => isCannotLoginLabel(anchor.textContent)) || null;
+    return anchors.find((anchor) => isCannotLoginAnchor(anchor)) || null;
   }
 
   function isCannotLoginLabel(label) {
@@ -679,7 +693,7 @@
 
     const sourceRow = sourceAnchor.closest("tr");
     if (!sourceRow) {
-      removeNode(sourceAnchor.closest("div"));
+      removeNode(sourceAnchor.closest("div") || sourceAnchor);
       return;
     }
 
@@ -702,8 +716,16 @@
       return null;
     }
 
+    const excludedHref = excludedAnchor
+      ? String(excludedAnchor.getAttribute("href") || "")
+      : "";
+
     const anchors = Array.from(utilityLinksTable.querySelectorAll("a[href]"))
       .filter((anchor) => anchor !== excludedAnchor)
+      .filter((anchor) => {
+        const href = String(anchor.getAttribute("href") || "");
+        return href && href !== excludedHref && !href.toLowerCase().includes("inquire_cpr.html");
+      })
       .filter((anchor) => anchor.textContent && anchor.textContent.trim().length > 0)
       .slice(0, 3);
 
