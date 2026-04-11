@@ -571,6 +571,81 @@ html[data-ccxp-lite-scope="landing"] a:hover {
   font-family: var(--ccxp-lite-font-sans) !important;
 }
 
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table font {
+  color: inherit !important;
+  font: inherit !important;
+}
+
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table td[style*="color:#032274" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table td[style*="color: #032274" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table td[style*="color:#0000ff" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table td[style*="color: #0000ff" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table td[style*="color:navy" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table td[style*="color: navy" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table td[style*="color:blue" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table td[style*="color: blue" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table a[style*="color:#032274" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table a[style*="color: #032274" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table a[style*="color:#0000ff" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table a[style*="color: #0000ff" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table a[style*="color:navy" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table a[style*="color: navy" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table a[style*="color:blue" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table a[style*="color: blue" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table font[color="#032274" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table font[color="#0000ff" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table font[color="navy" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table font[color="blue" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table [color="#032274" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table [color="#0000ff" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table [color="navy" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table [color="blue" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table [style*="color:#032274" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table [style*="color: #032274" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table [style*="color:#0000ff" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table [style*="color: #0000ff" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table [style*="color:navy" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table [style*="color: navy" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table [style*="color:blue" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table [style*="color: blue" i] {
+  color: var(--ccxp-lite-type-info-color) !important;
+  font-weight: var(--ccxp-lite-font-weight-strong) !important;
+}
+
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table td[style*="color:#ff0000" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table td[style*="color: #ff0000" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table td[style*="color:#ff4444" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table td[style*="color: #ff4444" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table td[style*="color:red" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table td[style*="color: red" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table a[style*="color:#ff4444" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table a[style*="color: #ff4444" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table a[style*="color:#ff0000" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table a[style*="color: #ff0000" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table a[style*="color:red" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table a[style*="color: red" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table font[color="#ff4444" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table font[color="#ff0000" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table font[color="red" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table [color="#ff4444" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table [color="#ff0000" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table [color="red" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table [style*="color:#ff4444" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table [style*="color: #ff4444" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table [style*="color:#ff0000" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table [style*="color: #ff0000" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table [style*="color:red" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table [style*="color: red" i] {
+  color: var(--ccxp-lite-type-danger-color) !important;
+  font-weight: var(--ccxp-lite-font-weight-strong) !important;
+}
+
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table font[size="2" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table [size="2" i] {
+  color: var(--ccxp-lite-type-caption-color) !important;
+  font: var(--ccxp-lite-type-caption) !important;
+}
+
 .ccxp-lite-landing-notices .ccxp-lite-announcement-table td,
 .ccxp-lite-landing-notices .ccxp-lite-announcement-table th {
   width: auto !important;
