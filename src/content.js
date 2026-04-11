@@ -998,7 +998,7 @@
 
       seen.add(field);
       field.type = "password";
-  removeRedundantPasswordLabelEyeIcon(field);
+      removeRedundantPasswordLabelEyeIcon(field);
 
       const wrapper = targetDocument.createElement("span");
       wrapper.className = "ccxp-lite-password-field";
@@ -1041,6 +1041,26 @@
     const labelCell = row.querySelector("th, td");
     if (!labelCell) {
       return;
+    }
+
+    const labelText = String(labelCell.textContent || "")
+      .replace(/\s+/g, " ")
+      .trim();
+    const isPasswordLabel = /(密碼|password)/i.test(labelText);
+
+    if (isPasswordLabel) {
+      Array.from(labelCell.querySelectorAll("svg")).forEach((node) => node.remove());
+
+      Array.from(labelCell.querySelectorAll("a, button, span, i")).forEach((node) => {
+        const text = String(node.textContent || "")
+          .replace(/\s+/g, " ")
+          .trim();
+        const hasOnlyIconChild = node.querySelector("svg, img, i") !== null;
+
+        if (!text && hasOnlyIconChild) {
+          node.remove();
+        }
+      });
     }
 
     const eyePattern = /(eye|show|hide|visible|visibility|view|顯示|隱藏|密碼)/i;
