@@ -340,6 +340,9 @@
     } else {
       moveChildNodes(loginSourceCell, loginSection);
     }
+
+    enhancePasswordVisibilityToggle(targetDocument, loginSection);
+
     removeNode(findCalendarTable(loginSection));
     removeNode(loginSection.querySelector("#twcaseal")?.closest("table"));
 
@@ -518,6 +521,82 @@
   function findServiceLink(targetDocument) {
     const anchor = targetDocument.querySelector("a[href*='inquire_cpr.html']");
     return anchor ? anchor.closest("div") : null;
+  }
+
+  function enhancePasswordVisibilityToggle(targetDocument, rootNode) {
+    const passwordFields = Array.from(rootNode.querySelectorAll("input[name='passwd'], input[name='passwd2'], input[type='password']"));
+    const seen = new Set();
+
+    passwordFields.forEach((field) => {
+      if (!field || seen.has(field) || field.dataset.ccxpLitePasswordToggle === "true") {
+        return;
+      }
+
+      seen.add(field);
+      field.type = "password";
+
+      const wrapper = targetDocument.createElement("span");
+      wrapper.className = "ccxp-lite-password-field";
+
+      if (!field.parentNode) {
+        return;
+      }
+
+      field.parentNode.insertBefore(wrapper, field);
+      wrapper.appendChild(field);
+
+      const toggleButton = targetDocument.createElement("button");
+      toggleButton.type = "button";
+      toggleButton.className = "ccxp-lite-password-toggle";
+      toggleButton.setAttribute("aria-label", "Show password");
+      toggleButton.appendChild(createPasswordVisibilityIcon(targetDocument, false));
+
+      toggleButton.addEventListener("click", () => {
+        const isHidden = field.type !== "text";
+        field.type = isHidden ? "text" : "password";
+        toggleButton.setAttribute("aria-label", isHidden ? "Hide password" : "Show password");
+        toggleButton.replaceChildren(createPasswordVisibilityIcon(targetDocument, isHidden));
+      });
+
+      wrapper.appendChild(toggleButton);
+      field.dataset.ccxpLitePasswordToggle = "true";
+    });
+  }
+
+  function createPasswordVisibilityIcon(targetDocument, visible) {
+    const icon = targetDocument.createElementNS("http://www.w3.org/2000/svg", "svg");
+    icon.setAttribute("viewBox", "0 0 24 24");
+    icon.setAttribute("fill", "none");
+    icon.setAttribute("stroke", "currentColor");
+    icon.setAttribute("stroke-width", "2");
+    icon.setAttribute("stroke-linecap", "round");
+    icon.setAttribute("stroke-linejoin", "round");
+    icon.setAttribute("aria-hidden", "true");
+
+    if (visible) {
+      [
+        "M10.733 5.076A10.744 10.744 0 0 1 12 5c4.596 0 8.51 2.934 9.938 7a10.454 10.454 0 0 1-1.077 2.167",
+        "M14.084 14.158a3 3 0 0 1-4.242-4.242",
+        "M17.479 17.499A10.75 10.75 0 0 1 12 19c-4.596 0-8.51-2.934-9.938-7a10.525 10.525 0 0 1 4.423-5.29",
+        "M2 2l20 20"
+      ].forEach((pathData) => {
+        const path = targetDocument.createElementNS("http://www.w3.org/2000/svg", "path");
+        path.setAttribute("d", pathData);
+        icon.appendChild(path);
+      });
+    } else {
+      const path = targetDocument.createElementNS("http://www.w3.org/2000/svg", "path");
+      path.setAttribute("d", "M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0");
+      icon.appendChild(path);
+
+      const circle = targetDocument.createElementNS("http://www.w3.org/2000/svg", "circle");
+      circle.setAttribute("cx", "12");
+      circle.setAttribute("cy", "12");
+      circle.setAttribute("r", "3");
+      icon.appendChild(circle);
+    }
+
+    return icon;
   }
 
   attachAndApply();
