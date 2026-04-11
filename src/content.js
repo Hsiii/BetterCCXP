@@ -346,6 +346,7 @@
     forceCaptchaLabelDisplay(loginSection);
     replaceLoginFormImageButtons(targetDocument, loginSection);
     wrapPrimaryLoginButtons(targetDocument, loginSection);
+    removeLoginSpacingArtifacts(targetDocument, loginSection);
     alignCaptchaMediaRow(targetDocument, loginSection);
     enhancePasswordVisibilityToggle(targetDocument, loginSection);
 
@@ -1468,7 +1469,8 @@
         return /簽到退|签到退|南大/.test(label);
       });
 
-      if (targetButtons.length < 2) {
+      const selectedButtons = targetButtons.length > 0 ? targetButtons : allActionButtons;
+      if (selectedButtons.length === 0) {
         return;
       }
 
@@ -1476,12 +1478,35 @@
       if (!actionGroup) {
         actionGroup = targetDocument.createElement("div");
         actionGroup.className = "ccxp-lite-login-action-group";
-        targetButtons[0].parentNode?.insertBefore(actionGroup, targetButtons[0]);
+        selectedButtons[0].parentNode?.insertBefore(actionGroup, selectedButtons[0]);
       }
 
-      targetButtons.forEach((buttonNode) => {
+      selectedButtons.forEach((buttonNode) => {
         actionGroup.appendChild(buttonNode);
       });
+    });
+  }
+
+  function removeLoginSpacingArtifacts(targetDocument, rootNode) {
+    Array.from(rootNode.querySelectorAll("br")).forEach((node) => removeNode(node));
+
+    const textNodes = [];
+    const walker = targetDocument.createTreeWalker(rootNode, NodeFilter.SHOW_TEXT);
+    let currentNode = walker.nextNode();
+
+    while (currentNode) {
+      textNodes.push(currentNode);
+      currentNode = walker.nextNode();
+    }
+
+    textNodes.forEach((textNode) => {
+      const normalized = String(textNode.textContent || "").replace(/\u00a0|&nbsp;|&npsp;/gi, " ");
+      if (normalized.trim()) {
+        textNode.textContent = normalized;
+        return;
+      }
+
+      removeNode(textNode);
     });
   }
 
