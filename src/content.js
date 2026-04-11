@@ -511,11 +511,42 @@
   }
 
   function findAnnouncementTable(targetDocument) {
-    return Array.from(targetDocument.querySelectorAll("table"))
-      .find((table) => {
-        const heading = table.querySelector(".board_item");
-        return heading && ["系統公告", "System Notice"].some((text) => heading.textContent.includes(text));
-      });
+    const tables = Array.from(targetDocument.querySelectorAll("table"));
+
+    const preferred = tables.find((table) => {
+      if (table.closest(".tabcontent")) {
+        return false;
+      }
+
+      const heading = table.querySelector(".board_item");
+      if (!heading) {
+        return false;
+      }
+
+      const headingText = normalizeAnnouncementHeading(heading.textContent);
+      return headingText === "系統公告" || headingText === "system notice";
+    });
+
+    if (preferred) {
+      return preferred;
+    }
+
+    return tables.find((table) => {
+      const heading = table.querySelector(".board_item");
+      if (!heading) {
+        return false;
+      }
+
+      const headingText = normalizeAnnouncementHeading(heading.textContent);
+      return headingText === "系統公告" || headingText === "system notice";
+    }) || null;
+  }
+
+  function normalizeAnnouncementHeading(rawText) {
+    return String(rawText || "")
+      .replace(/\s+/g, " ")
+      .trim()
+      .toLowerCase();
   }
 
   function findUtilityLinksTable(targetDocument) {
