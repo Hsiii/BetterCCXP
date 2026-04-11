@@ -284,7 +284,7 @@
   function getLoginForm(targetDocument) {
     const forms = Array.from(targetDocument.querySelectorAll("form"));
 
-    return forms.find((form) => {
+    const candidates = forms.filter((form) => {
       const action = (form.getAttribute("action") || "").toLowerCase();
       const hasKnownAction = action.includes("pre_select_entry.php") || action.includes("select_entry.php");
       const hasPasswordField = Boolean(form.querySelector("input[type='password'], input[name='passwd'], input[name='passwd2']"));
@@ -292,7 +292,46 @@
       const hasCredentials = Boolean(form.querySelector("input[name='account']"))
         && Boolean(form.querySelector("input[name='passwd'], input[name='passwd2']"));
       return hasKnownAction || hasCredentials || (hasPasswordField && hasAccountLikeField);
-    }) || null;
+    });
+
+    if (candidates.length === 0) {
+      return null;
+    }
+
+    const visibleCandidates = candidates.filter((form) => isLikelyVisibleForm(form));
+    if (visibleCandidates.length > 0) {
+      return visibleCandidates[0];
+    }
+
+    return candidates[0];
+  }
+
+  function isLikelyVisibleForm(formNode) {
+    if (!formNode) {
+      return false;
+    }
+
+    if (formNode.hidden) {
+      return false;
+    }
+
+    let node = formNode;
+    while (node && node !== document.body) {
+      if (node.nodeType !== Node.ELEMENT_NODE) {
+        node = node.parentElement;
+        continue;
+      }
+
+      const style = window.getComputedStyle(node);
+      if (style.display === "none" || style.visibility === "hidden") {
+        return false;
+      }
+
+      node = node.parentElement;
+    }
+
+    const rect = formNode.getBoundingClientRect();
+    return rect.width > 0 && rect.height > 0;
   }
 
   function simplifyLandingPage(targetDocument) {
