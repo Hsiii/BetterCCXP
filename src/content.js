@@ -10,6 +10,11 @@
   let attempts = 0;
 
   function attachAndApply() {
+    if (isLandingPage(document)) {
+      simplifyLandingPage(document);
+      return;
+    }
+
     const frames = findFrames();
 
     if (!frames.top || !frames.nav || !frames.main) {
@@ -109,8 +114,29 @@
 
   function isLandingPage(targetDocument) {
     const pathName = ((targetDocument.location && targetDocument.location.pathname) || "").toLowerCase();
-    const isSupportedPath = /\/ccxp\/inquire\/(?:index\.php)?$/.test(pathName);
-    return isSupportedPath && Boolean(targetDocument.querySelector("form[name='form1'][action*='pre_select_entry.php']"));
+    const isSupportedPath = /\/ccxp\/inquire\/(?:index\.php)?\/?$/.test(pathName);
+
+    if (!isSupportedPath) {
+      return false;
+    }
+
+    return Boolean(getLoginForm(targetDocument) || hasLandingTabContent(targetDocument));
+  }
+
+  function hasLandingTabContent(targetDocument) {
+    return Boolean(targetDocument.querySelector(".tab, .tabcontent"));
+  }
+
+  function getLoginForm(targetDocument) {
+    const forms = Array.from(targetDocument.querySelectorAll("form"));
+
+    return forms.find((form) => {
+      const action = (form.getAttribute("action") || "").toLowerCase();
+      const hasKnownAction = action.includes("pre_select_entry.php") || action.includes("select_entry.php");
+      const hasCredentials = Boolean(form.querySelector("input[name='account']"))
+        && Boolean(form.querySelector("input[name='passwd'], input[name='passwd2']"));
+      return hasKnownAction || hasCredentials;
+    }) || null;
   }
 
   function simplifyLandingPage(targetDocument) {
@@ -128,7 +154,8 @@
       return;
     }
 
-    const loginSourceCell = findLoginSourceCell(targetDocument);
+    const loginForm = getLoginForm(targetDocument);
+    const loginSourceCell = findLoginSourceCell(targetDocument, loginForm);
     const tabNavigation = targetDocument.querySelector(".tab");
     const tabContents = Array.from(targetDocument.querySelectorAll(".tabcontent"));
     const languageLinks = targetDocument.querySelector("ul.links");
@@ -227,7 +254,7 @@
       return;
     }
 
-    const form = targetDocument.querySelector("form[name='form1'][action*='pre_select_entry.php']");
+    const form = getLoginForm(targetDocument);
     if (!form || form.dataset.ccxpLiteValidationBound === "true") {
       return;
     }
@@ -254,9 +281,13 @@
     return section;
   }
 
-  function findLoginSourceCell(targetDocument) {
-    return Array.from(targetDocument.querySelectorAll("td"))
-      .find((cell) => cell.querySelector("form[name='form1'][action*='pre_select_entry.php']"));
+  function findLoginSourceCell(targetDocument, loginForm) {
+    if (loginForm) {
+      return loginForm.closest("td, table, div, section, article") || loginForm;
+    }
+
+    return Array.from(targetDocument.querySelectorAll("td, table, div, section, article"))
+      .find((cell) => cell.querySelector("form"));
   }
 
   function findCalendarTable(targetNode) {
@@ -287,11 +318,6 @@
   function findServiceLink(targetDocument) {
     const anchor = targetDocument.querySelector("a[href*='inquire_cpr.html']");
     return anchor ? anchor.closest("div") : null;
-  }
-
-  if (isLandingPage(document)) {
-    simplifyLandingPage(document);
-    return;
   }
 
   attachAndApply();
