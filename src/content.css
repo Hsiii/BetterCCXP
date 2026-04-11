@@ -77,8 +77,7 @@ html[data-ccxp-lite-scope="landing"] a:hover {
   align-items: center;
   gap: var(--ccxp-lite-spacing-md);
   min-height: 40px;
-  padding-block: var(--ccxp-lite-spacing-md);
-  padding-inline: var(--ccxp-lite-spacing-md);
+  padding: var(--ccxp-lite-spacing-md);
   border-bottom: 1px solid var(--ccxp-lite-border);
 }
 
