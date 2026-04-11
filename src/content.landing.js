@@ -20,7 +20,7 @@
     return Boolean(targetDocument.querySelector(".tab, .tabcontent"));
   }
 
-  function resolveLandingLocale(targetDocument, languageLinks, loginSourceCell) {
+  function resolveLandingLocale(targetDocument, languageLinks, loginSourceCell, loginForm) {
     const htmlLang = ((targetDocument.documentElement && targetDocument.documentElement.lang) || "").toLowerCase();
     if (htmlLang.startsWith("en")) {
       return "en";
@@ -53,16 +53,49 @@
       }
     }
 
+    const loginTextSample = [
+      loginForm && loginForm.textContent,
+      loginSourceCell && loginSourceCell.textContent
+    ]
+      .filter(Boolean)
+      .join(" ")
+      .toLowerCase();
+
+    const localePairs = [
+      { zh: ["帳號", "學號"], en: ["account", "username", "user id", "student id"] },
+      { zh: ["密碼"], en: ["password"] },
+      { zh: ["驗證碼"], en: ["captcha", "verification code", "security code"] }
+    ];
+
+    let zhHits = 0;
+    let enHits = 0;
+    localePairs.forEach((pair) => {
+      if (pair.zh.some((token) => loginTextSample.includes(token))) {
+        zhHits += 1;
+      }
+      if (pair.en.some((token) => loginTextSample.includes(token))) {
+        enHits += 1;
+      }
+    });
+
+    if (zhHits > enHits) {
+      return "zh";
+    }
+
+    if (enHits > zhHits) {
+      return "en";
+    }
+
     const sampleText = ((loginSourceCell && loginSourceCell.textContent) || "").trim();
     return /[\u3400-\u9fff]/.test(sampleText) ? "zh" : "en";
   }
 
-  function getLandingLoginTitle(targetDocument, languageLinks, loginSourceCell) {
-    const locale = resolveLandingLocale(targetDocument, languageLinks, loginSourceCell);
+  function getLandingLoginTitle(targetDocument, languageLinks, loginSourceCell, loginForm) {
+    const locale = resolveLandingLocale(targetDocument, languageLinks, loginSourceCell, loginForm);
     if (locale === "zh") {
-      return "NTHU AIS 登入";
+      return "登入";
     }
-    return STRINGS.landingTitle;
+    return "Login";
   }
 
   function getLoginForm(targetDocument) {
@@ -182,7 +215,7 @@
 
     const loginHeaderLabel = targetDocument.createElement("h1");
     loginHeaderLabel.className = "ccxp-lite-landing-login-label";
-    loginHeaderLabel.textContent = getLandingLoginTitle(targetDocument, languageLinks, loginSourceCell);
+    loginHeaderLabel.textContent = getLandingLoginTitle(targetDocument, languageLinks, loginSourceCell, loginForm);
     loginSection.appendChild(loginHeaderLabel);
 
     if (loginForm) {
