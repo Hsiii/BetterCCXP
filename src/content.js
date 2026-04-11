@@ -21,7 +21,7 @@
 
     const frames = findFrames();
 
-    if (!frames.top || !frames.nav || !frames.main) {
+    if (!frames.nav || !frames.main) {
       retry();
       return;
     }
@@ -32,7 +32,9 @@
       updateLoadingStateForNav(frames.nav);
     });
     attachFrameListener(frames.main, () => simplifyMainFrame(frames.main));
-    removeHeader(frames.top);
+    if (frames.top) {
+      removeHeader(frames.top);
+    }
     sidebar.simplifySidebar(frames.nav, retry);
     updateLoadingStateForNav(frames.nav);
     simplifyMainFrame(frames.main);
@@ -179,7 +181,7 @@
       return src.includes("top.php") || src.includes("top.html") || name === "top";
     });
 
-    const nav = frameCandidates.find((frame) => {
+    const navBySource = frameCandidates.find((frame) => {
       const src = (frame.getAttribute("src") || "").toLowerCase();
       return src.includes("in_inq_stu.php") || src.includes("in_inq_stu.html");
     });
@@ -188,6 +190,14 @@
       const name = (frame.getAttribute("name") || "").toLowerCase();
       return name === "main";
     });
+
+    const navByName = frameCandidates.find((frame) => {
+      const name = (frame.getAttribute("name") || "").toLowerCase();
+      return name === "nav" || name === "menu" || name === "left" || name === "list";
+    });
+
+    const navFallback = frameCandidates.find((frame) => frame !== top && frame !== main) || null;
+    const nav = navBySource || navByName || navFallback;
 
     return { top, nav, main };
   }
