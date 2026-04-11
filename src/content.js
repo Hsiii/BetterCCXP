@@ -389,6 +389,10 @@
       collapseLegacyServiceRow(serviceLink);
     }
 
+    if (cannotLoginLink) {
+      collapseLegacyCannotLoginLink(cannotLoginLink);
+    }
+
     tabsSection.appendChild(tabsHeader);
     tabContents.forEach((tabContent) => {
       collapseLegacyThreeColumnRows(tabContent);
@@ -729,7 +733,7 @@
       }
 
       const href = String(anchor.getAttribute("href") || "").toLowerCase();
-      if (href.includes("inquire_cpr.html")) {
+      if (href.includes("inquire_cpr.html") || href.includes("forget.php")) {
         return true;
       }
 
@@ -737,12 +741,18 @@
     };
 
     if (!utilityLinksTable) {
-      const fallbackAnchor = targetDocument.querySelector("a[href*='inquire_cpr.html']");
-      return fallbackAnchor || null;
+      const fallbackAnchor = targetDocument.querySelector("a[href*='forget.php'], a[href*='inquire_cpr.html']");
+      return fallbackAnchor && isCannotLoginAnchor(fallbackAnchor) ? fallbackAnchor : null;
     }
 
     const anchors = Array.from(utilityLinksTable.querySelectorAll("a[href]"));
-    return anchors.find((anchor) => isCannotLoginAnchor(anchor)) || null;
+    const fromUtility = anchors.find((anchor) => isCannotLoginAnchor(anchor));
+    if (fromUtility) {
+      return fromUtility;
+    }
+
+    const fallbackAnchor = targetDocument.querySelector("a[href*='forget.php'], a[href*='inquire_cpr.html']");
+    return fallbackAnchor && isCannotLoginAnchor(fallbackAnchor) ? fallbackAnchor : null;
   }
 
   function isCannotLoginLabel(label) {
@@ -853,6 +863,46 @@
 
     if (isLikelySpacerRow(nextRow)) {
       removeNode(nextRow);
+    }
+  }
+
+  function collapseLegacyCannotLoginLink(cannotLoginAnchor) {
+    if (!cannotLoginAnchor) {
+      return;
+    }
+
+    const sourceAnchor = cannotLoginAnchor.matches("a[href]")
+      ? cannotLoginAnchor
+      : cannotLoginAnchor.closest("a[href]");
+
+    if (!sourceAnchor) {
+      return;
+    }
+
+    removeAdjacentLegacyBreak(sourceAnchor, "previous");
+    removeAdjacentLegacyBreak(sourceAnchor, "next");
+    removeNode(sourceAnchor);
+  }
+
+  function removeAdjacentLegacyBreak(node, direction) {
+    const sibling = direction === "previous"
+      ? node.previousSibling
+      : node.nextSibling;
+
+    if (!sibling) {
+      return;
+    }
+
+    if (sibling.nodeType === Node.TEXT_NODE) {
+      const normalizedText = String(sibling.textContent || "").replace(/\u00a0/g, " ").trim();
+      if (normalizedText.length === 0) {
+        removeNode(sibling);
+      }
+      return;
+    }
+
+    if (sibling.nodeType === Node.ELEMENT_NODE && sibling.tagName === "BR") {
+      removeNode(sibling);
     }
   }
 
