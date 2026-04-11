@@ -340,6 +340,7 @@
       moveChildNodes(loginSourceCell, loginSection);
     }
 
+    normalizeLoginFormLayout(loginSection);
     enhancePasswordVisibilityToggle(targetDocument, loginSection);
 
     removeNode(findCalendarTable(loginSection));
@@ -357,6 +358,8 @@
       } else {
         headerSection.appendChild(utilityHeaderLinks);
       }
+
+      removeNode(utilityLinks);
     }
 
     topSection.appendChild(headerSection);
@@ -585,7 +588,7 @@
   }
 
   function enhancePasswordVisibilityToggle(targetDocument, rootNode) {
-    const passwordFields = Array.from(rootNode.querySelectorAll("input[name='passwd'], input[name='passwd2'], input[type='password']"));
+    const passwordFields = Array.from(rootNode.querySelectorAll("input[name='passwd'], input[type='password']:not([name='passwd2'])"));
     const seen = new Set();
 
     passwordFields.forEach((field) => {
@@ -621,6 +624,25 @@
 
       wrapper.appendChild(toggleButton);
       field.dataset.ccxpLitePasswordToggle = "true";
+    });
+  }
+
+  function normalizeLoginFormLayout(rootNode) {
+    const fields = Array.from(rootNode.querySelectorAll("input[name='account'], input[name='passwd'], input[name='passwd2']"));
+
+    fields.forEach((field) => {
+      const row = field.closest("tr");
+      if (!row || row.dataset.ccxpLiteLoginRow === "true") {
+        return;
+      }
+
+      row.classList.add("ccxp-lite-login-field-row");
+      row.dataset.ccxpLiteLoginRow = "true";
+
+      const table = row.closest("table");
+      if (table) {
+        table.classList.add("ccxp-lite-login-form-table");
+      }
     });
   }
 

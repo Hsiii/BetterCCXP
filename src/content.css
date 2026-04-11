@@ -73,6 +73,7 @@ html[data-ccxp-lite-scope="landing"] a:hover {
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
   gap: var(--ccxp-lite-spacing-md);
+  min-height: 40px;
   padding-bottom: var(--ccxp-lite-spacing-sm);
   border-bottom: 1px solid var(--ccxp-lite-border);
 }
@@ -85,9 +86,9 @@ html[data-ccxp-lite-scope="landing"] a:hover {
 }
 
 .ccxp-lite-landing-brand-logo {
-  width: 56px;
-  height: 56px;
-  border-radius: 16px;
+  width: var(--ccxp-lite-size-sidebar-brand-logo);
+  height: var(--ccxp-lite-size-sidebar-brand-logo);
+  border-radius: 12px;
   object-fit: cover;
   flex-shrink: 0;
 }
@@ -97,8 +98,11 @@ html[data-ccxp-lite-scope="landing"] a:hover {
 }
 
 .ccxp-lite-landing-brand-title {
-  color: var(--ccxp-lite-type-page-title-color);
-  font: var(--ccxp-lite-type-page-title);
+  color: var(--ccxp-lite-type-display-color);
+  font-family: var(--ccxp-lite-font-brand);
+  font-size: var(--ccxp-lite-font-size-sidebar-brand);
+  font-weight: var(--ccxp-lite-font-weight-regular);
+  line-height: 1;
   letter-spacing: 0.01em;
 }
 
@@ -204,6 +208,27 @@ html[data-ccxp-lite-scope="landing"] a:hover {
   margin-inline: auto;
 }
 
+.ccxp-lite-landing-login table.ccxp-lite-login-form-table {
+  margin-inline: auto;
+  border-collapse: separate;
+  border-spacing: 0 6px;
+}
+
+.ccxp-lite-landing-login tr.ccxp-lite-login-field-row > td {
+  vertical-align: middle;
+}
+
+.ccxp-lite-landing-login tr.ccxp-lite-login-field-row > td:first-child {
+  width: 8.5em;
+  text-align: right;
+  padding-right: 12px;
+  white-space: nowrap;
+}
+
+.ccxp-lite-landing-login tr.ccxp-lite-login-field-row > td:last-child {
+  min-width: 0;
+}
+
 .ccxp-lite-landing-login div[style*="login_mid.png"] {
   margin: 0 !important;
   padding: 0 !important;
@@ -302,18 +327,19 @@ html[data-ccxp-lite-scope="landing"] a:hover {
 }
 
 .ccxp-lite-landing-notices > table {
-  width: min(100%, 920px) !important;
+  width: min(100%, 960px) !important;
   margin-inline: auto;
 }
 
-.ccxp-lite-landing-notices table[width],
 .ccxp-lite-landing-notices td[width],
 .ccxp-lite-landing-notices th[width] {
   width: auto !important;
 }
 
 .ccxp-lite-landing-notices table {
-  table-layout: fixed;
+  width: min(100%, 960px) !important;
+  margin-inline: auto;
+  table-layout: auto;
 }
 
 .ccxp-lite-landing-notices td:first-child,
