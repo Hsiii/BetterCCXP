@@ -486,26 +486,29 @@ html[data-ccxp-lite-scope="landing"] a:hover {
   justify-content: center;
   margin-top: 2px;
   width: 100%;
-  max-width: 100%;
   min-width: 0;
-}
-
-.ccxp-lite-landing-notices .ccxp-lite-announcement-panel {
-  width: 35%;
-  min-width: 340px;
-  max-width: 960px;
-  overflow-x: hidden;
 }
 
 .ccxp-lite-landing-notices .ccxp-lite-announcement-table {
   width: 100% !important;
   border-collapse: separate;
   border-spacing: 0;
-  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
-  border: 1px solid rgba(17, 24, 39, 0.12);
-  border-radius: 14px;
+  background: var(--ccxp-lite-surface);
+  border: 1px solid var(--ccxp-lite-border);
+  border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 8px 24px rgba(17, 24, 39, 0.07);
+}
+
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table,
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table td,
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table th,
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table div,
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table span,
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table p,
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table b,
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table font,
+.ccxp-lite-landing-notices .ccxp-lite-announcement-table a {
+  font-family: var(--ccxp-lite-font-sans) !important;
 }
 
 .ccxp-lite-landing-notices .ccxp-lite-announcement-table td,
@@ -515,11 +518,11 @@ html[data-ccxp-lite-scope="landing"] a:hover {
 
 .ccxp-lite-landing-notices .ccxp-lite-announcement-title {
   padding: 12px 14px;
-  border-bottom: 1px solid rgba(17, 24, 39, 0.12);
-  color: #0f2d77;
+  border-bottom: 1px solid var(--ccxp-lite-border);
+  color: var(--ccxp-lite-type-body-strong-color);
   font: var(--ccxp-lite-type-body-strong);
   letter-spacing: 0.01em;
-  background: linear-gradient(90deg, #f0f4ff 0%, #f9fbff 100%);
+  background: var(--ccxp-lite-surface-muted);
 }
 
 .ccxp-lite-landing-notices .ccxp-lite-announcement-title img {
@@ -528,11 +531,12 @@ html[data-ccxp-lite-scope="landing"] a:hover {
 
 .ccxp-lite-landing-notices .ccxp-lite-announcement-head-cell {
   padding: 10px 12px;
-  color: #ffffff;
+  color: var(--ccxp-lite-type-body-strong-color);
   font: var(--ccxp-lite-type-caption);
   letter-spacing: 0.04em;
-  background: linear-gradient(90deg, #0f2d77 0%, #13388f 100%);
-  border-right: 1px solid rgba(255, 255, 255, 0.2);
+  background: var(--ccxp-lite-surface-muted);
+  border-right: 1px solid var(--ccxp-lite-border);
+  border-top: 1px solid var(--ccxp-lite-border);
 }
 
 .ccxp-lite-landing-notices .ccxp-lite-announcement-head-cell:last-child {
@@ -542,17 +546,23 @@ html[data-ccxp-lite-scope="landing"] a:hover {
 .ccxp-lite-landing-notices .ccxp-lite-announcement-row td {
   vertical-align: top;
   padding: 12px;
-  border-top: 1px solid rgba(17, 24, 39, 0.12);
-  background: #ffffff;
+  border-top: 1px solid var(--ccxp-lite-border);
+  background: var(--ccxp-lite-surface);
 }
 
 .ccxp-lite-landing-notices .ccxp-lite-announcement-row:nth-of-type(even) td {
-  background: #f9fbff;
+  background: var(--ccxp-lite-surface-muted);
 }
 
+.ccxp-lite-landing-notices .ccxp-lite-announcement-date {
+  width: 8.5rem !important;
+  white-space: nowrap;
+  color: var(--ccxp-lite-type-body-strong-color);
+  font: var(--ccxp-lite-type-body-strong);
+}
 
-  width: min(100%, 960px) !important;
-  color: #1f2937;
+.ccxp-lite-landing-notices .ccxp-lite-announcement-topic {
+  color: var(--ccxp-lite-type-body-color);
   font: var(--ccxp-lite-type-body);
 }
 
@@ -560,7 +570,7 @@ html[data-ccxp-lite-scope="landing"] a:hover {
   display: inline-block;
   margin-bottom: 8px;
   padding-bottom: 4px;
-  border-bottom: 1px dotted rgba(17, 24, 39, 0.35);
+  border-bottom: 1px dotted var(--ccxp-lite-border);
 }
 
 .ccxp-lite-landing-notices .ccxp-lite-announcement-topic p {

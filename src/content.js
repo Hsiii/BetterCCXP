@@ -705,21 +705,33 @@
     const fallbackTables = Array.from(targetDocument.querySelectorAll("table"));
 
     const isAnnouncementTable = (table) => {
-      const heading = table.querySelector(".board_item");
-      const headingText = normalizeAnnouncementHeading(heading && heading.textContent);
+      const rows = Array.from(table.rows || []);
+      if (rows.length === 0) {
+        return false;
+      }
+
+      const headingCell = rows
+        .flatMap((row) => Array.from(row.cells || []))
+        .find((cell) => cell.classList.contains("board_item"));
+
+      const headingText = normalizeAnnouncementHeading(headingCell && headingCell.textContent);
       const hasNoticeHeading = headingText.includes("系統公告") || headingText.includes("system notice");
 
       if (!hasNoticeHeading) {
         return false;
       }
 
-      const boardHeaderCells = table.querySelectorAll(".board_subject");
-      if (boardHeaderCells.length < 2) {
+      const boardHeaderRow = rows.find((row) => {
+        const cells = Array.from(row.cells || []);
+        return cells.filter((cell) => cell.classList.contains("board_subject")).length >= 2;
+      });
+
+      if (!boardHeaderRow) {
         return false;
       }
 
-      const dateRows = Array.from(table.querySelectorAll("tr")).filter((row) => {
-        const cells = Array.from(row.querySelectorAll(":scope > td"));
+      const dateRows = rows.filter((row) => {
+        const cells = Array.from(row.cells || []);
         if (cells.length < 2) {
           return false;
         }
@@ -776,9 +788,9 @@
 
     table.classList.add("ccxp-lite-announcement-table");
 
-    const rows = Array.from(table.querySelectorAll(":scope > tbody > tr, :scope > tr"));
+    const rows = Array.from(table.rows || []);
     rows.forEach((row) => {
-      const cells = Array.from(row.querySelectorAll(":scope > td, :scope > th"));
+      const cells = Array.from(row.cells || []);
       if (cells.length === 0) {
         return;
       }
@@ -794,22 +806,26 @@
       }
     });
 
-    const headerCell = table.querySelector(".board_item");
+    const headerCell = rows
+      .flatMap((row) => Array.from(row.cells || []))
+      .find((cell) => cell.classList.contains("board_item"));
     if (headerCell) {
       headerCell.classList.add("ccxp-lite-announcement-title");
     }
 
-    const headerRow = Array.from(table.querySelectorAll("tr"))
-      .find((row) => row.querySelector(".board_subject"));
+    const headerRow = rows.find((row) => {
+      const cells = Array.from(row.cells || []);
+      return cells.filter((cell) => cell.classList.contains("board_subject")).length >= 2;
+    });
     if (headerRow) {
       headerRow.classList.add("ccxp-lite-announcement-head-row");
-      Array.from(headerRow.querySelectorAll("td, th")).forEach((cell) => {
+      Array.from(headerRow.cells || []).forEach((cell) => {
         cell.classList.add("ccxp-lite-announcement-head-cell");
       });
     }
 
-    Array.from(table.querySelectorAll("tr")).forEach((row) => {
-      const cells = Array.from(row.querySelectorAll(":scope > td"));
+    rows.forEach((row) => {
+      const cells = Array.from(row.cells || []);
       if (cells.length < 2) {
         return;
       }
