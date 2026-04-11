@@ -365,7 +365,9 @@
       } else {
         headerSection.appendChild(utilityHeaderLinks);
       }
+    }
 
+    if (utilityLinks) {
       collapseLegacyUtilityRow(utilityLinks);
       removeNode(utilityLinks);
     }
