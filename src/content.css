@@ -715,6 +715,11 @@ html[data-ccxp-lite-scope="landing"] a:hover {
   border: 1px solid var(--ccxp-lite-border) !important;
 }
 
+.ccxp-lite-landing-tabs .ccxp-lite-student-alumni-panel table {
+  width: min(100%, 980px) !important;
+  max-width: 980px;
+}
+
 .ccxp-lite-landing-tabs .tabcontent[hidden] {
   display: none !important;
 }

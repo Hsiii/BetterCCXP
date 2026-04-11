@@ -576,6 +576,7 @@
       const { button, panel } = entry;
       const tabId = button.id || `ccxp-lite-tab-${index + 1}`;
       button.id = tabId;
+      applyTabPanelSemanticClass(button, panel);
       button.setAttribute("role", "tab");
       button.setAttribute("aria-controls", panel.id);
       button.setAttribute("aria-selected", "false");
@@ -651,6 +652,17 @@
     });
 
     activateTabAt(getActiveIndex());
+  }
+
+  function applyTabPanelSemanticClass(button, panel) {
+    if (!button || !panel) {
+      return;
+    }
+
+    const label = String(button.textContent || "").replace(/\s+/g, " ").trim().toLowerCase();
+    if (/(學生|校友|student|alumni)/i.test(label)) {
+      panel.classList.add("ccxp-lite-student-alumni-panel");
+    }
   }
 
   function extractLegacyTabTarget(button) {
