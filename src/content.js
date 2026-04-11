@@ -341,6 +341,7 @@
     }
 
     normalizeLoginFormLayout(loginSection);
+    forceCaptchaLabelDisplay(loginSection);
     replaceLoginFormImageButtons(targetDocument, loginSection);
     enhancePasswordVisibilityToggle(targetDocument, loginSection);
 
@@ -937,6 +938,20 @@
       if (table) {
         table.classList.add("ccxp-lite-login-form-table");
       }
+    });
+  }
+
+  function forceCaptchaLabelDisplay(rootNode) {
+    const captchaLabelPattern = /(驗證碼|captcha)/i;
+    const spans = Array.from(rootNode.querySelectorAll("span"));
+
+    spans.forEach((spanNode) => {
+      const labelText = String(spanNode.textContent || "").replace(/\s+/g, " ").trim();
+      if (!labelText || !captchaLabelPattern.test(labelText)) {
+        return;
+      }
+
+      spanNode.style.display = "block";
     });
   }
 
