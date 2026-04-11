@@ -6,8 +6,12 @@
   const RETRY_DELAY_MS = 250;
   const FRAMESET_COLUMNS = "288,*";
   const FRAMESET_ROWS = "0,*";
+  const LOADING_SPRITE_ID = "ccxp-lite-loading-sprite";
+  const LOADING_SPRITE_STYLE_ID = "ccxp-lite-loading-sprite-style";
+  const LOADING_SPRITE_TIMEOUT_MS = 8000;
 
   let attempts = 0;
+  const loadingState = initializeLoadingSprite(document);
 
   function attachAndApply() {
     if (isLandingPage(document)) {
@@ -23,11 +27,148 @@
     }
 
     applyFramesetLayout();
-    attachFrameListener(frames.nav, () => sidebar.simplifySidebar(frames.nav, retry));
+    attachFrameListener(frames.nav, () => {
+      sidebar.simplifySidebar(frames.nav, retry);
+      updateLoadingStateForNav(frames.nav);
+    });
     attachFrameListener(frames.main, () => simplifyMainFrame(frames.main));
     removeHeader(frames.top);
     sidebar.simplifySidebar(frames.nav, retry);
+    updateLoadingStateForNav(frames.nav);
     simplifyMainFrame(frames.main);
+  }
+
+  function initializeLoadingSprite(targetDocument) {
+    if (!isSupportedInquirePath(targetDocument)) {
+      return null;
+    }
+
+    ensureLoadingSprite(targetDocument);
+
+    const state = {
+      navReady: false,
+      mainReady: false,
+      timerId: null,
+      released: false
+    };
+
+    state.timerId = window.setTimeout(() => {
+      releaseLoadingSprite(targetDocument);
+      state.released = true;
+    }, LOADING_SPRITE_TIMEOUT_MS);
+
+    return state;
+  }
+
+  function ensureLoadingSprite(targetDocument) {
+    if (!targetDocument || !targetDocument.documentElement) {
+      return;
+    }
+
+    if (!targetDocument.getElementById(LOADING_SPRITE_STYLE_ID)) {
+      const styleNode = targetDocument.createElement("style");
+      styleNode.id = LOADING_SPRITE_STYLE_ID;
+      styleNode.textContent = `
+        html, body {
+          background: #ffffff !important;
+        }
+
+        #${LOADING_SPRITE_ID} {
+          position: fixed;
+          inset: 0;
+          z-index: 2147483647;
+          pointer-events: none;
+          background: #ffffff;
+          opacity: 1;
+          transition: opacity 160ms ease;
+        }
+
+        #${LOADING_SPRITE_ID}::after {
+          content: "";
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          width: 22px;
+          height: 22px;
+          margin-top: -11px;
+          margin-left: -11px;
+          border-radius: 999px;
+          background: #ffffff;
+          box-shadow: 0 0 0 1px rgba(17, 24, 39, 0.08), 0 8px 24px rgba(17, 24, 39, 0.08);
+        }
+      `;
+
+      if (targetDocument.head) {
+        targetDocument.head.appendChild(styleNode);
+      } else {
+        targetDocument.documentElement.appendChild(styleNode);
+      }
+    }
+
+    if (!targetDocument.getElementById(LOADING_SPRITE_ID)) {
+      const sprite = targetDocument.createElement("div");
+      sprite.id = LOADING_SPRITE_ID;
+      targetDocument.documentElement.appendChild(sprite);
+    }
+  }
+
+  function releaseLoadingSprite(targetDocument) {
+    const sprite = targetDocument.getElementById(LOADING_SPRITE_ID);
+    if (!sprite) {
+      return;
+    }
+
+    sprite.style.opacity = "0";
+    window.setTimeout(() => removeNode(sprite), 180);
+  }
+
+  function updateLoadingStateForNav(navFrame) {
+    if (!loadingState || loadingState.released) {
+      return;
+    }
+
+    const navDocument = navFrame && navFrame.contentDocument;
+    if (navDocument && navDocument.body && navDocument.body.dataset.ccxpLiteSidebarApplied === "true") {
+      loadingState.navReady = true;
+    }
+
+    tryReleaseLoadingSprite();
+  }
+
+  function markMainReady() {
+    if (!loadingState || loadingState.released) {
+      return;
+    }
+
+    loadingState.mainReady = true;
+    tryReleaseLoadingSprite();
+  }
+
+  function markLandingReady() {
+    if (!loadingState || loadingState.released) {
+      return;
+    }
+
+    loadingState.navReady = true;
+    loadingState.mainReady = true;
+    tryReleaseLoadingSprite();
+  }
+
+  function tryReleaseLoadingSprite() {
+    if (!loadingState || loadingState.released) {
+      return;
+    }
+
+    if (!loadingState.navReady || !loadingState.mainReady) {
+      return;
+    }
+
+    if (loadingState.timerId) {
+      window.clearTimeout(loadingState.timerId);
+    }
+
+    loadingState.released = true;
+    releaseLoadingSprite(document);
   }
 
   function findFrames() {
@@ -110,13 +251,16 @@
 
     ensureThemeDocument(mainDocument, "main");
     mainDocument.body.classList.add(TOKENS.mainClass);
+    markMainReady();
+  }
+
+  function isSupportedInquirePath(targetDocument) {
+    const pathName = ((targetDocument.location && targetDocument.location.pathname) || "").toLowerCase();
+    return /\/ccxp\/inquire\/(?:index\.php)?\/?$/.test(pathName);
   }
 
   function isLandingPage(targetDocument) {
-    const pathName = ((targetDocument.location && targetDocument.location.pathname) || "").toLowerCase();
-    const isSupportedPath = /\/ccxp\/inquire\/(?:index\.php)?\/?$/.test(pathName);
-
-    if (!isSupportedPath) {
+    if (!isSupportedInquirePath(targetDocument)) {
       return false;
     }
 
@@ -228,6 +372,7 @@
     targetDocument.body.replaceChildren(shell);
     restoreLoginValidationGuards(targetDocument, loginValidationState);
     targetDocument.body.dataset.ccxpLiteLandingApplied = "true";
+    markLandingReady();
   }
 
   function captureLoginValidationState(targetDocument) {
