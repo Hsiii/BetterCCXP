@@ -1497,6 +1497,8 @@
     const forms = Array.from(rootNode.querySelectorAll("form"));
 
     forms.forEach((formNode) => {
+      normalizeNativeLoginSubmitControls(targetDocument, formNode);
+
       const allActionButtons = Array.from(formNode.querySelectorAll(".ccxp-lite-image-action-button, .ccxp-lite-image-link-button"));
       if (allActionButtons.length === 0) {
         return;
@@ -1526,6 +1528,58 @@
 
         actionGroup.appendChild(buttonNode);
       });
+    });
+  }
+
+  function normalizeNativeLoginSubmitControls(targetDocument, formNode) {
+    const nativeSubmitInputs = Array.from(formNode.querySelectorAll("input[type='submit']"));
+
+    nativeSubmitInputs.forEach((inputNode) => {
+      if (inputNode.dataset.ccxpLiteSubmitRebuilt === "true") {
+        return;
+      }
+
+      const label = String(inputNode.value || inputNode.getAttribute("value") || inputNode.textContent || "")
+        .replace(/\s+/g, " ")
+        .trim();
+
+      if (!label) {
+        return;
+      }
+
+      const button = targetDocument.createElement("button");
+      button.type = "submit";
+      button.className = "ccxp-lite-image-action-button";
+      button.textContent = label;
+
+      Array.from(inputNode.attributes).forEach((attribute) => {
+        const attributeName = attribute.name.toLowerCase();
+        if (attributeName === "type" || attributeName === "value" || attributeName === "class") {
+          return;
+        }
+
+        button.setAttribute(attribute.name, attribute.value);
+      });
+
+      if (inputNode.className) {
+        button.className = `${button.className} ${inputNode.className}`.trim();
+      }
+
+      if (inputNode.disabled) {
+        button.disabled = true;
+      }
+
+      inputNode.replaceWith(button);
+      button.dataset.ccxpLiteSubmitRebuilt = "true";
+    });
+
+    const nativeSubmitButtons = Array.from(formNode.querySelectorAll("button[type='submit'], button:not([type])"));
+    nativeSubmitButtons.forEach((buttonNode) => {
+      if (buttonNode.classList.contains("ccxp-lite-audio-icon-button") || buttonNode.classList.contains("ccxp-lite-image-action-button")) {
+        return;
+      }
+
+      buttonNode.classList.add("ccxp-lite-image-action-button");
     });
   }
 
