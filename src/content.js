@@ -303,7 +303,7 @@
     const tabNavigation = targetDocument.querySelector(".tab");
     const tabContents = Array.from(targetDocument.querySelectorAll(".tabcontent"));
     const languageLinks = targetDocument.querySelector("ul.links");
-    const announcementPanel = findAnnouncementPanel(targetDocument);
+    const announcementTable = findAnnouncementTable(targetDocument);
     const utilityLinks = findUtilityLinksTable(targetDocument);
     const cannotLoginLink = findCannotLoginLink(targetDocument, utilityLinks);
     const serviceLink = findServiceLink(targetDocument);
@@ -405,9 +405,9 @@
 
     shell.appendChild(tabsSection);
 
-    if (announcementPanel) {
-      prepareAnnouncementPanel(announcementPanel);
-      noticesSection.appendChild(announcementPanel);
+    if (announcementTable) {
+      prepareAnnouncementTable(announcementTable);
+      noticesSection.appendChild(announcementTable);
       shell.appendChild(noticesSection);
     }
 
@@ -691,14 +691,26 @@
   }
 
   function findAnnouncementTable(targetDocument) {
-    const tables = Array.from(targetDocument.querySelectorAll("table"));
+    const rightPanel = Array.from(targetDocument.querySelectorAll("td"))
+      .find((cell) => {
+        const widthText = normalizeLegacyWidth(cell.getAttribute("width") || cell.style.width);
+        if (widthText !== "35%" && widthText !== "35") {
+          return false;
+        }
+
+        return Boolean(cell.querySelector(".board_item, .board_subject"));
+      });
+
+    const panelTables = rightPanel ? Array.from(rightPanel.querySelectorAll("table")) : [];
+    const fallbackTables = Array.from(targetDocument.querySelectorAll("table"));
 
     const isAnnouncementTable = (table) => {
       const heading = table.querySelector(".board_item");
       const headingText = normalizeAnnouncementHeading(heading && heading.textContent);
+      const hasNoticeHeading = headingText.includes("系統公告") || headingText.includes("system notice");
 
-      if (headingText.includes("系統公告") || headingText.includes("system notice")) {
-        return true;
+      if (!hasNoticeHeading) {
+        return false;
       }
 
       const boardHeaderCells = table.querySelectorAll(".board_subject");
@@ -735,7 +747,7 @@
       return dateRows.length >= 3;
     };
 
-    const preferred = tables.find((table) => {
+    const preferred = panelTables.find((table) => {
       if (table.closest(".tabcontent")) {
         return false;
       }
@@ -747,26 +759,7 @@
       return preferred;
     }
 
-    return tables.find((table) => isAnnouncementTable(table)) || null;
-  }
-
-  function findAnnouncementPanel(targetDocument) {
-    const announcementTable = findAnnouncementTable(targetDocument);
-    if (!announcementTable) {
-      return null;
-    }
-
-    const panelCell = Array.from(targetDocument.querySelectorAll("td"))
-      .find((cell) => {
-        if (!cell.contains(announcementTable)) {
-          return false;
-        }
-
-        const widthText = normalizeLegacyWidth(cell.getAttribute("width") || cell.style.width);
-        return widthText === "35%" || widthText === "35";
-      });
-
-    return panelCell || announcementTable;
+    return fallbackTables.find((table) => isAnnouncementTable(table)) || null;
   }
 
   function normalizeAnnouncementHeading(rawText) {
@@ -834,24 +827,6 @@
     });
 
     table.dataset.ccxpLiteAnnouncementPrepared = "true";
-  }
-
-  function prepareAnnouncementPanel(panelNode) {
-    if (!panelNode || panelNode.dataset.ccxpLiteAnnouncementPanelPrepared === "true") {
-      return;
-    }
-
-    panelNode.classList.add("ccxp-lite-announcement-panel");
-
-    const table = panelNode.matches("table")
-      ? panelNode
-      : panelNode.querySelector("table");
-
-    if (table) {
-      prepareAnnouncementTable(table);
-    }
-
-    panelNode.dataset.ccxpLiteAnnouncementPanelPrepared = "true";
   }
 
   function findUtilityLinksTable(targetDocument) {
