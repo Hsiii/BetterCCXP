@@ -1532,43 +1532,39 @@
         return;
       }
 
-      const fieldNode = findPrimaryFieldControl(rowNode);
-      if (!fieldNode) {
-        return;
-      }
-
       const cells = Array.from(rowNode.querySelectorAll(":scope > th, :scope > td"));
       if (cells.length === 0) {
         return;
       }
 
-      const labelCell = cells[0];
-      const fieldCell = cells[cells.length - 1];
-      const labelText = String(labelCell.textContent || "")
-        .replace(/\s+/g, " ")
-        .trim();
-
-      const fieldId = ensureFieldId(fieldNode, rowIndex);
-
-      const fieldGroup = targetDocument.createElement("div");
-      fieldGroup.className = "ccxp-lite-login-field";
-
-      const label = targetDocument.createElement("label");
-      label.className = "ccxp-lite-login-field-label";
-      label.setAttribute("for", fieldId);
-      label.textContent = labelText || String(fieldNode.getAttribute("name") || "");
-
-      const controlWrap = targetDocument.createElement("div");
-      controlWrap.className = "ccxp-lite-login-field-control";
-      moveChildNodes(fieldCell, controlWrap);
-
-      fieldGroup.appendChild(label);
-      fieldGroup.appendChild(controlWrap);
+      const fieldPairs = collectLoginFieldPairs(rowNode, cells);
+      if (fieldPairs.length === 0) {
+        return;
+      }
 
       const mergedCell = targetDocument.createElement("td");
       mergedCell.className = "ccxp-lite-login-field-cell";
       mergedCell.colSpan = Math.max(1, cells.length);
-      mergedCell.appendChild(fieldGroup);
+
+      fieldPairs.forEach((fieldPair, pairIndex) => {
+        const fieldId = ensureFieldId(fieldPair.fieldNode, rowIndex, pairIndex);
+
+        const fieldGroup = targetDocument.createElement("div");
+        fieldGroup.className = "ccxp-lite-login-field";
+
+        const label = targetDocument.createElement("label");
+        label.className = "ccxp-lite-login-field-label";
+        label.setAttribute("for", fieldId);
+        label.textContent = fieldPair.labelText || String(fieldPair.fieldNode.getAttribute("name") || "");
+
+        const controlWrap = targetDocument.createElement("div");
+        controlWrap.className = "ccxp-lite-login-field-control";
+        moveChildNodes(fieldPair.fieldCell, controlWrap);
+
+        fieldGroup.appendChild(label);
+        fieldGroup.appendChild(controlWrap);
+        mergedCell.appendChild(fieldGroup);
+      });
 
       rowNode.replaceChildren(mergedCell);
       rowNode.classList.add("ccxp-lite-login-field-row");
@@ -1581,8 +1577,84 @@
     });
   }
 
-  function findPrimaryFieldControl(rowNode) {
-    const candidates = Array.from(rowNode.querySelectorAll("input, select, textarea"));
+  function collectLoginFieldPairs(rowNode, cells) {
+    const pairs = [];
+    const usedFieldCells = new Set();
+
+    cells.forEach((cellNode, cellIndex) => {
+      const fieldNode = findPrimaryFieldControl(cellNode);
+      if (!fieldNode) {
+        return;
+      }
+
+      const fieldCell = fieldNode.closest("th, td") || cellNode;
+      if (usedFieldCells.has(fieldCell)) {
+        return;
+      }
+
+      const fieldCellIndex = cells.indexOf(fieldCell);
+      const labelCell = resolveLabelCellForField(cells, fieldCellIndex >= 0 ? fieldCellIndex : cellIndex);
+      const labelText = getNodeText(labelCell);
+
+      pairs.push({
+        fieldNode,
+        fieldCell,
+        labelText
+      });
+
+      usedFieldCells.add(fieldCell);
+    });
+
+    if (pairs.length > 0) {
+      return pairs;
+    }
+
+    const fallbackFieldNode = findPrimaryFieldControl(rowNode);
+    if (!fallbackFieldNode) {
+      return pairs;
+    }
+
+    const fallbackFieldCell = fallbackFieldNode.closest("th, td") || cells[cells.length - 1];
+    const fallbackLabelCell = resolveLabelCellForField(cells, cells.indexOf(fallbackFieldCell));
+
+    pairs.push({
+      fieldNode: fallbackFieldNode,
+      fieldCell: fallbackFieldCell,
+      labelText: getNodeText(fallbackLabelCell)
+    });
+
+    return pairs;
+  }
+
+  function resolveLabelCellForField(cells, fieldCellIndex) {
+    for (let index = fieldCellIndex - 1; index >= 0; index -= 1) {
+      const candidate = cells[index];
+      if (!candidate) {
+        continue;
+      }
+
+      if (findPrimaryFieldControl(candidate)) {
+        continue;
+      }
+
+      if (!getNodeText(candidate)) {
+        continue;
+      }
+
+      return candidate;
+    }
+
+    return cells[0] || null;
+  }
+
+  function getNodeText(node) {
+    return String((node && node.textContent) || "")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  function findPrimaryFieldControl(scopeNode) {
+    const candidates = Array.from(scopeNode.querySelectorAll("input, select, textarea"));
 
     return candidates.find((field) => {
       const inputType = (field.getAttribute("type") || "text").toLowerCase();
@@ -1590,7 +1662,7 @@
     }) || null;
   }
 
-  function ensureFieldId(fieldNode, rowIndex) {
+  function ensureFieldId(fieldNode, rowIndex, pairIndex = 0) {
     if (fieldNode.id) {
       return fieldNode.id;
     }
@@ -1599,7 +1671,8 @@
       .trim()
       .replace(/[^a-zA-Z0-9_-]+/g, "-")
       .replace(/^-+|-+$/g, "") || "field";
-    const generatedId = `ccxp-lite-${baseName}-${rowIndex + 1}`;
+    const pairSuffix = pairIndex > 0 ? `-${pairIndex + 1}` : "";
+    const generatedId = `ccxp-lite-${baseName}-${rowIndex + 1}${pairSuffix}`;
     fieldNode.id = generatedId;
     return generatedId;
   }
