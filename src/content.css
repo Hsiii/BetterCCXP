@@ -547,6 +547,9 @@ html[data-ccxp-lite-scope="landing"] a:hover {
   background: color-mix(in srgb, var(--ccxp-lite-surface) 72%, #d5dae1);
   border-color: var(--ccxp-lite-border);
   border-bottom-color: var(--ccxp-lite-surface);
+  position: relative;
+  top: 1px;
+  z-index: 2;
   color: var(--ccxp-lite-type-body-strong-color);
 }
 
