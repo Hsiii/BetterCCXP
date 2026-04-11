@@ -485,13 +485,6 @@
       return;
     }
 
-    const rawAction = String(form.getAttribute("action") || "").trim();
-    const normalizedAction = rawAction.toLowerCase();
-    if (normalizedAction.includes("select_entry.php") && !normalizedAction.includes("pre_select_entry.php")) {
-      const rewrittenAction = rawAction.replace(/select_entry\.php(?=([?#]|$))/i, "pre_select_entry.php");
-      form.setAttribute("action", rewrittenAction || "pre_select_entry.php");
-    }
-
     const authImage = form.querySelector("img[src*='auth_img.php?pwdstr=']");
     const tokenFromImage = extractPwdstrFromImage(authImage, targetDocument);
     let fnstrField = form.querySelector("input[name='fnstr']");
@@ -1595,6 +1588,10 @@
         return;
       }
 
+      if (shouldKeepLegacyLoginImageSubmit(inputNode)) {
+        return;
+      }
+
       if (isVerificationAudioControl(inputNode)) {
         const audioButton = createAudioIconButtonFromImageInput(targetDocument, inputNode);
         inputNode.replaceWith(audioButton);
@@ -1888,6 +1885,29 @@
     return String(rawLabel || "")
       .replace(/\s+/g, " ")
       .trim();
+  }
+
+  function shouldKeepLegacyLoginImageSubmit(inputNode) {
+    if (!inputNode || !inputNode.form) {
+      return false;
+    }
+
+    const action = String(inputNode.form.getAttribute("action") || "").toLowerCase();
+    const isLoginFlowForm = action.includes("pre_select_entry.php") || action.includes("select_entry.php");
+    if (!isLoginFlowForm) {
+      return false;
+    }
+
+    if (isVerificationAudioControl(inputNode) || isAdjacentLoginClearControl(inputNode)) {
+      return false;
+    }
+
+    const label = resolveLegacyImageButtonLabel(inputNode);
+    if (isClearActionLabel(label)) {
+      return false;
+    }
+
+    return true;
   }
 
   function isClearActionLabel(label) {
