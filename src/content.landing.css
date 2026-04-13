@@ -509,11 +509,15 @@ html[data-ccxp-lite-scope="landing"] [size="2" i] {
 .ccxp-lite-landing-login .ccxp-lite-login-inline-label {
   display: block;
   width: 100%;
+  color: var(--ccxp-lite-type-body-strong-color);
+  font: var(--ccxp-lite-type-body-strong);
 }
 
 .ccxp-lite-landing-login .ccxp-lite-login-inline-label > * {
   display: block;
   width: 100%;
+  color: inherit;
+  font: inherit;
 }
 
 .ccxp-lite-landing-login .ccxp-lite-login-inline-control {
@@ -616,7 +620,7 @@ html[data-ccxp-lite-scope="landing"] [size="2" i] {
   border: 1px solid var(--ccxp-lite-border);
   background: transparent;
   color: var(--ccxp-lite-type-utility-color);
-  font: var(--ccxp-lite-type-utility);
+  font: var(--ccxp-lite-type-body-strong);
   white-space: normal;
   overflow-wrap: anywhere;
   text-align: center;
