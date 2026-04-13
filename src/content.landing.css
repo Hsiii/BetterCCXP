@@ -393,10 +393,9 @@ html[data-ccxp-lite-scope="landing"] [size="2" i] {
 }
 
 .ccxp-lite-landing-lang ul.links a {
-    background: #fff;
+  background: #fff;
   border-radius: 999px;
   border: 1px solid var(--ccxp-lite-border);
-  background: transparent;
   padding: 10px 18px;
   min-height: 38px;
   color: var(--ccxp-lite-type-utility-color);
