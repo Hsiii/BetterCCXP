@@ -946,6 +946,7 @@ html[data-ccxp-lite-scope="landing"] [size="2" i] {
   text-align: right;
   color: var(--ccxp-lite-type-caption-color);
   font: var(--ccxp-lite-type-caption);
+  font-size: var(--ccxp-lite-font-size-utility);
   font-variant-numeric: var(--ccxp-lite-font-variant-numeric-tabular);
 }
 
