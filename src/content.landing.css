@@ -205,13 +205,17 @@ html[data-ccxp-lite-scope="landing"] [size="2" i] {
   grid-column: 1;
   display: flex;
   align-items: center;
+  justify-content: flex-start;
   gap: var(--ccxp-lite-spacing-brand-inline);
-  justify-self: start;
+  height: 100%;
 }
 
 .ccxp-lite-landing-brand-logo {
-  width: auto;
-  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
   max-width: 100%;
   border-radius: 12px;
   object-fit: contain;
@@ -437,7 +441,18 @@ html[data-ccxp-lite-scope="landing"] [size="2" i] {
 }
 
 .ccxp-lite-landing-login form.ccxp-lite-login-form,
-.ccxp-lite-landing-login form.ccxp-lite-login-form * {
+.ccxp-lite-landing-login form.ccxp-lite-login-form .ccxp-lite-login-fields,
+.ccxp-lite-landing-login form.ccxp-lite-login-form table.ccxp-lite-login-form-table,
+.ccxp-lite-landing-login form.ccxp-lite-login-form table.ccxp-lite-login-form-table tbody,
+.ccxp-lite-landing-login form.ccxp-lite-login-form tr.ccxp-lite-login-field-row,
+.ccxp-lite-landing-login form.ccxp-lite-login-form td.ccxp-lite-login-field-cell,
+.ccxp-lite-landing-login form.ccxp-lite-login-form .ccxp-lite-login-field,
+.ccxp-lite-landing-login form.ccxp-lite-login-form .ccxp-lite-login-inline-field,
+.ccxp-lite-landing-login form.ccxp-lite-login-form .ccxp-lite-login-inline-label,
+.ccxp-lite-landing-login form.ccxp-lite-login-form .ccxp-lite-login-inline-control,
+.ccxp-lite-landing-login form.ccxp-lite-login-form .ccxp-lite-login-field-label,
+.ccxp-lite-landing-login form.ccxp-lite-login-form .ccxp-lite-login-field-control,
+.ccxp-lite-landing-login form.ccxp-lite-login-form .ccxp-lite-password-field {
   margin: 0 !important;
 }
 
@@ -617,7 +632,7 @@ html[data-ccxp-lite-scope="landing"] [size="2" i] {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-block: 12px !important;
+  margin-block: 12px;
 }
 
 .ccxp-lite-landing-login .ccxp-lite-login-action-group > .ccxp-lite-image-action-button,
@@ -1105,4 +1120,3 @@ html[data-ccxp-lite-scope="landing"] [size="2" i] {
   word-break: break-word;
   overflow-wrap: anywhere;
 }
-
