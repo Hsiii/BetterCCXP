@@ -84,7 +84,7 @@ html[data-ccxp-lite-scope="nav"] body {
 .ccxp-lite-row-button {
   display: flex;
   align-items: center;
-  gap: var(--ccxp-lite-sidebar-row-gap);
+  gap: var(--ccxp-lite-spacing-brand-inline);
   width: 100%;
   min-width: 0;
   padding: var(--ccxp-lite-sidebar-row-padding-y) var(--ccxp-lite-sidebar-row-padding-x);
