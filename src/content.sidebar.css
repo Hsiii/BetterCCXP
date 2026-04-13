@@ -177,8 +177,17 @@ html[data-ccxp-lite-scope="nav"] body {
 }
 
 .ccxp-lite-link-icon {
-  width: 14px;
-  height: 14px;
+  width: 1em;
+  height: 1em;
+  flex: 0 0 1em;
+  color: inherit;
+  opacity: 0.85;
+}
+
+.ccxp-lite-row-leading svg,
+.ccxp-lite-category-icon {
+  width: 20px !important;
+  height: 20px !important;
   color: inherit;
   opacity: 0.85;
 }

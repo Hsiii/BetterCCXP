@@ -377,9 +377,9 @@ html[data-ccxp-lite-scope="landing"] [size="2" i] {
 }
 
 .ccxp-lite-landing-link-icon {
-  width: 10px;
-  height: 10px;
-  flex: 0 0 10px;
+  width: 1em;
+  height: 1em;
+  flex: 0 0 1em;
   transform: translateY(-1px);
 }
 
