@@ -423,6 +423,7 @@ html[data-ccxp-lite-scope="landing"] [size="2" i] {
   width: 100%;
   max-width: 100%;
   min-width: 0;
+  padding-top: var(--ccxp-lite-spacing-lg);
 }
 
 .ccxp-lite-landing-login form {
@@ -617,6 +618,7 @@ html[data-ccxp-lite-scope="landing"] [size="2" i] {
   flex-direction: column;
   gap: 8px;
   margin-top: 14px;
+  margin-bottom: var(--ccxp-lite-spacing-lg);
 }
 
 .ccxp-lite-landing-login .ccxp-lite-login-action-group > .ccxp-lite-image-action-button,
