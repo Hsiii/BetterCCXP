@@ -617,7 +617,7 @@ html[data-ccxp-lite-scope="landing"] [size="2" i] {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-block: 12px;
+  margin-block: 12px !important;
 }
 
 .ccxp-lite-landing-login .ccxp-lite-login-action-group > .ccxp-lite-image-action-button,
