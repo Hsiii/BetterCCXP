@@ -77,7 +77,7 @@ html[data-ccxp-lite-scope="nav"] body {
   display: flex;
   align-items: center;
   gap: var(--ccxp-lite-spacing-xs);
-  margin: 0 0 var(--ccxp-lite-spacing-md);
+  margin: 0;
   padding: 0 var(--ccxp-lite-spacing-sidebar-search-inset);
 }
 
@@ -89,15 +89,12 @@ html[data-ccxp-lite-scope="nav"] body {
   border-radius: var(--ccxp-lite-radius-md);
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.98), var(--ccxp-lite-sidebar-search-surface));
-  box-shadow: 0 10px 24px rgba(17, 24, 39, 0.05);
   pointer-events: none;
 }
 
 .ccxp-lite-sidebar-search:focus-within::before {
   border-color: rgba(121, 36, 133, 0.28);
-  box-shadow:
-    0 0 0 3px rgba(121, 36, 133, 0.08),
-    0 10px 24px rgba(17, 24, 39, 0.08);
+  box-shadow: 0 0 0 3px rgba(121, 36, 133, 0.08);
 }
 
 .ccxp-lite-sidebar-search-icon,
