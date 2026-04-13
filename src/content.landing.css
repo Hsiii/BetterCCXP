@@ -513,6 +513,14 @@ html[data-ccxp-lite-scope="landing"] [size="2" i] {
   font: var(--ccxp-lite-type-body-strong);
 }
 
+.ccxp-lite-landing-login .ccxp-lite-login-field-label,
+.ccxp-lite-landing-login .ccxp-lite-login-inline-label,
+.ccxp-lite-landing-login .ccxp-lite-login-field-label *,
+.ccxp-lite-landing-login .ccxp-lite-login-inline-label * {
+  color: var(--ccxp-lite-type-body-strong-color) !important;
+  font: var(--ccxp-lite-type-body-strong) !important;
+}
+
 .ccxp-lite-landing-login .ccxp-lite-login-inline-label > * {
   display: block;
   width: 100%;
