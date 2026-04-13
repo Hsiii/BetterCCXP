@@ -442,6 +442,11 @@
     input.setAttribute("aria-label", strings.sidebarSearchPlaceholder);
     search.appendChild(input);
 
+    const spacer = targetDocument.createElement("span");
+    spacer.className = "ccxp-lite-sidebar-search-spacer";
+    spacer.setAttribute("aria-hidden", "true");
+    search.appendChild(spacer);
+
     return search;
   }
 

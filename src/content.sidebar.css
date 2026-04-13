@@ -98,7 +98,8 @@ html[data-ccxp-lite-scope="nav"] body {
 }
 
 .ccxp-lite-sidebar-search-icon,
-.ccxp-lite-sidebar-search-input {
+.ccxp-lite-sidebar-search-input,
+.ccxp-lite-sidebar-search-spacer {
   position: relative;
   z-index: 1;
 }
@@ -124,6 +125,13 @@ html[data-ccxp-lite-scope="nav"] body {
 
 .ccxp-lite-sidebar-search-input::placeholder {
   color: var(--ccxp-lite-sidebar-search-placeholder);
+}
+
+.ccxp-lite-sidebar-search-spacer {
+  flex: 0 0 auto;
+  width: 14px;
+  height: 14px;
+  visibility: hidden;
 }
 
 .ccxp-lite-sidebar-list,
