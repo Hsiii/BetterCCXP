@@ -5,11 +5,9 @@ html[data-ccxp-lite-scope="nav"] body {
 
 .ccxp-lite-sidebar-shell {
   box-sizing: border-box;
-  width: 100%;
-  min-width: var(--ccxp-lite-sidebar-width);
   min-height: 0;
   height: 100vh;
-  padding: 18px 10px 20px;
+  padding: 0;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
@@ -24,10 +22,11 @@ html[data-ccxp-lite-scope="nav"] body {
   grid-template-columns: var(--ccxp-lite-size-sidebar-brand-logo) minmax(0, 1fr);
   align-items: center;
   gap: var(--ccxp-lite-spacing-brand-inline);
-  padding: 4px 6px 18px;
+  padding-block: 12px;
   font-family: var(--ccxp-lite-font-brand);
   font-size: var(--ccxp-lite-font-size-sidebar-brand);
   line-height: 1;
+  min-height: 64px;
 }
 
 .ccxp-lite-sidebar-brand-logo {
@@ -46,7 +45,7 @@ html[data-ccxp-lite-scope="nav"] body {
 .ccxp-lite-sidebar-brand-title {
   display: inline-flex;
   align-items: baseline;
-  gap: var(--ccxp-lite-spacing-sidebar-brand-word-gap);
+  gap: var(--ccxp-lite-sidebar-row-gap);
   color: var(--ccxp-lite-type-display-color);
   font-family: var(--ccxp-lite-font-brand);
   font-size: var(--ccxp-lite-font-size-sidebar-brand);
@@ -88,7 +87,7 @@ html[data-ccxp-lite-scope="nav"] body {
   width: 100%;
   min-width: 0;
   padding: var(--ccxp-lite-sidebar-row-padding-y) var(--ccxp-lite-sidebar-row-padding-x);
-  padding-left: var(--ccxp-lite-row-indent, var(--ccxp-lite-sidebar-row-padding-x));
+  padding-left: 10px;
   border: 0;
   border-radius: var(--ccxp-lite-radius-sm);
   background: transparent;
@@ -140,12 +139,13 @@ html[data-ccxp-lite-scope="nav"] body {
 
 .ccxp-lite-row-leading {
   display: inline-flex;
-  flex: 0 0 auto;
+  flex: 0 0 20px;
   align-items: center;
   justify-content: center;
-  width: var(--ccxp-lite-size-sidebar-category-leading);
-  height: var(--ccxp-lite-size-sidebar-category-leading);
+  width: 20px;
+  height: 20px;
   color: inherit;
+  margin-left: 0;
 }
 
 .ccxp-lite-row-label {
@@ -158,9 +158,9 @@ html[data-ccxp-lite-scope="nav"] body {
 .ccxp-lite-row-label-wrap {
   display: inline-flex;
   align-items: center;
-  gap: var(--ccxp-lite-spacing-brand-inline);
   min-width: 0;
   flex: 1 1 auto;
+  gap: var(--ccxp-lite-spacing-brand-inline);
 }
 
 .ccxp-lite-chevron {
@@ -206,4 +206,3 @@ html[data-ccxp-lite-scope="nav"] body {
   font: var(--ccxp-lite-type-body-muted);
   background: rgba(124, 45, 146, 0.04);
 }
-
