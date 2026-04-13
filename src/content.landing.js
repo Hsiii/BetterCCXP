@@ -851,7 +851,8 @@
       return null;
     }
 
-    const labelText = String(sourceAnchor.textContent || "").trim() || strings.cannotLogin;
+    const sourceLabel = String(sourceAnchor.textContent || "").trim();
+    const labelText = isCannotLoginLabel(sourceLabel) ? strings.cannotLogin : (sourceLabel || strings.cannotLogin);
     return buildLandingSupportLink(targetDocument, sourceAnchor, labelText);
   }
 
@@ -1242,12 +1243,7 @@
   function enhancePasswordVisibilityToggle(targetDocument, rootNode) {
     const passwordFields = Array.from(rootNode.querySelectorAll("input[name='passwd'], input[type='password']:not([name='passwd2'])"));
     const seen = new Set();
-    const strings = getLocalizedStrings(resolveLandingLocale(
-      targetDocument,
-      targetDocument.querySelector("ul.links"),
-      findLoginSourceCell(targetDocument, getLoginForm(targetDocument)),
-      getLoginForm(targetDocument)
-    ));
+    const strings = getLandingStrings(targetDocument);
 
     passwordFields.forEach((field) => {
       if (!field || seen.has(field) || field.dataset.ccxpLitePasswordToggle === "true") {
@@ -1421,7 +1417,7 @@
     const label = targetDocument.createElement("label");
     label.className = "ccxp-lite-login-field-label";
     label.setAttribute("for", fieldId);
-    label.textContent = fieldPair.labelText || String(fieldPair.fieldNode.getAttribute("name") || "");
+    label.textContent = resolveLoginFieldLabel(fieldPair, targetDocument);
 
     const controlWrap = targetDocument.createElement("div");
     controlWrap.className = "ccxp-lite-login-field-control";
@@ -1547,6 +1543,36 @@
     return String((node && node.textContent) || "")
       .replace(/\s+/g, " ")
       .trim();
+  }
+
+  function resolveLoginFieldLabel(fieldPair, targetDocument) {
+    const explicitLabel = String(fieldPair && fieldPair.labelText || "").trim();
+    if (explicitLabel) {
+      return explicitLabel;
+    }
+
+    const fieldName = String(fieldPair && fieldPair.fieldNode && fieldPair.fieldNode.getAttribute("name") || "")
+      .trim()
+      .toLowerCase();
+    const strings = getLandingStrings(targetDocument);
+
+    if (fieldName === "account") {
+      return strings.fieldAccount;
+    }
+
+    if (fieldName === "id") {
+      return strings.fieldStudentId;
+    }
+
+    if (fieldName === "passwd" || fieldName === "password") {
+      return strings.fieldPassword;
+    }
+
+    if (fieldName === "passwd2" || fieldName === "captcha" || fieldName === "code") {
+      return strings.fieldVerificationCode;
+    }
+
+    return fieldName || strings.fieldGeneric;
   }
 
   function findPrimaryFieldControl(scopeNode) {
@@ -1678,13 +1704,7 @@
 
       if (isVerificationAudioControl(imageNode)) {
         anchor.classList.add("ccxp-lite-audio-icon-link");
-        const locale = resolveLandingLocale(
-          targetDocument,
-          targetDocument.querySelector("ul.links"),
-          findLoginSourceCell(targetDocument, getLoginForm(targetDocument)),
-          getLoginForm(targetDocument)
-        );
-        anchor.setAttribute("aria-label", resolveLegacyImageButtonLabel(imageNode) || getLocalizedStrings(locale).playVerificationAudio);
+        anchor.setAttribute("aria-label", resolveLegacyImageButtonLabel(imageNode) || getLandingStrings(targetDocument).playVerificationAudio);
         anchor.replaceChildren(createAudioIcon(targetDocument));
         anchor.dataset.ccxpLiteImageButtonReplaced = "true";
         return;
@@ -2068,7 +2088,7 @@
     button.className = "ccxp-lite-audio-icon-button";
     button.appendChild(createAudioIcon(targetDocument));
 
-    const label = resolveLegacyImageButtonLabel(inputNode) || getLocalizedStrings(targetDocument.documentElement.lang).playVerificationAudio;
+    const label = resolveLegacyImageButtonLabel(inputNode) || getLandingStrings(targetDocument).playVerificationAudio;
     button.setAttribute("aria-label", label);
     button.title = label;
 
@@ -2092,6 +2112,15 @@
     });
 
     return button;
+  }
+
+  function getLandingStrings(targetDocument) {
+    return getLocalizedStrings(resolveLandingLocale(
+      targetDocument,
+      targetDocument.querySelector("ul.links"),
+      findLoginSourceCell(targetDocument, getLoginForm(targetDocument)),
+      getLoginForm(targetDocument)
+    ));
   }
 
   function createAudioIcon(targetDocument) {
