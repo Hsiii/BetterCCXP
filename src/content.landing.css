@@ -759,47 +759,6 @@ html[data-ccxp-lite-scope="landing"] [size="2" i] {
   font-family: var(--ccxp-lite-font-sans) !important;
 }
 
-.ccxp-lite-landing-top td,
-.ccxp-lite-landing-top th,
-.ccxp-lite-landing-top font,
-.ccxp-lite-landing-top span,
-.ccxp-lite-landing-top div,
-.ccxp-lite-landing-top p,
-.ccxp-lite-landing-top li,
-.ccxp-lite-landing-top a,
-.ccxp-lite-landing-top button,
-.ccxp-lite-landing-top input,
-.ccxp-lite-landing-top select,
-.ccxp-lite-landing-top textarea,
-.ccxp-lite-landing-tabs,
-.ccxp-lite-landing-tabs td,
-.ccxp-lite-landing-tabs th,
-.ccxp-lite-landing-tabs font,
-.ccxp-lite-landing-tabs span,
-.ccxp-lite-landing-tabs div,
-.ccxp-lite-landing-tabs p,
-.ccxp-lite-landing-tabs li,
-.ccxp-lite-landing-tabs a,
-.ccxp-lite-landing-tabs button,
-.ccxp-lite-landing-tabs input,
-.ccxp-lite-landing-tabs select,
-.ccxp-lite-landing-tabs textarea,
-.ccxp-lite-landing-support-only,
-.ccxp-lite-landing-support-only td,
-.ccxp-lite-landing-support-only th,
-.ccxp-lite-landing-support-only font,
-.ccxp-lite-landing-support-only span,
-.ccxp-lite-landing-support-only div,
-.ccxp-lite-landing-support-only p,
-.ccxp-lite-landing-support-only li,
-.ccxp-lite-landing-support-only a,
-.ccxp-lite-landing-support-only button,
-.ccxp-lite-landing-support-only input,
-.ccxp-lite-landing-support-only select,
-.ccxp-lite-landing-support-only textarea {
-  font-size: var(--ccxp-lite-font-size-body) !important;
-}
-
 .ccxp-lite-landing-brand-title {
   font-size: var(--ccxp-lite-font-size-sidebar-brand) !important;
 }
