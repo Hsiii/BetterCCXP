@@ -325,6 +325,10 @@
     }
 
     const searchInput = shell.querySelector(".ccxp-lite-sidebar-search-input");
+    if (searchInput && searchInput.dataset.ccxpLiteSearchBound !== "true") {
+      searchInput.addEventListener("input", () => renderSidebar(navDocument, model, strings));
+      searchInput.dataset.ccxpLiteSearchBound = "true";
+    }
     const searchQuery = searchInput ? searchInput.value.trim() : "";
     const activeModel = searchQuery
       ? filterSidebarModel(model, searchQuery)
@@ -436,9 +440,6 @@
     input.spellcheck = false;
     input.placeholder = strings.sidebarSearchPlaceholder;
     input.setAttribute("aria-label", strings.sidebarSearchPlaceholder);
-    input.addEventListener("input", () => {
-      renderSidebar(targetDocument, buildSidebarModel(parseSidebarTree(targetDocument), targetDocument), getLocalizedStrings(resolveLocaleFromDocument(targetDocument)));
-    });
     search.appendChild(input);
 
     return search;
