@@ -87,6 +87,15 @@
           background: #ffffff !important;
         }
 
+        body {
+          opacity: 0 !important;
+        }
+
+        body[data-ccxp-lite-loading-ready="true"] {
+          opacity: 1 !important;
+          transition: opacity 120ms ease;
+        }
+
         #${LOADING_SPRITE_ID} {
           position: fixed;
           inset: 0;
@@ -128,6 +137,10 @@
 
   function releaseLoadingSprite(targetDocument) {
     const sprite = targetDocument.getElementById(LOADING_SPRITE_ID);
+    if (targetDocument.body) {
+      targetDocument.body.dataset.ccxpLiteLoadingReady = "true";
+    }
+
     if (!sprite) {
       return;
     }
