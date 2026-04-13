@@ -1,7 +1,7 @@
 (function registerCcxpLiteLanding(globalScope) {
   const namespace = globalScope.CCXP_LITE || (globalScope.CCXP_LITE = {});
   const { shared } = namespace;
-  const { TOKENS, STRINGS, ASSETS, ensureThemeDocument, createBrandImage, createBrandCopy, moveChildNodes, removeNode, isDocumentComplete } = shared;
+  const { TOKENS, ASSETS, ensureThemeDocument, getLocalizedStrings, createBrandImage, createBrandCopy, moveChildNodes, removeNode, isDocumentComplete } = shared;
 
   function isSupportedInquirePath(targetDocument) {
     const pathName = ((targetDocument.location && targetDocument.location.pathname) || "").toLowerCase();
@@ -105,14 +105,6 @@
     return /[\u3400-\u9fff]/.test(sampleText) ? "zh" : "en";
   }
 
-  function getLandingLoginTitle(targetDocument, languageLinks, loginSourceCell, loginForm) {
-    const locale = resolveLandingLocale(targetDocument, languageLinks, loginSourceCell, loginForm);
-    if (locale === "zh") {
-      return "登入";
-    }
-    return "Login";
-  }
-
   function getLoginForm(targetDocument) {
     const forms = Array.from(targetDocument.querySelectorAll("form"));
 
@@ -193,6 +185,8 @@
     const utilityLinks = findUtilityLinksTable(targetDocument);
     const cannotLoginLink = findCannotLoginLink(targetDocument, utilityLinks);
     const serviceLink = findServiceLink(targetDocument);
+    const locale = resolveLandingLocale(targetDocument, languageLinks, loginSourceCell, loginForm);
+    const strings = getLocalizedStrings(locale);
 
     if (!loginSourceCell) {
       retryFn();
@@ -220,7 +214,7 @@
         targetDocument,
         "ccxp-lite-landing-brand-copy ccxp-lite-sidebar-brand-copy",
         "ccxp-lite-sidebar-brand-title",
-        STRINGS.sidebarTitle
+        strings.sidebarTitle
       )
     );
 
@@ -230,7 +224,7 @@
 
     const loginHeaderLabel = targetDocument.createElement("h1");
     loginHeaderLabel.className = "ccxp-lite-landing-login-label";
-    loginHeaderLabel.textContent = getLandingLoginTitle(targetDocument, languageLinks, loginSourceCell, loginForm);
+    loginHeaderLabel.textContent = strings.loginTitle;
     loginSection.appendChild(loginHeaderLabel);
 
     if (loginForm) {
@@ -258,7 +252,7 @@
       headerSection.appendChild(langSection);
     }
 
-    const utilityHeaderLinks = buildHeaderUtilityLinks(targetDocument, utilityLinks, cannotLoginLink);
+    const utilityHeaderLinks = buildHeaderUtilityLinks(targetDocument, utilityLinks, cannotLoginLink, strings);
     if (utilityHeaderLinks) {
       if (languageLinks) {
         headerSection.insertBefore(utilityHeaderLinks, langSection);
@@ -276,7 +270,7 @@
     topSection.appendChild(loginSection);
     shell.appendChild(topSection);
 
-    const supportLinks = buildLandingSupportLinks(targetDocument, serviceLink, cannotLoginLink);
+    const supportLinks = buildLandingSupportLinks(targetDocument, serviceLink, cannotLoginLink, strings);
     if (serviceLink) {
       collapseLegacyServiceRow(serviceLink);
     }
@@ -300,7 +294,7 @@
         tabsSection.appendChild(tabContent);
       });
 
-      wireLandingTabs(targetDocument, tabNavigation, tabContents);
+      wireLandingTabs(targetDocument, tabNavigation, tabContents, strings);
       shell.appendChild(tabsSection);
     } else if (supportLinks) {
       const supportSection = createLandingSection(targetDocument, "ccxp-lite-landing-support-only");
@@ -309,7 +303,7 @@
     }
 
     if (announcementTable) {
-      prepareAnnouncementTable(announcementTable);
+      prepareAnnouncementTable(announcementTable, strings);
       noticesSection.appendChild(announcementTable);
       shell.appendChild(noticesSection);
     }
@@ -416,7 +410,7 @@
     return section;
   }
 
-  function wireLandingTabs(targetDocument, tabNavigation, tabContents) {
+  function wireLandingTabs(targetDocument, tabNavigation, tabContents, strings = getLocalizedStrings("zh")) {
     if (!tabNavigation || !Array.isArray(tabContents) || tabContents.length === 0) {
       return;
     }
@@ -468,7 +462,7 @@
     structureLandingTabNavigation(targetDocument, tabNavigation, buttonPanelMap);
 
     tabNavigation.setAttribute("role", "tablist");
-    tabNavigation.setAttribute("aria-label", "Portal sections");
+    tabNavigation.setAttribute("aria-label", strings.portalSectionsLabel);
 
     const uniquePanels = Array.from(new Set(buttonPanelMap.map((entry) => entry.panel)));
 
@@ -706,7 +700,7 @@
       .toLowerCase();
   }
 
-  function prepareAnnouncementTable(table) {
+  function prepareAnnouncementTable(table, strings = getLocalizedStrings("zh")) {
     if (!table || table.dataset.ccxpLiteAnnouncementPrepared === "true") {
       return;
     }
@@ -780,8 +774,8 @@
       row.classList.add("ccxp-lite-announcement-row");
       cells[0].classList.add("ccxp-lite-announcement-date");
       cells[1].classList.add("ccxp-lite-announcement-topic");
-      cells[0].setAttribute("data-label", "日期");
-      cells[1].setAttribute("data-label", "新聞主題");
+      cells[0].setAttribute("data-label", strings.announcementDate);
+      cells[1].setAttribute("data-label", strings.announcementTopic);
     });
 
     table.dataset.ccxpLiteAnnouncementPrepared = "true";
@@ -840,7 +834,7 @@
       || normalized.includes("cantlogin");
   }
 
-  function buildServicePhoneLink(targetDocument, serviceLinkNode) {
+  function buildServicePhoneLink(targetDocument, serviceLinkNode, strings = getLocalizedStrings("zh")) {
     if (!serviceLinkNode) {
       return null;
     }
@@ -849,15 +843,15 @@
       ? serviceLinkNode
       : serviceLinkNode.querySelector("a[href]");
 
-    return buildLandingSupportLink(targetDocument, sourceAnchor, "服務電話");
+    return buildLandingSupportLink(targetDocument, sourceAnchor, strings.servicePhone);
   }
 
-  function buildCannotLoginLink(targetDocument, sourceAnchor) {
+  function buildCannotLoginLink(targetDocument, sourceAnchor, strings = getLocalizedStrings("zh")) {
     if (!sourceAnchor) {
       return null;
     }
 
-    const labelText = String(sourceAnchor.textContent || "").trim() || "無法登入";
+    const labelText = String(sourceAnchor.textContent || "").trim() || strings.cannotLogin;
     return buildLandingSupportLink(targetDocument, sourceAnchor, labelText);
   }
 
@@ -881,9 +875,9 @@
     return anchor;
   }
 
-  function buildLandingSupportLinks(targetDocument, serviceLinkNode, cannotLoginAnchor) {
-    const servicePhoneLink = buildServicePhoneLink(targetDocument, serviceLinkNode);
-    const cannotLoginLink = buildCannotLoginLink(targetDocument, cannotLoginAnchor);
+  function buildLandingSupportLinks(targetDocument, serviceLinkNode, cannotLoginAnchor, strings = getLocalizedStrings("zh")) {
+    const servicePhoneLink = buildServicePhoneLink(targetDocument, serviceLinkNode, strings);
+    const cannotLoginLink = buildCannotLoginLink(targetDocument, cannotLoginAnchor, strings);
 
     if (!servicePhoneLink && !cannotLoginLink) {
       return null;
@@ -976,7 +970,7 @@
     }
   }
 
-  function buildHeaderUtilityLinks(targetDocument, utilityLinksTable, excludedAnchor) {
+  function buildHeaderUtilityLinks(targetDocument, utilityLinksTable, excludedAnchor, strings = getLocalizedStrings("zh")) {
     if (!utilityLinksTable) {
       return null;
     }
@@ -1000,7 +994,7 @@
 
     const nav = targetDocument.createElement("nav");
     nav.className = "ccxp-lite-landing-utility";
-    nav.setAttribute("aria-label", "External links");
+    nav.setAttribute("aria-label", strings.externalLinksLabel);
 
     anchors.forEach((sourceAnchor, index) => {
       const anchor = targetDocument.createElement("a");
@@ -1678,7 +1672,13 @@
 
       if (isVerificationAudioControl(imageNode)) {
         anchor.classList.add("ccxp-lite-audio-icon-link");
-        anchor.setAttribute("aria-label", resolveLegacyImageButtonLabel(imageNode) || "Play verification audio");
+        const locale = resolveLandingLocale(
+          targetDocument,
+          targetDocument.querySelector("ul.links"),
+          findLoginSourceCell(targetDocument, getLoginForm(targetDocument)),
+          getLoginForm(targetDocument)
+        );
+        anchor.setAttribute("aria-label", resolveLegacyImageButtonLabel(imageNode) || getLocalizedStrings(locale).playVerificationAudio);
         anchor.replaceChildren(createAudioIcon(targetDocument));
         anchor.dataset.ccxpLiteImageButtonReplaced = "true";
         return;
@@ -2062,7 +2062,7 @@
     button.className = "ccxp-lite-audio-icon-button";
     button.appendChild(createAudioIcon(targetDocument));
 
-    const label = resolveLegacyImageButtonLabel(inputNode) || "Play verification audio";
+    const label = resolveLegacyImageButtonLabel(inputNode) || getLocalizedStrings(targetDocument.documentElement.lang).playVerificationAudio;
     button.setAttribute("aria-label", label);
     button.title = label;
 

@@ -58,6 +58,35 @@
     emptyGroup: "此分類暫無可顯示項目"
   };
 
+  const LOCALIZED_STRINGS = {
+    en: {
+      sidebarTitle: "NTHU AIS",
+      landingTitle: "NTHU AIS Login",
+      loginTitle: "Login",
+      emptyGroup: "No items available in this section",
+      servicePhone: "Service Phone",
+      cannotLogin: "Can't log in?",
+      externalLinksLabel: "External links",
+      portalSectionsLabel: "Portal sections",
+      announcementDate: "Date",
+      announcementTopic: "Topic",
+      playVerificationAudio: "Play verification audio"
+    },
+    zh: {
+      sidebarTitle: "NTHU AIS",
+      landingTitle: "NTHU AIS LOGIN",
+      loginTitle: "登入",
+      emptyGroup: "此分類暫無可顯示項目",
+      servicePhone: "服務電話",
+      cannotLogin: "無法登入",
+      externalLinksLabel: "外部連結",
+      portalSectionsLabel: "入口分區",
+      announcementDate: "日期",
+      announcementTopic: "新聞主題",
+      playVerificationAudio: "播放驗證碼語音"
+    }
+  };
+
   const SIDEBAR_CATEGORIES = [
     {
       id: "profile",
@@ -233,10 +262,36 @@
     });
   }
 
+  function normalizeLocale(locale) {
+    const normalized = String(locale || "").toLowerCase();
+
+    if (normalized.startsWith("en")) {
+      return "en";
+    }
+
+    if (normalized.startsWith("zh") || normalized.startsWith("ch")) {
+      return "zh";
+    }
+
+    return "zh";
+  }
+
+  function resolveLocaleFromDocument(targetDocument) {
+    if (!targetDocument || !targetDocument.documentElement) {
+      return "zh";
+    }
+
+    return normalizeLocale(targetDocument.documentElement.lang);
+  }
+
+  function getLocalizedStrings(locale) {
+    return LOCALIZED_STRINGS[normalizeLocale(locale)] || LOCALIZED_STRINGS.zh;
+  }
+
   function createBrandImage(targetDocument, className, assetPath = ASSETS.brandLogoPath) {
     const image = targetDocument.createElement("img");
     image.className = className;
-    image.alt = STRINGS.sidebarTitle;
+    image.alt = getLocalizedStrings(resolveLocaleFromDocument(targetDocument)).sidebarTitle;
     image.src = chrome.runtime.getURL(assetPath);
     return image;
   }
@@ -281,9 +336,13 @@
   namespace.shared = {
     TOKENS,
     STRINGS,
+    LOCALIZED_STRINGS,
     SIDEBAR_CATEGORIES,
     ASSETS,
     ensureThemeDocument,
+    getLocalizedStrings,
+    normalizeLocale,
+    resolveLocaleFromDocument,
     createBrandImage,
     createBrandCopy,
     moveChildNodes,

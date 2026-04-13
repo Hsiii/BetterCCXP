@@ -20,7 +20,8 @@ const filesToPack = [
   "content.landing.css",
   "content.main.css",
   "content.sidebar.css",
-  "assets"
+  "assets",
+  "_locales"
 ];
 
 try {

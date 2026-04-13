@@ -1,7 +1,7 @@
 (function registerCcxpLiteSidebar(globalScope) {
   const namespace = globalScope.CCXP_LITE || (globalScope.CCXP_LITE = {});
   const { shared } = namespace;
-  const { TOKENS, STRINGS, SIDEBAR_CATEGORIES, ASSETS, ensureThemeDocument, createBrandImage, createBrandCopy } = shared;
+  const { TOKENS, STRINGS, SIDEBAR_CATEGORIES, ASSETS, ensureThemeDocument, getLocalizedStrings, resolveLocaleFromDocument, createBrandImage, createBrandCopy } = shared;
 
   function simplifySidebar(navFrame, retry) {
     const navDocument = navFrame.contentDocument;
@@ -24,6 +24,7 @@
     }
 
     ensureThemeDocument(navDocument, "nav");
+    const strings = getLocalizedStrings(resolveLocaleFromDocument(navDocument));
 
     if (navDocument.body.dataset.ccxpLiteSidebarApplied !== "true") {
       const helperFrame = navDocument.querySelector("iframe[name='frame_7472']");
@@ -33,7 +34,7 @@
       const brand = navDocument.createElement("div");
       brand.className = "ccxp-lite-sidebar-brand";
       brand.appendChild(createBrandImage(navDocument, "ccxp-lite-sidebar-brand-logo", ASSETS.sidebarBrandLogoPath));
-      brand.appendChild(createBrandCopy(navDocument, "ccxp-lite-sidebar-brand-copy", "ccxp-lite-sidebar-brand-title", STRINGS.sidebarTitle));
+      brand.appendChild(createBrandCopy(navDocument, "ccxp-lite-sidebar-brand-copy", "ccxp-lite-sidebar-brand-title", strings.sidebarTitle));
 
       const divider = navDocument.createElement("div");
       divider.className = "ccxp-lite-sidebar-divider";
@@ -56,7 +57,7 @@
     }
 
     const model = buildSidebarModel(rawTree, navDocument);
-    renderSidebar(navDocument, model);
+    renderSidebar(navDocument, model, strings);
   }
 
   function buildSidebarModel(root, navDocument) {
@@ -309,7 +310,7 @@
       .trim();
   }
 
-  function renderSidebar(navDocument, model) {
+  function renderSidebar(navDocument, model, strings = STRINGS) {
     const shell = navDocument.querySelector(`.${TOKENS.sidebarClass}`);
     if (!shell) {
       return;
@@ -335,7 +336,7 @@
       sidebarList.innerHTML = "";
 
       if (model.items.length === 0) {
-        sidebarList.innerHTML = `<div class="ccxp-lite-empty">${STRINGS.emptyGroup}</div>`;
+        sidebarList.innerHTML = `<div class="ccxp-lite-empty">${strings.emptyGroup}</div>`;
         return;
       }
 
@@ -402,7 +403,7 @@
       } else {
         const empty = targetDocument.createElement("div");
         empty.className = "ccxp-lite-empty";
-        empty.textContent = STRINGS.emptyGroup;
+        empty.textContent = strings.emptyGroup;
         linkList.appendChild(empty);
       }
     }
