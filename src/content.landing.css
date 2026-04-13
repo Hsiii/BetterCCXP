@@ -805,11 +805,6 @@ html[data-ccxp-lite-scope="landing"] [size="2" i] {
   font-size: var(--ccxp-lite-font-size-sidebar-brand) !important;
 }
 
-.ccxp-lite-landing-login-label,
-.ccxp-lite-landing-login .td26 {
-  font-size: var(--ccxp-lite-font-size-page-title) !important;
-}
-
 .ccxp-lite-landing-links table {
   width: 100% !important;
 }
