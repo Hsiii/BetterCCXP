@@ -745,21 +745,19 @@
     const headerCell = rows
       .flatMap((row) => Array.from(row.cells || []))
       .find((cell) => cell.classList.contains("board_item"));
-    if (headerCell) {
-      headerCell.classList.add("ccxp-lite-announcement-title");
-    }
+    const titleText = String(headerCell ? headerCell.textContent : "")
+      .replace(/\s+/g, " ")
+      .trim();
 
     const headerRow = rows.find((row) => {
       const cells = Array.from(row.cells || []);
       return cells.filter((cell) => cell.classList.contains("board_subject")).length >= 2;
     });
     if (headerRow) {
-      headerRow.classList.add("ccxp-lite-announcement-head-row");
-      Array.from(headerRow.cells || []).forEach((cell) => {
-        cell.classList.add("ccxp-lite-announcement-head-cell");
-      });
+      removeNode(headerRow);
     }
 
+    const entries = [];
     rows.forEach((row) => {
       const cells = Array.from(row.cells || []);
       if (cells.length < 2) {
@@ -771,12 +769,59 @@
         return;
       }
 
-      row.classList.add("ccxp-lite-announcement-row");
-      cells[0].classList.add("ccxp-lite-announcement-date");
-      cells[1].classList.add("ccxp-lite-announcement-topic");
-      cells[0].setAttribute("data-label", strings.announcementDate);
-      cells[1].setAttribute("data-label", strings.announcementTopic);
+      const topicCell = cells[1];
+      const topicContent = topicCell.cloneNode(true);
+      entries.push({
+        date: rawDate,
+        topicContent
+      });
     });
+
+    const tbody = table.tBodies[0] || table.appendChild(table.ownerDocument.createElement("tbody"));
+    tbody.replaceChildren();
+
+    const titleRow = table.ownerDocument.createElement("tr");
+    titleRow.className = "ccxp-lite-announcement-title-row";
+    const titleCell = table.ownerDocument.createElement("td");
+    titleCell.className = "ccxp-lite-announcement-title";
+    titleCell.textContent = titleText || strings.sidebarCategoryAnnouncementsAndVoting;
+    titleRow.appendChild(titleCell);
+
+    const contentRow = table.ownerDocument.createElement("tr");
+    contentRow.className = "ccxp-lite-announcement-scroll-row";
+    const contentCell = table.ownerDocument.createElement("td");
+    contentCell.className = "ccxp-lite-announcement-content-cell";
+
+    const list = table.ownerDocument.createElement("div");
+    list.className = "ccxp-lite-announcement-list";
+
+    entries.forEach((entry) => {
+      const item = table.ownerDocument.createElement("article");
+      item.className = "ccxp-lite-announcement-row";
+
+      const entryRow = table.ownerDocument.createElement("div");
+      entryRow.className = "ccxp-lite-announcement-entry";
+
+      const body = table.ownerDocument.createElement("div");
+      body.className = "ccxp-lite-announcement-topic";
+      while (entry.topicContent.firstChild) {
+        body.appendChild(entry.topicContent.firstChild);
+      }
+
+      const date = table.ownerDocument.createElement("div");
+      date.className = "ccxp-lite-announcement-date";
+      date.textContent = entry.date;
+
+      entryRow.appendChild(body);
+      entryRow.appendChild(date);
+      item.appendChild(entryRow);
+      list.appendChild(item);
+    });
+
+    contentCell.appendChild(list);
+    contentRow.appendChild(contentCell);
+    tbody.appendChild(titleRow);
+    tbody.appendChild(contentRow);
 
     table.dataset.ccxpLiteAnnouncementPrepared = "true";
   }
