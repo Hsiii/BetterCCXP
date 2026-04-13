@@ -39,11 +39,14 @@
       const divider = navDocument.createElement("div");
       divider.className = "ccxp-lite-sidebar-divider";
 
+      const search = createSidebarSearch(navDocument, strings);
+
       const list = navDocument.createElement("aside");
       list.className = "ccxp-lite-sidebar-list";
 
       shell.appendChild(brand);
       shell.appendChild(divider);
+      shell.appendChild(search);
       shell.appendChild(list);
 
       navDocument.body.replaceChildren(shell);
@@ -321,26 +324,35 @@
       return;
     }
 
+    const searchInput = shell.querySelector(".ccxp-lite-sidebar-search-input");
+    const searchQuery = searchInput ? searchInput.value.trim() : "";
+    const activeModel = searchQuery
+      ? filterSidebarModel(model, searchQuery)
+      : model;
     const initialExpandedIds = new Set(model.initialExpandedItemIds || []);
     const storedExpandedIds = shell.dataset.expandedItemIds
       ? shell.dataset.expandedItemIds.split(",").filter(Boolean)
       : null;
     let expandedItemIds = new Set(
-      storedExpandedIds && storedExpandedIds.length > 0
-        ? storedExpandedIds.filter((itemId) => model.items.some((item) => hasExpandableId(item, itemId)))
-        : Array.from(initialExpandedIds)
+      searchQuery
+        ? Array.from(activeModel.initialExpandedItemIds || [])
+        : storedExpandedIds && storedExpandedIds.length > 0
+          ? storedExpandedIds.filter((itemId) => model.items.some((item) => hasExpandableId(item, itemId)))
+          : Array.from(initialExpandedIds)
     );
 
     const renderItems = () => {
-      shell.dataset.expandedItemIds = Array.from(expandedItemIds).join(",");
+      if (!searchQuery) {
+        shell.dataset.expandedItemIds = Array.from(expandedItemIds).join(",");
+      }
       sidebarList.innerHTML = "";
 
-      if (model.items.length === 0) {
-        sidebarList.innerHTML = `<div class="ccxp-lite-empty">${strings.emptyGroup}</div>`;
+      if (activeModel.items.length === 0) {
+        sidebarList.innerHTML = `<div class="ccxp-lite-empty">${searchQuery ? strings.sidebarSearchNoResults : strings.emptyGroup}</div>`;
         return;
       }
 
-      model.items.forEach((item) => {
+      activeModel.items.forEach((item) => {
         if (item.kind === "category" || item.kind === "group" || item.kind === "section") {
           sidebarList.appendChild(createExpandableGroup(navDocument, item, expandedItemIds, 0, (groupId) => {
             if (expandedItemIds.has(groupId)) {
@@ -409,6 +421,98 @@
     }
 
     return linkList;
+  }
+
+  function createSidebarSearch(targetDocument, strings) {
+    const search = targetDocument.createElement("label");
+    search.className = "ccxp-lite-sidebar-search";
+
+    search.appendChild(createSearchIcon(targetDocument));
+
+    const input = targetDocument.createElement("input");
+    input.className = "ccxp-lite-sidebar-search-input";
+    input.type = "search";
+    input.autocomplete = "off";
+    input.spellcheck = false;
+    input.placeholder = strings.sidebarSearchPlaceholder;
+    input.setAttribute("aria-label", strings.sidebarSearchPlaceholder);
+    input.addEventListener("input", () => {
+      renderSidebar(targetDocument, buildSidebarModel(parseSidebarTree(targetDocument), targetDocument), getLocalizedStrings(resolveLocaleFromDocument(targetDocument)));
+    });
+    search.appendChild(input);
+
+    return search;
+  }
+
+  function filterSidebarModel(model, query) {
+    const normalizedQuery = normalizeSearchText(query);
+    if (!normalizedQuery) {
+      return model;
+    }
+
+    const expandedItemIds = new Set();
+    const items = (model.items || [])
+      .map((item) => filterSidebarItem(item, normalizedQuery, expandedItemIds))
+      .filter(Boolean);
+
+    return {
+      items,
+      initialExpandedItemIds: Array.from(expandedItemIds)
+    };
+  }
+
+  function filterSidebarItem(item, normalizedQuery, expandedItemIds) {
+    if (!item) {
+      return null;
+    }
+
+    if (item.kind === "link") {
+      return isSearchMatch(item.label, normalizedQuery) ? item : null;
+    }
+
+    const directLinks = (item.directLinks || []).filter((linkItem) => isSearchMatch(linkItem.label, normalizedQuery));
+    const sections = (item.sections || [])
+      .map((section) => filterSidebarItem(section, normalizedQuery, expandedItemIds))
+      .filter(Boolean);
+    const itemMatches = isSearchMatch(item.label, normalizedQuery);
+
+    if (!itemMatches && directLinks.length === 0 && sections.length === 0) {
+      return null;
+    }
+
+    if (sections.length > 0 || (!itemMatches && directLinks.length > 0)) {
+      expandedItemIds.add(item.id);
+    }
+
+    if (itemMatches) {
+      collectExpandableIds(item, expandedItemIds);
+    }
+
+    return {
+      ...item,
+      directLinks: itemMatches ? item.directLinks : directLinks,
+      sections: itemMatches ? item.sections : sections
+    };
+  }
+
+  function collectExpandableIds(item, expandedItemIds) {
+    if (!item || !expandedItemIds || (item.kind !== "category" && item.kind !== "group" && item.kind !== "section")) {
+      return;
+    }
+
+    expandedItemIds.add(item.id);
+    (item.sections || []).forEach((section) => collectExpandableIds(section, expandedItemIds));
+  }
+
+  function isSearchMatch(text, normalizedQuery) {
+    return normalizeSearchText(text).includes(normalizedQuery);
+  }
+
+  function normalizeSearchText(text) {
+    return String(text || "")
+      .toLowerCase()
+      .replace(/\s+/g, " ")
+      .trim();
   }
 
   function createLinkButton(targetDocument, linkItem, toneClass, depth) {
@@ -518,6 +622,26 @@
     icon.setAttribute("aria-hidden", "true");
 
     ["M15 3h6v6", "M10 14 21 3", "M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"].forEach((pathData) => {
+      const path = targetDocument.createElementNS("http://www.w3.org/2000/svg", "path");
+      path.setAttribute("d", pathData);
+      icon.appendChild(path);
+    });
+
+    return icon;
+  }
+
+  function createSearchIcon(targetDocument) {
+    const icon = targetDocument.createElementNS("http://www.w3.org/2000/svg", "svg");
+    icon.setAttribute("class", "ccxp-lite-sidebar-search-icon");
+    icon.setAttribute("viewBox", "0 0 24 24");
+    icon.setAttribute("fill", "none");
+    icon.setAttribute("stroke", "currentColor");
+    icon.setAttribute("stroke-width", "2");
+    icon.setAttribute("stroke-linecap", "round");
+    icon.setAttribute("stroke-linejoin", "round");
+    icon.setAttribute("aria-hidden", "true");
+
+    ["M11 19a8 8 0 1 1 0-16 8 8 0 0 1 0 16", "m21 21-4.3-4.3"].forEach((pathData) => {
       const path = targetDocument.createElementNS("http://www.w3.org/2000/svg", "path");
       path.setAttribute("d", pathData);
       icon.appendChild(path);
