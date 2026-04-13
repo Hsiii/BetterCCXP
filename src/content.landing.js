@@ -1405,6 +1405,7 @@
     forms.forEach((formNode) => {
       if (formNode.dataset.ccxpLiteFormStructured !== "true") {
         structureLoginFormRows(rootNode.ownerDocument, formNode);
+        rebuildFlatLoginFormLabels(rootNode.ownerDocument, formNode);
         groupLoginFieldRows(rootNode.ownerDocument, formNode);
       }
 
@@ -1448,6 +1449,39 @@
     });
   }
 
+  function rebuildFlatLoginFormLabels(targetDocument, formNode) {
+    const fields = Array.from(formNode.querySelectorAll("input, select, textarea"));
+
+    fields.forEach((fieldNode, fieldIndex) => {
+      const inputType = (fieldNode.getAttribute("type") || "text").toLowerCase();
+      if (["hidden", "submit", "button", "image", "reset", "checkbox", "radio", "file"].includes(inputType)) {
+        return;
+      }
+
+      if (fieldNode.parentNode !== formNode) {
+        return;
+      }
+
+      const labelSourceNode = findLegacyInlineLabelNode(fieldNode, formNode);
+      if (!labelSourceNode) {
+        return;
+      }
+
+      const labelText = getNodeText(labelSourceNode);
+      if (!labelText) {
+        return;
+      }
+
+      const fieldId = ensureFieldId(fieldNode, fieldIndex);
+      const labelNode = targetDocument.createElement("label");
+      labelNode.className = "ccxp-lite-login-field-label";
+      labelNode.setAttribute("for", fieldId);
+      labelNode.textContent = labelText;
+
+      labelSourceNode.replaceWith(labelNode);
+    });
+  }
+
   function buildLoginFieldRow(targetDocument, fieldPair, fieldId, columnCount) {
     const row = targetDocument.createElement("tr");
     row.className = "ccxp-lite-login-field-row";
@@ -1462,10 +1496,11 @@
     const label = targetDocument.createElement("label");
     label.className = "ccxp-lite-login-field-label";
     label.setAttribute("for", fieldId);
-    injectLoginFieldLabelContent(targetDocument, label, fieldPair);
+    label.textContent = resolveLoginFieldLabel(fieldPair, targetDocument);
 
     const controlWrap = targetDocument.createElement("div");
     controlWrap.className = "ccxp-lite-login-field-control";
+    removeInlineLoginLabelNodes(fieldPair.fieldCell, fieldPair.fieldNode);
     moveChildNodes(fieldPair.fieldCell, controlWrap);
 
     fieldGroup.appendChild(label);
@@ -1531,12 +1566,11 @@
 
       const fieldCellIndex = cells.indexOf(fieldCell);
       const labelCell = resolveLabelCellForField(cells, fieldCellIndex >= 0 ? fieldCellIndex : cellIndex);
-      const labelText = getNodeText(labelCell);
+      const labelText = getPreferredLoginLabelText(labelCell, fieldCell, fieldNode);
 
       pairs.push({
         fieldNode,
         fieldCell,
-        labelCell,
         labelText
       });
 
@@ -1558,8 +1592,7 @@
     pairs.push({
       fieldNode: fallbackFieldNode,
       fieldCell: fallbackFieldCell,
-      labelCell: fallbackLabelCell,
-      labelText: getNodeText(fallbackLabelCell)
+      labelText: getPreferredLoginLabelText(fallbackLabelCell, fallbackFieldCell, fallbackFieldNode)
     });
 
     return pairs;
@@ -1592,6 +1625,48 @@
       .trim();
   }
 
+  function findLegacyInlineLabelNode(fieldNode, boundaryNode) {
+    let currentNode = fieldNode.previousSibling;
+
+    while (currentNode && currentNode !== boundaryNode) {
+      if (currentNode.nodeType === Node.TEXT_NODE && !getNodeText(currentNode)) {
+        currentNode = currentNode.previousSibling;
+        continue;
+      }
+
+      if (currentNode.nodeType === Node.ELEMENT_NODE) {
+        const tagName = currentNode.tagName.toLowerCase();
+
+        if (tagName === "br") {
+          currentNode = currentNode.previousSibling;
+          continue;
+        }
+
+        if (["svg", "img", "a", "button"].includes(tagName)) {
+          currentNode = currentNode.previousSibling;
+          continue;
+        }
+
+        if (tagName === "label" && currentNode.classList.contains("ccxp-lite-login-field-label")) {
+          return null;
+        }
+      }
+
+      return getNodeText(currentNode) ? currentNode : null;
+    }
+
+    return null;
+  }
+
+  function getPreferredLoginLabelText(labelCell, fieldCell, fieldNode) {
+    const explicitLabel = getNodeText(labelCell);
+    if (explicitLabel) {
+      return explicitLabel;
+    }
+
+    return getInlineLoginLabelText(fieldCell, fieldNode);
+  }
+
   function resolveLoginFieldLabel(fieldPair, targetDocument) {
     const explicitLabel = String(fieldPair && fieldPair.labelText || "").trim();
     if (explicitLabel) {
@@ -1622,57 +1697,47 @@
     return fieldName || strings.fieldGeneric;
   }
 
-  function injectLoginFieldLabelContent(targetDocument, labelNode, fieldPair) {
-    const labelContentNodes = cloneLoginFieldLabelNodes(targetDocument, fieldPair && fieldPair.labelCell);
-
-    if (labelContentNodes.length > 0) {
-      labelNode.replaceChildren(...labelContentNodes);
-      return;
+  function getInlineLoginLabelText(fieldCell, fieldNode) {
+    if (!fieldCell || !fieldNode) {
+      return "";
     }
 
-    labelNode.textContent = resolveLoginFieldLabel(fieldPair, targetDocument);
+    const leadingNodes = collectLeadingNodesBeforeField(fieldCell, fieldNode);
+    return leadingNodes
+      .map((node) => getNodeText(node))
+      .join(" ")
+      .replace(/\s+/g, " ")
+      .trim();
   }
 
-  function cloneLoginFieldLabelNodes(targetDocument, labelCell) {
-    if (!labelCell) {
+  function removeInlineLoginLabelNodes(fieldCell, fieldNode) {
+    collectLeadingNodesBeforeField(fieldCell, fieldNode).forEach((node) => {
+      removeNode(node);
+    });
+  }
+
+  function collectLeadingNodesBeforeField(fieldCell, fieldNode) {
+    if (!fieldCell || !fieldNode || fieldNode.parentNode !== fieldCell) {
       return [];
     }
 
-    const fragment = targetDocument.createDocumentFragment();
-    Array.from(labelCell.childNodes).forEach((childNode) => {
-      fragment.appendChild(sanitizeLoginLabelNodeClone(childNode.cloneNode(true), targetDocument));
-    });
+    const leadingNodes = [];
+    let currentNode = fieldCell.firstChild;
+    while (currentNode && currentNode !== fieldNode) {
+      const nextNode = currentNode.nextSibling;
+      const textContent = getNodeText(currentNode);
+      const isBreak = currentNode.nodeType === Node.ELEMENT_NODE
+        && currentNode.tagName
+        && currentNode.tagName.toLowerCase() === "br";
 
-    const hasMeaningfulContent = Array.from(fragment.childNodes).some((node) => getNodeText(node));
-    if (!hasMeaningfulContent) {
-      return [];
+      if (textContent || isBreak) {
+        leadingNodes.push(currentNode);
+      }
+
+      currentNode = nextNode;
     }
 
-    return Array.from(fragment.childNodes);
-  }
-
-  function sanitizeLoginLabelNodeClone(node, targetDocument) {
-    if (!node) {
-      return targetDocument.createTextNode("");
-    }
-
-    if (node.nodeType !== Node.ELEMENT_NODE) {
-      return node;
-    }
-
-    node.removeAttribute("style");
-    node.removeAttribute("size");
-    node.removeAttribute("color");
-    node.removeAttribute("face");
-    node.removeAttribute("width");
-    node.removeAttribute("height");
-    node.removeAttribute("id");
-
-    Array.from(node.children).forEach((childNode) => {
-      sanitizeLoginLabelNodeClone(childNode, targetDocument);
-    });
-
-    return node;
+    return leadingNodes;
   }
 
   function findPrimaryFieldControl(scopeNode) {
