@@ -1005,7 +1005,6 @@ html[data-ccxp-lite-scope="landing"] [size="2" i] {
 .ccxp-lite-landing-notices .ccxp-lite-announcement-topic,
 .ccxp-lite-landing-notices .ccxp-lite-announcement-topic * {
   color: var(--ccxp-lite-type-body-color) !important;
-  font: inherit !important;
   border-bottom: 0 !important;
 }
 
