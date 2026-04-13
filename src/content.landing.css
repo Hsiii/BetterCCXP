@@ -1012,11 +1012,17 @@ html[data-ccxp-lite-scope="landing"] [size="2" i] {
 .ccxp-lite-landing-notices .ccxp-lite-announcement-topic * {
   color: var(--ccxp-lite-type-body-color) !important;
   font: inherit !important;
+  border-bottom: 0 !important;
 }
 
 .ccxp-lite-landing-notices .ccxp-lite-announcement-topic [style*="color" i],
 .ccxp-lite-landing-notices .ccxp-lite-announcement-topic [color] {
   color: var(--ccxp-lite-type-body-color) !important;
+}
+
+.ccxp-lite-landing-notices .ccxp-lite-announcement-topic [style*="border-bottom" i],
+.ccxp-lite-landing-notices .ccxp-lite-announcement-topic [style*="border-bottom:" i] {
+  border-bottom: 0 !important;
 }
 
 .ccxp-lite-landing-notices .ccxp-lite-announcement-topic p,
