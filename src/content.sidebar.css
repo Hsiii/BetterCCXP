@@ -23,7 +23,7 @@ html[data-ccxp-lite-scope="nav"] body {
   display: grid;
   grid-template-columns: var(--ccxp-lite-size-sidebar-brand-logo) minmax(0, 1fr);
   align-items: center;
-  gap: 8px;
+  gap: var(--ccxp-lite-spacing-brand-inline);
   padding: 4px 6px 18px;
   font-family: var(--ccxp-lite-font-brand);
   font-size: var(--ccxp-lite-font-size-sidebar-brand);
@@ -158,7 +158,7 @@ html[data-ccxp-lite-scope="nav"] body {
 .ccxp-lite-row-label-wrap {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--ccxp-lite-spacing-brand-inline);
   min-width: 0;
   flex: 1 1 auto;
 }

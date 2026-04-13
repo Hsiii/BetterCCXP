@@ -205,7 +205,7 @@ html[data-ccxp-lite-scope="landing"] [size="2" i] {
   grid-column: 1;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--ccxp-lite-spacing-brand-inline);
   justify-self: start;
 }
 
