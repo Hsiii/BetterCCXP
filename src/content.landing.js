@@ -1462,7 +1462,7 @@
     const label = targetDocument.createElement("label");
     label.className = "ccxp-lite-login-field-label";
     label.setAttribute("for", fieldId);
-    label.textContent = resolveLoginFieldLabel(fieldPair, targetDocument);
+    injectLoginFieldLabelContent(targetDocument, label, fieldPair);
 
     const controlWrap = targetDocument.createElement("div");
     controlWrap.className = "ccxp-lite-login-field-control";
@@ -1536,6 +1536,7 @@
       pairs.push({
         fieldNode,
         fieldCell,
+        labelCell,
         labelText
       });
 
@@ -1557,6 +1558,7 @@
     pairs.push({
       fieldNode: fallbackFieldNode,
       fieldCell: fallbackFieldCell,
+      labelCell: fallbackLabelCell,
       labelText: getNodeText(fallbackLabelCell)
     });
 
@@ -1618,6 +1620,59 @@
     }
 
     return fieldName || strings.fieldGeneric;
+  }
+
+  function injectLoginFieldLabelContent(targetDocument, labelNode, fieldPair) {
+    const labelContentNodes = cloneLoginFieldLabelNodes(targetDocument, fieldPair && fieldPair.labelCell);
+
+    if (labelContentNodes.length > 0) {
+      labelNode.replaceChildren(...labelContentNodes);
+      return;
+    }
+
+    labelNode.textContent = resolveLoginFieldLabel(fieldPair, targetDocument);
+  }
+
+  function cloneLoginFieldLabelNodes(targetDocument, labelCell) {
+    if (!labelCell) {
+      return [];
+    }
+
+    const fragment = targetDocument.createDocumentFragment();
+    Array.from(labelCell.childNodes).forEach((childNode) => {
+      fragment.appendChild(sanitizeLoginLabelNodeClone(childNode.cloneNode(true), targetDocument));
+    });
+
+    const hasMeaningfulContent = Array.from(fragment.childNodes).some((node) => getNodeText(node));
+    if (!hasMeaningfulContent) {
+      return [];
+    }
+
+    return Array.from(fragment.childNodes);
+  }
+
+  function sanitizeLoginLabelNodeClone(node, targetDocument) {
+    if (!node) {
+      return targetDocument.createTextNode("");
+    }
+
+    if (node.nodeType !== Node.ELEMENT_NODE) {
+      return node;
+    }
+
+    node.removeAttribute("style");
+    node.removeAttribute("size");
+    node.removeAttribute("color");
+    node.removeAttribute("face");
+    node.removeAttribute("width");
+    node.removeAttribute("height");
+    node.removeAttribute("id");
+
+    Array.from(node.children).forEach((childNode) => {
+      sanitizeLoginLabelNodeClone(childNode, targetDocument);
+    });
+
+    return node;
   }
 
   function findPrimaryFieldControl(scopeNode) {
