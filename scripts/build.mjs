@@ -23,6 +23,7 @@ const filesToPack = [
   "assets",
   "_locales"
 ];
+const recursiveEntries = new Set(["assets", "_locales"]);
 
 try {
   mkdirSync(distDir, { recursive: true });
@@ -37,7 +38,7 @@ try {
 
     const destinationPath = join(stagingDir, fileName);
 
-    if (fileName === "assets") {
+    if (recursiveEntries.has(fileName)) {
       cpSync(sourcePath, destinationPath, { recursive: true });
       continue;
     }
