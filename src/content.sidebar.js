@@ -56,15 +56,15 @@
       navDocument.body.dataset.ccxpLiteSidebarApplied = "true";
     }
 
-    const model = buildSidebarModel(rawTree, navDocument);
+    const model = buildSidebarModel(rawTree, navDocument, strings);
     renderSidebar(navDocument, model, strings);
   }
 
-  function buildSidebarModel(root, navDocument) {
+  function buildSidebarModel(root, navDocument, strings) {
     const normalizedItems = (root.children || [])
       .map((entry, index) => normalizeRootEntry(entry, index, navDocument))
       .filter(Boolean);
-    const items = buildCategorizedSidebarItems(normalizedItems);
+    const items = buildCategorizedSidebarItems(normalizedItems, strings);
 
     return {
       items,
@@ -72,7 +72,7 @@
     };
   }
 
-  function buildCategorizedSidebarItems(items) {
+  function buildCategorizedSidebarItems(items, strings = STRINGS) {
     const buckets = new Map(SIDEBAR_CATEGORIES.map((category) => [category.id, []]));
 
     items.forEach((item) => {
@@ -91,7 +91,7 @@
 
         return {
           id: `category-${category.id}`,
-          label: category.label,
+          label: strings[category.labelKey] || category.fallbackLabel || category.id,
           icon: category.icon,
           directLinks: categoryItems.filter((item) => item.kind === "link").map((item) => item.linkItem),
           sections: categoryItems.filter((item) => item.kind !== "link"),

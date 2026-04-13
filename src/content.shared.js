@@ -34,9 +34,9 @@
     fontWeightStrong: "700",
     fontWeightHeavy: "800",
     fontSizeCaption: "12px",
-    fontSizeNav: "13px",
+    fontSizeNav: "14px",
     fontSizeUtility: "14px",
-    fontSizeBody: "15px",
+    fontSizeBody: "16px",
     fontSizeSidebarBrand: "20px",
     sizeSidebarBrandLogo: "30px",
     sizeSidebarCategoryLeading: "1.5em",
@@ -52,12 +52,6 @@
     landingClass: "ccxp-lite-landing-shell"
   };
 
-  const STRINGS = {
-    sidebarTitle: "NTHU AIS",
-    landingTitle: "NTHU AIS LOGIN",
-    emptyGroup: "此分類暫無可顯示項目"
-  };
-
   const LOCALIZED_STRINGS = {
     en: {
       sidebarTitle: "NTHU AIS",
@@ -70,7 +64,20 @@
       portalSectionsLabel: "Portal sections",
       announcementDate: "Date",
       announcementTopic: "Topic",
-      playVerificationAudio: "Play verification audio"
+      playVerificationAudio: "Play verification audio",
+      showPassword: "Show password",
+      hidePassword: "Hide password",
+      sidebarCategoryProfile: "Personal Info",
+      sidebarCategoryPlanningAndEnrollment: "Planning & Enrollment",
+      sidebarCategoryCoursesAndGrades: "Courses & Grades",
+      sidebarCategoryTeachingFeedback: "Teaching Feedback",
+      sidebarCategoryStatusChanges: "Status Changes",
+      sidebarCategoryGraduationAndDefense: "Graduation & Defense",
+      sidebarCategoryPaymentsAndAid: "Payments & Aid",
+      sidebarCategoryHousingAndLife: "Housing & Life",
+      sidebarCategoryForms: "Forms",
+      sidebarCategoryCampusSystems: "Campus Systems",
+      sidebarCategoryAnnouncementsAndVoting: "Notices & Voting"
     },
     zh: {
       sidebarTitle: "NTHU AIS",
@@ -83,74 +90,100 @@
       portalSectionsLabel: "入口分區",
       announcementDate: "日期",
       announcementTopic: "新聞主題",
-      playVerificationAudio: "播放驗證碼語音"
+      playVerificationAudio: "播放驗證碼語音",
+      showPassword: "顯示密碼",
+      hidePassword: "隱藏密碼",
+      sidebarCategoryProfile: "個人資料",
+      sidebarCategoryPlanningAndEnrollment: "預排與選課",
+      sidebarCategoryCoursesAndGrades: "課程成績",
+      sidebarCategoryTeachingFeedback: "教學意見",
+      sidebarCategoryStatusChanges: "學籍異動",
+      sidebarCategoryGraduationAndDefense: "畢業與口試",
+      sidebarCategoryPaymentsAndAid: "繳費與補助",
+      sidebarCategoryHousingAndLife: "住宿與生活",
+      sidebarCategoryForms: "表單系統",
+      sidebarCategoryCampusSystems: "校園系統",
+      sidebarCategoryAnnouncementsAndVoting: "公告與投票"
     }
   };
+
+  const STRINGS = LOCALIZED_STRINGS.zh;
 
   const SIDEBAR_CATEGORIES = [
     {
       id: "profile",
-      label: "個人資料",
+      labelKey: "sidebarCategoryProfile",
+      fallbackLabel: "個人資料",
       icon: "circle-user-round",
       itemLabels: ["帳號相關維護", "個人資料維護", "導師聯繫資料", "原住民資料系統"]
     },
     {
       id: "planning-and-enrollment",
-      label: "預排與選課",
+      labelKey: "sidebarCategoryPlanningAndEnrollment",
+      fallbackLabel: "預排與選課",
       icon: "calendar-range",
       itemLabels: ["預排系統 Tentative schedule", "選課 Select courses", "校際/跨系統選修", "暑修 Summer courses"]
     },
     {
       id: "courses-and-grades",
-      label: "課程成績",
+      labelKey: "sidebarCategoryCoursesAndGrades",
+      fallbackLabel: "課程成績",
       icon: "notepad-text",
       itemLabels: ["課程、成績 Courses, transcript", "學分&抵免學分"]
     },
     {
       id: "teaching-feedback",
-      label: "教學意見",
+      labelKey: "sidebarCategoryTeachingFeedback",
+      fallbackLabel: "教學意見",
       icon: "message-square-more",
       itemLabels: ["教學意見 Comments about courses", "傑出教學教師票選", "教學助理評量問卷"]
     },
     {
       id: "status-changes",
-      label: "學籍異動",
+      labelKey: "sidebarCategoryStatusChanges",
+      fallbackLabel: "學籍異動",
       icon: "refresh-cw",
       itemLabels: ["申請復學", "保留生申請入學", "轉系所申請", "兵役業務"]
     },
     {
       id: "graduation-and-defense",
-      label: "畢業與口試",
+      labelKey: "sidebarCategoryGraduationAndDefense",
+      fallbackLabel: "畢業與口試",
       icon: "graduation-cap",
       itemLabels: ["畢業審查", "研究生學位考試", "畢業生離校系統", "數位學位證書", "袍服借用申請"]
     },
     {
       id: "payments-and-aid",
-      label: "繳費與補助",
+      labelKey: "sidebarCategoryPaymentsAndAid",
+      fallbackLabel: "繳費與補助",
       icon: "dollar-sign",
       itemLabels: ["繳費單相關作業(出納組)", "退費查詢", "所得相關查詢", "出納傳票付款查詢", "就學貸款", "弱勢助學作業", "學雜費減免作業", "國外差旅費"]
     },
     {
       id: "housing-and-life",
-      label: "住宿與生活",
+      labelKey: "sidebarCategoryHousingAndLife",
+      fallbackLabel: "住宿與生活",
       icon: "house",
       itemLabels: ["外宿資料", "學生宿舍相關", "健康照護系統", "職涯諮詢與評測"]
     },
     {
       id: "forms",
-      label: "表單系統",
+      labelKey: "sidebarCategoryForms",
+      fallbackLabel: "表單系統",
       icon: "notebook-pen",
       itemLabels: ["學生請假系統", "電子表單系統", "計畫差勤及臨時工時登錄系統", "出國申請與報告繳交系統", "校外實習登錄平台"]
     },
     {
       id: "campus-systems",
-      label: "校園系統",
+      labelKey: "sidebarCategoryCampusSystems",
+      fallbackLabel: "校園系統",
       icon: "school",
       itemLabels: ["學習平台", "計通中心相關服務", "研發處資訊系統", "校內其他系統", "明燈平台"]
     },
     {
       id: "announcements-and-voting",
-      label: "公告與投票",
+      labelKey: "sidebarCategoryAnnouncementsAndVoting",
+      fallbackLabel: "公告與投票",
       icon: "megaphone",
       itemLabels: ["會議紀錄", "校內業務公告", "線上投票系統", "線上投票系統(特殊投票)", "校園通報網"]
     }

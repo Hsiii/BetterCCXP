@@ -1242,6 +1242,12 @@
   function enhancePasswordVisibilityToggle(targetDocument, rootNode) {
     const passwordFields = Array.from(rootNode.querySelectorAll("input[name='passwd'], input[type='password']:not([name='passwd2'])"));
     const seen = new Set();
+    const strings = getLocalizedStrings(resolveLandingLocale(
+      targetDocument,
+      targetDocument.querySelector("ul.links"),
+      findLoginSourceCell(targetDocument, getLoginForm(targetDocument)),
+      getLoginForm(targetDocument)
+    ));
 
     passwordFields.forEach((field) => {
       if (!field || seen.has(field) || field.dataset.ccxpLitePasswordToggle === "true") {
@@ -1265,13 +1271,13 @@
       const toggleButton = targetDocument.createElement("button");
       toggleButton.type = "button";
       toggleButton.className = "ccxp-lite-password-toggle";
-      toggleButton.setAttribute("aria-label", "Show password");
+      toggleButton.setAttribute("aria-label", strings.showPassword);
       toggleButton.appendChild(createPasswordVisibilityIcon(targetDocument, false));
 
       toggleButton.addEventListener("click", () => {
         const isHidden = field.type !== "text";
         field.type = isHidden ? "text" : "password";
-        toggleButton.setAttribute("aria-label", isHidden ? "Hide password" : "Show password");
+        toggleButton.setAttribute("aria-label", isHidden ? strings.hidePassword : strings.showPassword);
         toggleButton.replaceChildren(createPasswordVisibilityIcon(targetDocument, isHidden));
       });
 

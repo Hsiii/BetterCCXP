@@ -197,7 +197,7 @@ html[data-ccxp-lite-scope="landing"] [size="2" i] {
   background: var(--ccxp-lite-sidebar-surface);
   padding: 12px;
   height: 64px; /* top padding + logo + bottom padding */
-  font-size: 20px;
+  font-size: var(--ccxp-lite-font-size-sidebar-brand);
   border-bottom: 1px solid var(--ccxp-lite-border);
 }
 
@@ -1071,7 +1071,7 @@ html[data-ccxp-lite-scope="landing"] [size="2" i] {
 
 .ccxp-lite-landing-tabs .tabcontent h3,
 .ccxp-lite-landing-tabs .tabcontent ul {
-  margin-block: 0.2em;
+  margin-block: 4px;
 }
 
 .ccxp-lite-landing-tabs .tabcontent h3 {

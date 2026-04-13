@@ -113,8 +113,7 @@
           left: 50%;
           width: 22px;
           height: 22px;
-          margin-top: -11px;
-          margin-left: -11px;
+          transform: translate(-50%, -50%);
           border-radius: 999px;
           background: #ffffff;
           box-shadow: 0 0 0 1px rgba(17, 24, 39, 0.08), 0 8px 24px rgba(17, 24, 39, 0.08);
