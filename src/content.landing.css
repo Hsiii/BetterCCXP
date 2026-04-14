@@ -462,6 +462,10 @@ html[data-ccxp-lite-scope="landing"] [size="2" i] {
   margin: 0 !important;
 }
 
+.ccxp-lite-landing-login form.ccxp-lite-login-form .ccxp-lite-login-field-label {
+  margin-bottom: -4px !important;
+}
+
 .ccxp-lite-landing-login .ccxp-lite-login-fields {
   display: flex;
   flex-direction: column;
@@ -542,7 +546,6 @@ html[data-ccxp-lite-scope="landing"] [size="2" i] {
 .ccxp-lite-landing-login .ccxp-lite-login-field-label {
   display: block;
   width: 100%;
-  margin-bottom: -4px;
   text-align: left;
   white-space: normal;
   color: var(--ccxp-lite-type-body-color);
