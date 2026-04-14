@@ -49,7 +49,7 @@ html[data-ccxp-lite-scope="nav"] body {
   color: var(--ccxp-lite-type-display-color);
   font-family: var(--ccxp-lite-font-brand);
   font-size: var(--ccxp-lite-font-size-sidebar-brand);
-  font-weight: var(--ccxp-lite-font-weight-regular);
+  font-weight: var(--ccxp-lite-font-weight-strong);
   line-height: 1;
   letter-spacing: 0.01em;
 }
