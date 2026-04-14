@@ -542,6 +542,7 @@ html[data-ccxp-lite-scope="landing"] [size="2" i] {
 .ccxp-lite-landing-login .ccxp-lite-login-field-label {
   display: block;
   width: 100%;
+  margin-bottom: -4px;
   text-align: left;
   white-space: normal;
   color: var(--ccxp-lite-type-body-color);
