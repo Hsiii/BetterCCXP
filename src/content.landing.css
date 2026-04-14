@@ -245,7 +245,6 @@ html[data-ccxp-lite-scope="landing"] [size="2" i] {
   padding-block: var(--ccxp-lite-spacing-sm);
   color: var(--ccxp-lite-type-page-title-color);
   font: var(--ccxp-lite-type-page-title);
-  font-weight: var(--ccxp-lite-font-weight-regular);
 }
 
 .ccxp-lite-landing-login .td26 {
@@ -664,7 +663,7 @@ html[data-ccxp-lite-scope="landing"] [size="2" i] {
   color: var(--ccxp-lite-bg);
   font: var(--ccxp-lite-type-body);
   font-size: var(--ccxp-lite-font-size-utility);
-  font-weight: var(--ccxp-lite-font-weight-regular);
+  font-weight: var(--ccxp-lite-font-weight-strong);
 }
 
 .ccxp-lite-landing-login .ccxp-lite-login-action-group {
