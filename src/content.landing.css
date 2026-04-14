@@ -1188,7 +1188,6 @@ html[data-ccxp-lite-scope="landing"] [size="2" i] {
   gap: 6px;
   margin-left: auto;
   padding-left: 12px;
-  border-left: 1px solid var(--ccxp-lite-border);
   flex: 0 0 auto;
   color: var(--ccxp-lite-type-body-muted-color);
   font: var(--ccxp-lite-type-utility);
