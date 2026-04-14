@@ -77,7 +77,7 @@ html[data-ccxp-lite-scope="nav"] body {
   display: flex;
   align-items: center;
   gap: var(--ccxp-lite-spacing-brand-inline);
-  margin: 14px var(--ccxp-lite-sidebar-row-padding-x);
+  margin-block: 14px;
   padding: var(--ccxp-lite-sidebar-row-padding-y) var(--ccxp-lite-sidebar-row-padding-x);
 }
 

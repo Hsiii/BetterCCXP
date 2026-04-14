@@ -48,7 +48,7 @@
     spacingSidebarBrandWordGap: "0.5ch",
     sizeSidebarHeaderDividerWidth: "100%",
     sizeSidebarHeaderDividerHeight: "1px",
-    sizeSidebarSearchIcon: "16px",
+    sizeSidebarSearchIcon: "20px",
     fontSizePageTitle: "26px",
     fontSizeDisplay: "30px",
     landingMaxWidth: "960px",
