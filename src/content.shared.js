@@ -93,8 +93,8 @@
       sidebarCategoryAnnouncementsAndVoting: "Notices & Voting"
     },
     zh: {
-      sidebarTitle: "NTHU AIS",
-      landingTitle: "NTHU AIS LOGIN",
+      sidebarTitle: "校務資訊系統",
+      landingTitle: "校務資訊系統登入",
       loginTitle: "登入",
       emptyGroup: "此分類暫無可顯示項目",
       servicePhone: "服務電話",
