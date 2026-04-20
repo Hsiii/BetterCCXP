@@ -2,6 +2,7 @@
   const namespace = globalScope.CCXP_LITE || (globalScope.CCXP_LITE = {});
   const { shared } = namespace;
   const { TOKENS, STRINGS, SIDEBAR_CATEGORIES, ASSETS, ensureThemeDocument, getLocalizedStrings, resolveLocaleFromDocument, createBrandImage, createBrandCopy } = shared;
+  const FAVORITES_STORAGE_KEY = "ccxp-lite-sidebar-favorites";
 
   function simplifySidebar(navFrame, retry) {
     const navDocument = navFrame.contentDocument;
@@ -59,33 +60,44 @@
       navDocument.body.dataset.ccxpLiteSidebarApplied = "true";
     }
 
-    const model = buildSidebarModel(rawTree, navDocument, strings);
-    renderSidebar(navDocument, model, strings);
+    renderSidebar(navDocument, () => buildSidebarModel(rawTree, navDocument, strings), strings);
   }
 
   function buildSidebarModel(root, navDocument, strings) {
     const normalizedItems = (root.children || [])
       .map((entry, index) => normalizeRootEntry(entry, index, navDocument))
       .filter(Boolean);
-    const items = buildCategorizedSidebarItems(normalizedItems, strings);
+    const favoriteIds = getFavoriteIds(navDocument);
+    const items = buildCategorizedSidebarItems(normalizedItems, favoriteIds, strings);
 
     return {
       items,
-      initialExpandedItemIds: []
+      initialExpandedItemIds: favoriteIds.size > 0 ? ["category-favorites"] : []
     };
   }
 
-  function buildCategorizedSidebarItems(items, strings = STRINGS) {
+  function buildCategorizedSidebarItems(items, favoriteIds, strings = STRINGS) {
     const buckets = new Map(SIDEBAR_CATEGORIES.map((category) => [category.id, []]));
+    const favoriteLinks = [];
 
     items.forEach((item) => {
+      collectFavoriteLinks(item, favoriteIds, favoriteLinks);
       const category = findCategoryForItem(item);
       if (category) {
         buckets.get(category.id).push(item);
       }
     });
 
-    return SIDEBAR_CATEGORIES
+    return [
+      favoriteLinks.length > 0 ? {
+        id: "category-favorites",
+        label: strings.sidebarCategoryFavorites || "常用功能",
+        icon: "star",
+        directLinks: dedupeLinkItems(favoriteLinks),
+        sections: [],
+        kind: "category"
+      } : null,
+      ...SIDEBAR_CATEGORIES
       .map((category) => {
         const categoryItems = buckets.get(category.id) || [];
         if (categoryItems.length === 0) {
@@ -101,7 +113,8 @@
           kind: "category"
         };
       })
-      .filter(Boolean);
+      .filter(Boolean)
+    ].filter(Boolean);
   }
 
   function findCategoryForItem(item) {
@@ -255,6 +268,12 @@
 
     const rawHtml = String(itemNode.desc || "");
     return {
+      id: createLinkId({
+        label: toPlainText(rawHtml, navDocument),
+        href: parsedLink.href,
+        target: parsedLink.target,
+        clickLinkArgs: parseClickLinkArgs(rawHtml)
+      }),
       label: toPlainText(rawHtml, navDocument),
       href: parsedLink.href,
       target: parsedLink.target,
@@ -313,7 +332,7 @@
       .trim();
   }
 
-  function renderSidebar(navDocument, model, strings = STRINGS) {
+  function renderSidebar(navDocument, modelInput, strings = STRINGS) {
     const shell = navDocument.querySelector(`.${TOKENS.sidebarClass}`);
     if (!shell) {
       return;
@@ -326,9 +345,10 @@
 
     const searchInput = shell.querySelector(".ccxp-lite-sidebar-search-input");
     if (searchInput && searchInput.dataset.ccxpLiteSearchBound !== "true") {
-      searchInput.addEventListener("input", () => renderSidebar(navDocument, model, strings));
+      searchInput.addEventListener("input", () => renderSidebar(navDocument, modelInput, strings));
       searchInput.dataset.ccxpLiteSearchBound = "true";
     }
+    const model = typeof modelInput === "function" ? modelInput() : modelInput;
     const searchQuery = searchInput ? searchInput.value.trim() : "";
     const activeModel = searchQuery
       ? filterSidebarModel(model, searchQuery)
@@ -358,25 +378,25 @@
 
       activeModel.items.forEach((item) => {
         if (item.kind === "category" || item.kind === "group" || item.kind === "section") {
-          sidebarList.appendChild(createExpandableGroup(navDocument, item, expandedItemIds, 0, (groupId) => {
+          sidebarList.appendChild(createExpandableGroup(navDocument, item, expandedItemIds, 0, strings, (groupId) => {
             if (expandedItemIds.has(groupId)) {
               expandedItemIds.delete(groupId);
             } else {
               expandedItemIds.add(groupId);
             }
             renderItems();
-          }));
+          }, () => renderSidebar(navDocument, modelInput, strings)));
           return;
         }
 
-        sidebarList.appendChild(createLinkButton(navDocument, item.linkItem, "ccxp-lite-item", 0));
+        sidebarList.appendChild(createLinkButton(navDocument, item.linkItem, "ccxp-lite-item", 0, strings, () => renderSidebar(navDocument, modelInput, strings)));
       });
     };
 
     renderItems();
   }
 
-  function createExpandableGroup(targetDocument, group, expandedItemIds, depth, onToggle) {
+  function createExpandableGroup(targetDocument, group, expandedItemIds, depth, strings, onToggle, onFavoritesChange) {
     const isExpanded = expandedItemIds.has(group.id);
     const linkList = targetDocument.createElement("div");
     linkList.className = `ccxp-lite-sidebar-group${group.kind === "category" ? " ccxp-lite-category" : ""}`;
@@ -407,11 +427,11 @@
       children.className = "ccxp-lite-link-list";
 
       group.directLinks.forEach((linkItem) => {
-        children.appendChild(createLinkButton(targetDocument, linkItem, "ccxp-lite-item", depth + 1));
+        children.appendChild(createLinkButton(targetDocument, linkItem, "ccxp-lite-item", depth + 1, strings, onFavoritesChange));
       });
 
       group.sections.forEach((section) => {
-        children.appendChild(createExpandableGroup(targetDocument, section, expandedItemIds, depth + 1, onToggle));
+        children.appendChild(createExpandableGroup(targetDocument, section, expandedItemIds, depth + 1, strings, onToggle, onFavoritesChange));
       });
 
       if (children.childElementCount > 0) {
@@ -521,15 +541,12 @@
       .trim();
   }
 
-  function createLinkButton(targetDocument, linkItem, toneClass, depth) {
+  function createLinkButton(targetDocument, linkItem, toneClass, depth, strings, onFavoritesChange) {
     const button = targetDocument.createElement("button");
     button.type = "button";
     button.className = `ccxp-lite-row-button ${toneClass}`;
     button.style.setProperty("--ccxp-lite-row-indent", `${getSidebarIndent("link", depth)}px`);
-
-    if (depth > 0) {
-      button.appendChild(createRowLeadingSpacer(targetDocument));
-    }
+    button.appendChild(createFavoriteToggle(targetDocument, linkItem, strings, onFavoritesChange));
 
     button.appendChild(createRowLabel(targetDocument, linkItem.label, isExternalLinkTarget(linkItem.target)));
     button.addEventListener("click", () => activateLegacyLink(linkItem, targetDocument));
@@ -558,6 +575,38 @@
     spacer.className = "ccxp-lite-row-leading";
     spacer.setAttribute("aria-hidden", "true");
     return spacer;
+  }
+
+  function createFavoriteToggle(targetDocument, linkItem, strings, onFavoritesChange) {
+    const favoriteButton = targetDocument.createElement("button");
+    favoriteButton.type = "button";
+    favoriteButton.className = "ccxp-lite-row-leading ccxp-lite-favorite-toggle";
+
+    const isFavorite = getFavoriteIds(targetDocument).has(linkItem.id);
+    favoriteButton.setAttribute("aria-pressed", isFavorite ? "true" : "false");
+    favoriteButton.setAttribute("aria-label", isFavorite ? `${strings.sidebarRemoveFavorite}: ${linkItem.label}` : `${strings.sidebarAddFavorite}: ${linkItem.label}`);
+    favoriteButton.setAttribute("title", isFavorite ? strings.sidebarRemoveFavorite : strings.sidebarAddFavorite);
+    favoriteButton.appendChild(createFavoriteStarIcon(targetDocument, isFavorite));
+
+    favoriteButton.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      const favoriteIds = getFavoriteIds(targetDocument);
+
+      if (favoriteIds.has(linkItem.id)) {
+        favoriteIds.delete(linkItem.id);
+      } else {
+        favoriteIds.add(linkItem.id);
+      }
+
+      writeFavoriteIds(targetDocument, favoriteIds);
+
+      if (typeof onFavoritesChange === "function") {
+        onFavoritesChange();
+      }
+    });
+
+    return favoriteButton;
   }
 
   function hasExpandableId(item, itemId) {
@@ -634,6 +683,117 @@
     });
 
     return icon;
+  }
+
+  function createFavoriteStarIcon(targetDocument, isFavorite) {
+    const icon = targetDocument.createElementNS("http://www.w3.org/2000/svg", "svg");
+    icon.setAttribute("class", `ccxp-lite-favorite-star${isFavorite ? " is-active" : ""}`);
+    icon.setAttribute("viewBox", "0 0 24 24");
+    icon.setAttribute("fill", isFavorite ? "currentColor" : "none");
+    icon.setAttribute("stroke", "currentColor");
+    icon.setAttribute("stroke-width", "2");
+    icon.setAttribute("stroke-linecap", "round");
+    icon.setAttribute("stroke-linejoin", "round");
+    icon.setAttribute("aria-hidden", "true");
+
+    const path = targetDocument.createElementNS("http://www.w3.org/2000/svg", "path");
+    path.setAttribute("d", "M11.525 2.295a.53.53 0 0 1 .95 0l2.262 4.584a.53.53 0 0 0 .399.29l5.06.735a.53.53 0 0 1 .294.904l-3.66 3.567a.53.53 0 0 0-.152.469l.864 5.039a.53.53 0 0 1-.768.559l-4.525-2.379a.53.53 0 0 0-.493 0l-4.525 2.38a.53.53 0 0 1-.768-.56l.864-5.039a.53.53 0 0 0-.152-.469L3.51 8.808a.53.53 0 0 1 .294-.904l5.06-.735a.53.53 0 0 0 .4-.29z");
+    icon.appendChild(path);
+
+    return icon;
+  }
+
+  function getFavoriteIds(targetDocument) {
+    const storage = getFavoriteStorage(targetDocument);
+    if (!storage) {
+      return new Set();
+    }
+
+    try {
+      const parsed = JSON.parse(storage.getItem(FAVORITES_STORAGE_KEY) || "[]");
+      return new Set(Array.isArray(parsed) ? parsed.map((value) => String(value || "")).filter(Boolean) : []);
+    } catch (_error) {
+      return new Set();
+    }
+  }
+
+  function writeFavoriteIds(targetDocument, favoriteIds) {
+    const storage = getFavoriteStorage(targetDocument);
+    if (!storage) {
+      return;
+    }
+
+    storage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(Array.from(favoriteIds)));
+  }
+
+  function getFavoriteStorage(targetDocument) {
+    const candidateWindows = [];
+
+    if (targetDocument && targetDocument.defaultView) {
+      candidateWindows.push(targetDocument.defaultView);
+      if (targetDocument.defaultView.top) {
+        candidateWindows.push(targetDocument.defaultView.top);
+      }
+    }
+
+    for (const candidateWindow of candidateWindows) {
+      try {
+        if (candidateWindow && candidateWindow.localStorage) {
+          return candidateWindow.localStorage;
+        }
+      } catch (_error) {
+        // Ignore inaccessible storage and continue with the next candidate.
+      }
+    }
+
+    return null;
+  }
+
+  function collectFavoriteLinks(item, favoriteIds, favoriteLinks) {
+    if (!item) {
+      return;
+    }
+
+    if (item.kind === "link") {
+      if (item.linkItem && favoriteIds.has(item.linkItem.id)) {
+        favoriteLinks.push(item.linkItem);
+      }
+      return;
+    }
+
+    (item.directLinks || []).forEach((linkItem) => {
+      if (favoriteIds.has(linkItem.id)) {
+        favoriteLinks.push(linkItem);
+      }
+    });
+
+    (item.sections || []).forEach((section) => collectFavoriteLinks(section, favoriteIds, favoriteLinks));
+  }
+
+  function dedupeLinkItems(linkItems) {
+    const seen = new Set();
+
+    return linkItems.filter((linkItem) => {
+      if (!linkItem || seen.has(linkItem.id)) {
+        return false;
+      }
+
+      seen.add(linkItem.id);
+      return true;
+    });
+  }
+
+  function createLinkId(linkItem) {
+    const clickSignature = linkItem.clickLinkArgs
+      ? `${linkItem.clickLinkArgs.name}::${linkItem.clickLinkArgs.url}`
+      : "";
+
+    return [
+      String(linkItem.label || "").trim(),
+      String(linkItem.href || "").trim(),
+      String(linkItem.target || "").trim(),
+      clickSignature
+    ].join("||");
   }
 
   function createSearchIcon(targetDocument) {
@@ -766,6 +926,9 @@
         "M11 5 18 3v18l-7-2-5-4V9z",
         "M11 19v3",
         "M7 15v5"
+      ],
+      star: [
+        "M11.525 2.295a.53.53 0 0 1 .95 0l2.262 4.584a.53.53 0 0 0 .399.29l5.06.735a.53.53 0 0 1 .294.904l-3.66 3.567a.53.53 0 0 0-.152.469l.864 5.039a.53.53 0 0 1-.768.559l-4.525-2.379a.53.53 0 0 0-.493 0l-4.525 2.38a.53.53 0 0 1-.768-.56l.864-5.039a.53.53 0 0 0-.152-.469L3.51 8.808a.53.53 0 0 1 .294-.904l5.06-.735a.53.53 0 0 0 .4-.29z"
       ],
       folders: [
         "M2 6a2 2 0 0 1 2-2h5l2 2h9a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2z",
