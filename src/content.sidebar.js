@@ -390,6 +390,10 @@
           ? storedExpandedIds.filter((itemId) => model.items.some((item) => hasExpandableId(item, itemId)))
           : Array.from(initialExpandedIds)
     );
+    const hasFavoritesCategory = activeModel.items.some((item) => item && item.id === "category-favorites");
+    if (hasFavoritesCategory) {
+      expandedItemIds.add("category-favorites");
+    }
 
     const renderItems = () => {
       if (!searchQuery) {
