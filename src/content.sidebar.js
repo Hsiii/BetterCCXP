@@ -2,7 +2,8 @@
   const namespace = globalScope.CCXP_LITE || (globalScope.CCXP_LITE = {});
   const { shared } = namespace;
   const { TOKENS, STRINGS, SIDEBAR_CATEGORIES, ASSETS, ensureThemeDocument, getLocalizedStrings, resolveLocaleFromDocument, createBrandImage, createBrandCopy } = shared;
-  const FAVORITES_STORAGE_KEY = "ccxp-lite-sidebar-favorites";
+  const FAVORITES_STORAGE_SCOPE_PATH = "/ccxp/INQUIRE/select_entry.php";
+  const FAVORITES_STORAGE_KEY = `ccxp-lite-sidebar-favorites::${FAVORITES_STORAGE_SCOPE_PATH}`;
   const favoriteState = {
     ids: new Set(),
     hasLoaded: false,
@@ -756,47 +757,58 @@
     favoriteState.hasLoaded = true;
     notifyFavoriteSubscribers();
 
-    const storageApi = typeof chrome !== "undefined" && chrome.storage ? chrome.storage.local : null;
-    if (!storageApi) {
+    const storage = getScopedFavoriteStorage();
+    if (!storage) {
       return;
     }
 
-    storageApi.set({
-      [FAVORITES_STORAGE_KEY]: Array.from(favoriteIds)
-    });
+    try {
+      storage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(Array.from(favoriteIds)));
+    } catch (_error) {
+      // Ignore storage write failures; in-memory state still updates for the current page.
+    }
   }
 
   function readFavoritesFromStorage() {
     return new Promise((resolve) => {
-      const storageApi = typeof chrome !== "undefined" && chrome.storage ? chrome.storage.local : null;
-      if (!storageApi) {
-        resolve(new Set());
-        return;
+      const storage = getScopedFavoriteStorage();
+      if (storage) {
+        try {
+          const storedValue = JSON.parse(storage.getItem(FAVORITES_STORAGE_KEY) || "[]");
+          resolve(new Set(Array.isArray(storedValue) ? storedValue.map(normalizeFavoriteStorageValue).filter(Boolean) : []));
+          return;
+        } catch (_error) {
+          // Fall through to migration fallback.
+        }
       }
 
-      storageApi.get([FAVORITES_STORAGE_KEY], (result) => {
-        if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.lastError) {
-          resolve(new Set());
-          return;
+      readLegacyFavoritesFromExtensionStorage().then((favoriteIds) => {
+        if (favoriteIds.size > 0) {
+          writeFavoriteIds(favoriteIds);
         }
-
-        const storedValue = result ? result[FAVORITES_STORAGE_KEY] : [];
-        resolve(new Set(Array.isArray(storedValue) ? storedValue.map(normalizeFavoriteStorageValue).filter(Boolean) : []));
+        resolve(favoriteIds);
       });
     });
   }
 
   function ensureFavoriteStorageSync() {
-    if (favoriteStorageSyncBound || typeof chrome === "undefined" || !chrome.storage || !chrome.storage.onChanged) {
+    const scopeWindow = getFavoriteScopeWindow();
+    if (favoriteStorageSyncBound || !scopeWindow) {
       return;
     }
 
-    chrome.storage.onChanged.addListener((changes, areaName) => {
-      if (areaName !== "local" || !changes[FAVORITES_STORAGE_KEY]) {
+    scopeWindow.addEventListener("storage", (event) => {
+      if (!event || event.key !== FAVORITES_STORAGE_KEY) {
         return;
       }
 
-      const nextValue = changes[FAVORITES_STORAGE_KEY].newValue;
+      let nextValue = [];
+      try {
+        nextValue = JSON.parse(event.newValue || "[]");
+      } catch (_error) {
+        nextValue = [];
+      }
+
       favoriteState.ids = new Set(Array.isArray(nextValue) ? nextValue.map(normalizeFavoriteStorageValue).filter(Boolean) : []);
       favoriteState.hasLoaded = true;
       notifyFavoriteSubscribers();
@@ -812,6 +824,51 @@
       } catch (_error) {
         // Ignore stale subscribers from replaced frame documents.
       }
+    });
+  }
+
+  function getScopedFavoriteStorage() {
+    const scopeWindow = getFavoriteScopeWindow();
+    if (!scopeWindow) {
+      return null;
+    }
+
+    try {
+      return scopeWindow.localStorage || null;
+    } catch (_error) {
+      return null;
+    }
+  }
+
+  function getFavoriteScopeWindow() {
+    if (typeof window === "undefined") {
+      return null;
+    }
+
+    try {
+      return window.top || window;
+    } catch (_error) {
+      return window;
+    }
+  }
+
+  function readLegacyFavoritesFromExtensionStorage() {
+    return new Promise((resolve) => {
+      const storageApi = typeof chrome !== "undefined" && chrome.storage ? chrome.storage.local : null;
+      if (!storageApi) {
+        resolve(new Set());
+        return;
+      }
+
+      storageApi.get(["ccxp-lite-sidebar-favorites"], (result) => {
+        if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.lastError) {
+          resolve(new Set());
+          return;
+        }
+
+        const storedValue = result ? result["ccxp-lite-sidebar-favorites"] : [];
+        resolve(new Set(Array.isArray(storedValue) ? storedValue.map(normalizeFavoriteStorageValue).filter(Boolean) : []));
+      });
     });
   }
 
