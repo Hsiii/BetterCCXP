@@ -309,6 +309,7 @@ html[data-ccxp-lite-scope="nav"] body {
   padding: 12px;
   font-size: 14px;
   line-height: 1.5;
+  background: transparent;
   white-space: normal;
   word-break: break-word;
   overflow-wrap: anywhere;
