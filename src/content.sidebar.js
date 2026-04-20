@@ -8,6 +8,8 @@
     hasLoaded: false,
     pendingLoad: null
   };
+  const favoriteSubscribers = new Set();
+  let favoriteStorageSyncBound = false;
 
   function simplifySidebar(navFrame, retry) {
     const navDocument = navFrame.contentDocument;
@@ -65,8 +67,11 @@
       navDocument.body.dataset.ccxpLiteSidebarApplied = "true";
     }
 
-    ensureFavoriteIdsLoaded(() => renderSidebar(navDocument, () => buildSidebarModel(rawTree, navDocument, strings), strings));
-    renderSidebar(navDocument, () => buildSidebarModel(rawTree, navDocument, strings), strings);
+    const rerender = () => renderSidebar(navDocument, () => buildSidebarModel(rawTree, navDocument, strings), strings);
+    ensureFavoriteStorageSync();
+    favoriteSubscribers.add(rerender);
+    ensureFavoriteIdsLoaded(rerender);
+    rerender();
   }
 
   function buildSidebarModel(root, navDocument, strings) {
@@ -749,6 +754,7 @@
   function writeFavoriteIds(favoriteIds) {
     favoriteState.ids = new Set(favoriteIds);
     favoriteState.hasLoaded = true;
+    notifyFavoriteSubscribers();
 
     const storageApi = typeof chrome !== "undefined" && chrome.storage ? chrome.storage.local : null;
     if (!storageApi) {
@@ -775,8 +781,37 @@
         }
 
         const storedValue = result ? result[FAVORITES_STORAGE_KEY] : [];
-        resolve(new Set(Array.isArray(storedValue) ? storedValue.map((value) => String(value || "")).filter(Boolean) : []));
+        resolve(new Set(Array.isArray(storedValue) ? storedValue.map(normalizeFavoriteStorageValue).filter(Boolean) : []));
       });
+    });
+  }
+
+  function ensureFavoriteStorageSync() {
+    if (favoriteStorageSyncBound || typeof chrome === "undefined" || !chrome.storage || !chrome.storage.onChanged) {
+      return;
+    }
+
+    chrome.storage.onChanged.addListener((changes, areaName) => {
+      if (areaName !== "local" || !changes[FAVORITES_STORAGE_KEY]) {
+        return;
+      }
+
+      const nextValue = changes[FAVORITES_STORAGE_KEY].newValue;
+      favoriteState.ids = new Set(Array.isArray(nextValue) ? nextValue.map(normalizeFavoriteStorageValue).filter(Boolean) : []);
+      favoriteState.hasLoaded = true;
+      notifyFavoriteSubscribers();
+    });
+
+    favoriteStorageSyncBound = true;
+  }
+
+  function notifyFavoriteSubscribers() {
+    favoriteSubscribers.forEach((callback) => {
+      try {
+        callback();
+      } catch (_error) {
+        // Ignore stale subscribers from replaced frame documents.
+      }
     });
   }
 
@@ -816,15 +851,94 @@
 
   function createLinkId(linkItem) {
     const clickSignature = linkItem.clickLinkArgs
-      ? `${linkItem.clickLinkArgs.name}::${linkItem.clickLinkArgs.url}`
+      ? `${String(linkItem.clickLinkArgs.name || "").trim()}::${normalizeFavoriteUrl(linkItem.clickLinkArgs.url)}`
       : "";
 
     return [
-      String(linkItem.label || "").trim(),
-      String(linkItem.href || "").trim(),
-      String(linkItem.target || "").trim(),
+      normalizeFavoriteText(linkItem.label),
+      normalizeFavoriteUrl(linkItem.href),
+      normalizeFavoriteText(linkItem.target),
       clickSignature
     ].join("||");
+  }
+
+  function normalizeFavoriteStorageValue(value) {
+    if (typeof value !== "string") {
+      return "";
+    }
+
+    const parts = value.split("||");
+    if (parts.length !== 4) {
+      return normalizeFavoriteText(value);
+    }
+
+    return createLinkId({
+      label: parts[0],
+      href: parts[1],
+      target: parts[2],
+      clickLinkArgs: parseFavoriteClickSignature(parts[3])
+    });
+  }
+
+  function parseFavoriteClickSignature(signature) {
+    const normalizedSignature = String(signature || "").trim();
+    if (!normalizedSignature) {
+      return null;
+    }
+
+    const separatorIndex = normalizedSignature.indexOf("::");
+    if (separatorIndex === -1) {
+      return {
+        name: normalizedSignature,
+        url: ""
+      };
+    }
+
+    return {
+      name: normalizedSignature.slice(0, separatorIndex),
+      url: normalizedSignature.slice(separatorIndex + 2)
+    };
+  }
+
+  function normalizeFavoriteText(value) {
+    return String(value || "")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  function normalizeFavoriteUrl(rawValue) {
+    const value = String(rawValue || "").trim();
+    if (!value) {
+      return "";
+    }
+
+    try {
+      const url = new URL(value, "https://www.ccxp.nthu.edu.tw/");
+      const volatileParams = ["acixstore", "sid", "session", "phpsessid", "token", "_", "t"];
+      volatileParams.forEach((key) => url.searchParams.delete(key));
+
+      const sortedEntries = Array.from(url.searchParams.entries()).sort(([leftKey, leftValue], [rightKey, rightValue]) => {
+        if (leftKey === rightKey) {
+          return leftValue.localeCompare(rightValue);
+        }
+        return leftKey.localeCompare(rightKey);
+      });
+
+      url.search = "";
+      sortedEntries.forEach(([key, entryValue]) => url.searchParams.append(key, entryValue));
+
+      const normalizedPath = url.pathname.replace(/\/+/g, "/");
+      const normalizedQuery = url.searchParams.toString();
+      const normalizedHash = url.hash || "";
+
+      return `${normalizedPath}${normalizedQuery ? `?${normalizedQuery}` : ""}${normalizedHash}`;
+    } catch (_error) {
+      return value
+        .replace(/([?&])(ACIXSTORE|sid|session|PHPSESSID|token|_|t)=[^&#]*/gi, "$1")
+        .replace(/[?&]+$/, "")
+        .replace(/[?&]{2,}/g, "&")
+        .replace("?&", "?");
+    }
   }
 
   function createSearchIcon(targetDocument) {
