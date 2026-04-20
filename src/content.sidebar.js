@@ -101,14 +101,15 @@
     });
 
     return [
-      favoriteLinks.length > 0 ? {
+      {
         id: "category-favorites",
         label: strings.sidebarCategoryFavorites || "常用功能",
         icon: "star",
         directLinks: dedupeLinkItems(favoriteLinks),
         sections: [],
+        emptyMessage: strings.sidebarFavoritesEmpty || "Press star at any function to save it here",
         kind: "category"
-      } : null,
+      },
       ...SIDEBAR_CATEGORIES
       .map((category) => {
         const categoryItems = buckets.get(category.id) || [];
@@ -122,6 +123,7 @@
           icon: category.icon,
           directLinks: categoryItems.filter((item) => item.kind === "link").map((item) => item.linkItem),
           sections: categoryItems.filter((item) => item.kind !== "link"),
+          emptyMessage: strings.emptyGroup,
           kind: "category"
         };
       })
@@ -469,7 +471,7 @@
       } else {
         const empty = targetDocument.createElement("div");
         empty.className = "ccxp-lite-empty";
-        empty.textContent = strings.emptyGroup;
+        empty.textContent = group.emptyMessage || strings.emptyGroup;
         linkList.appendChild(empty);
       }
     }
