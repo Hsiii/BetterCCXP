@@ -470,7 +470,7 @@
         linkList.appendChild(children);
       } else {
         const empty = targetDocument.createElement("div");
-        empty.className = "ccxp-lite-empty";
+        empty.className = `ccxp-lite-empty${group.id === "category-favorites" ? " ccxp-lite-empty-favorites" : ""}`;
         empty.textContent = group.emptyMessage || strings.emptyGroup;
         linkList.appendChild(empty);
       }

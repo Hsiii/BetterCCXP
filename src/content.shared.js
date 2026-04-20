@@ -108,7 +108,7 @@
       sidebarSearchPlaceholder: "搜尋功能",
       sidebarSearchNoResults: "找不到符合項目",
       sidebarCategoryFavorites: "常用功能",
-      sidebarFavoritesEmpty: "按下任一功能旁的星號，即可將它儲存在這裡",
+      sidebarFavoritesEmpty: "按下任意功能旁的星號以儲存",
       sidebarAddFavorite: "加入常用功能",
       sidebarRemoveFavorite: "移除常用功能",
       announcementDate: "日期",

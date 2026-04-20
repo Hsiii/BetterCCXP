@@ -304,3 +304,12 @@ html[data-ccxp-lite-scope="nav"] body {
   font: var(--ccxp-lite-type-body-muted);
   background: rgba(124, 45, 146, 0.04);
 }
+
+.ccxp-lite-empty-favorites {
+  padding: 12px;
+  font-size: 14px;
+  line-height: 1.5;
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
