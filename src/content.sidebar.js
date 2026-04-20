@@ -193,7 +193,7 @@
       return normalizeTopLevelGroup(entryNode, index, navDocument);
     }
 
-    const linkItem = normalizeLinkItem(entryNode, navDocument);
+    const linkItem = normalizeLinkItem(entryNode, navDocument, []);
     if (!linkItem) {
       return null;
     }
@@ -209,17 +209,19 @@
   function normalizeTopLevelGroup(folderNode, index, navDocument) {
     const directLinks = [];
     const sections = [];
+    const groupLabel = toPlainText(folderNode.desc, navDocument);
+    const groupPathSegments = buildFavoritePathSegments([], groupLabel, `group-${index}`);
 
     (folderNode.children || []).forEach((childNode) => {
       if (childNode && childNode.children) {
-        const section = normalizeSectionNode(childNode, `${index}-${sections.length}`, navDocument);
+        const section = normalizeSectionNode(childNode, `${index}-${sections.length}`, navDocument, groupPathSegments);
         if (section) {
           sections.push(section);
         }
         return;
       }
 
-      const linkItem = normalizeLinkItem(childNode, navDocument);
+      const linkItem = normalizeLinkItem(childNode, navDocument, groupPathSegments);
       if (linkItem) {
         directLinks.push(linkItem);
       }
@@ -227,33 +229,34 @@
 
     return {
       id: `group-${index}`,
-      label: toPlainText(folderNode.desc, navDocument),
+      label: groupLabel,
       directLinks,
       sections,
       kind: "group"
     };
   }
 
-  function normalizeSectionNode(folderNode, indexKey, navDocument) {
+  function normalizeSectionNode(folderNode, indexKey, navDocument, parentPathSegments) {
     const directLinks = [];
     const sections = [];
+    const label = toPlainText(folderNode.desc, navDocument);
+    const sectionPathSegments = buildFavoritePathSegments(parentPathSegments, label, `section-${indexKey}`);
 
     (folderNode.children || []).forEach((childNode) => {
       if (childNode && childNode.children) {
-        const section = normalizeSectionNode(childNode, `${indexKey}-${sections.length}`, navDocument);
+        const section = normalizeSectionNode(childNode, `${indexKey}-${sections.length}`, navDocument, sectionPathSegments);
         if (section) {
           sections.push(section);
         }
         return;
       }
 
-      const linkItem = normalizeLinkItem(childNode, navDocument);
+      const linkItem = normalizeLinkItem(childNode, navDocument, sectionPathSegments);
       if (linkItem) {
         directLinks.push(linkItem);
       }
     });
 
-    const label = toPlainText(folderNode.desc, navDocument);
     if (!label && directLinks.length === 0 && sections.length === 0) {
       return null;
     }
@@ -267,7 +270,7 @@
     };
   }
 
-  function normalizeLinkItem(itemNode, navDocument) {
+  function normalizeLinkItem(itemNode, navDocument, parentPathSegments) {
     if (!itemNode || typeof itemNode.link !== "string") {
       return null;
     }
@@ -279,17 +282,28 @@
     }
 
     const rawHtml = String(itemNode.desc || "");
+    const label = toPlainText(rawHtml, navDocument);
+    const clickLinkArgs = parseClickLinkArgs(rawHtml);
+    const pathSegments = buildFavoritePathSegments(parentPathSegments, label);
     return {
       id: createLinkId({
-        label: toPlainText(rawHtml, navDocument),
+        label,
+        pathSegments,
         href: parsedLink.href,
         target: parsedLink.target,
-        clickLinkArgs: parseClickLinkArgs(rawHtml)
+        clickLinkArgs
       }),
-      label: toPlainText(rawHtml, navDocument),
+      legacyId: createLegacyLinkId({
+        label,
+        href: parsedLink.href,
+        target: parsedLink.target,
+        clickLinkArgs
+      }),
+      label,
+      pathSegments,
       href: parsedLink.href,
       target: parsedLink.target,
-      clickLinkArgs: parseClickLinkArgs(rawHtml)
+      clickLinkArgs
     };
   }
 
@@ -594,7 +608,7 @@
     favoriteButton.type = "button";
     favoriteButton.className = "ccxp-lite-row-leading ccxp-lite-favorite-toggle";
 
-    const isFavorite = getFavoriteIds().has(linkItem.id);
+    const isFavorite = isFavoriteLink(linkItem, getFavoriteIds());
     favoriteButton.setAttribute("aria-pressed", isFavorite ? "true" : "false");
     favoriteButton.setAttribute("aria-label", isFavorite ? `${strings.sidebarRemoveFavorite}: ${linkItem.label}` : `${strings.sidebarAddFavorite}: ${linkItem.label}`);
     favoriteButton.setAttribute("title", isFavorite ? strings.sidebarRemoveFavorite : strings.sidebarAddFavorite);
@@ -605,8 +619,9 @@
       event.stopPropagation();
       const favoriteIds = getFavoriteIds();
 
-      if (favoriteIds.has(linkItem.id)) {
-        favoriteIds.delete(linkItem.id);
+      const matchingIds = getMatchingFavoriteIds(linkItem, favoriteIds);
+      if (matchingIds.length > 0) {
+        matchingIds.forEach((favoriteId) => favoriteIds.delete(favoriteId));
       } else {
         favoriteIds.add(linkItem.id);
       }
@@ -878,14 +893,14 @@
     }
 
     if (item.kind === "link") {
-      if (item.linkItem && favoriteIds.has(item.linkItem.id)) {
+      if (item.linkItem && isFavoriteLink(item.linkItem, favoriteIds)) {
         favoriteLinks.push(item.linkItem);
       }
       return;
     }
 
     (item.directLinks || []).forEach((linkItem) => {
-      if (favoriteIds.has(linkItem.id)) {
+      if (isFavoriteLink(linkItem, favoriteIds)) {
         favoriteLinks.push(linkItem);
       }
     });
@@ -907,6 +922,23 @@
   }
 
   function createLinkId(linkItem) {
+    const pathSignature = Array.isArray(linkItem.pathSegments)
+      ? linkItem.pathSegments.map(normalizeFavoriteText).filter(Boolean).join(">")
+      : "";
+    const clickSignature = linkItem.clickLinkArgs
+      ? `${String(linkItem.clickLinkArgs.name || "").trim()}::${normalizeFavoriteUrl(linkItem.clickLinkArgs.url)}`
+      : "";
+
+    return [
+      "v2",
+      pathSignature,
+      normalizeFavoriteText(linkItem.label),
+      normalizeFavoriteText(linkItem.target),
+      clickSignature
+    ].join("||");
+  }
+
+  function createLegacyLinkId(linkItem) {
     const clickSignature = linkItem.clickLinkArgs
       ? `${String(linkItem.clickLinkArgs.name || "").trim()}::${normalizeFavoriteUrl(linkItem.clickLinkArgs.url)}`
       : "";
@@ -925,16 +957,32 @@
     }
 
     const parts = value.split("||");
-    if (parts.length !== 4) {
+    if (parts.length === 4) {
+      return createLegacyLinkId({
+        label: parts[0],
+        href: parts[1],
+        target: parts[2],
+        clickLinkArgs: parseFavoriteClickSignature(parts[3])
+      });
+    }
+
+    if (parts.length !== 5 || parts[0] !== "v2") {
       return normalizeFavoriteText(value);
     }
 
     return createLinkId({
-      label: parts[0],
-      href: parts[1],
-      target: parts[2],
-      clickLinkArgs: parseFavoriteClickSignature(parts[3])
+      pathSegments: parseFavoritePathSignature(parts[1]),
+      label: parts[2],
+      target: parts[3],
+      clickLinkArgs: parseFavoriteClickSignature(parts[4])
     });
+  }
+
+  function parseFavoritePathSignature(signature) {
+    return String(signature || "")
+      .split(">")
+      .map(normalizeFavoriteText)
+      .filter(Boolean);
   }
 
   function parseFavoriteClickSignature(signature) {
@@ -961,6 +1009,38 @@
     return String(value || "")
       .replace(/\s+/g, " ")
       .trim();
+  }
+
+  function buildFavoritePathSegments(parentPathSegments, label, fallbackSegment) {
+    const normalizedParentSegments = Array.isArray(parentPathSegments)
+      ? parentPathSegments.map(normalizeFavoriteText).filter(Boolean)
+      : [];
+    const normalizedLabel = normalizeFavoriteText(label);
+
+    if (normalizedLabel) {
+      return [...normalizedParentSegments, normalizedLabel];
+    }
+
+    if (fallbackSegment) {
+      return [...normalizedParentSegments, fallbackSegment];
+    }
+
+    return normalizedParentSegments;
+  }
+
+  function isFavoriteLink(linkItem, favoriteIds) {
+    return getMatchingFavoriteIds(linkItem, favoriteIds).length > 0;
+  }
+
+  function getMatchingFavoriteIds(linkItem, favoriteIds) {
+    if (!linkItem || !favoriteIds) {
+      return [];
+    }
+
+    return [linkItem.id, linkItem.legacyId]
+      .filter(Boolean)
+      .filter((favoriteId, index, values) => values.indexOf(favoriteId) === index)
+      .filter((favoriteId) => favoriteIds.has(favoriteId));
   }
 
   function normalizeFavoriteUrl(rawValue) {
