@@ -3,6 +3,11 @@
   const { shared } = namespace;
   const { TOKENS, STRINGS, SIDEBAR_CATEGORIES, ASSETS, ensureThemeDocument, getLocalizedStrings, resolveLocaleFromDocument, createBrandImage, createBrandCopy } = shared;
   const FAVORITES_STORAGE_KEY = "ccxp-lite-sidebar-favorites";
+  const favoriteState = {
+    ids: new Set(),
+    hasLoaded: false,
+    pendingLoad: null
+  };
 
   function simplifySidebar(navFrame, retry) {
     const navDocument = navFrame.contentDocument;
@@ -60,6 +65,7 @@
       navDocument.body.dataset.ccxpLiteSidebarApplied = "true";
     }
 
+    ensureFavoriteIdsLoaded(() => renderSidebar(navDocument, () => buildSidebarModel(rawTree, navDocument, strings), strings));
     renderSidebar(navDocument, () => buildSidebarModel(rawTree, navDocument, strings), strings);
   }
 
@@ -67,7 +73,7 @@
     const normalizedItems = (root.children || [])
       .map((entry, index) => normalizeRootEntry(entry, index, navDocument))
       .filter(Boolean);
-    const favoriteIds = getFavoriteIds(navDocument);
+    const favoriteIds = getFavoriteIds();
     const items = buildCategorizedSidebarItems(normalizedItems, favoriteIds, strings);
 
     return {
@@ -582,7 +588,7 @@
     favoriteButton.type = "button";
     favoriteButton.className = "ccxp-lite-row-leading ccxp-lite-favorite-toggle";
 
-    const isFavorite = getFavoriteIds(targetDocument).has(linkItem.id);
+    const isFavorite = getFavoriteIds().has(linkItem.id);
     favoriteButton.setAttribute("aria-pressed", isFavorite ? "true" : "false");
     favoriteButton.setAttribute("aria-label", isFavorite ? `${strings.sidebarRemoveFavorite}: ${linkItem.label}` : `${strings.sidebarAddFavorite}: ${linkItem.label}`);
     favoriteButton.setAttribute("title", isFavorite ? strings.sidebarRemoveFavorite : strings.sidebarAddFavorite);
@@ -591,7 +597,7 @@
     favoriteButton.addEventListener("click", (event) => {
       event.preventDefault();
       event.stopPropagation();
-      const favoriteIds = getFavoriteIds(targetDocument);
+      const favoriteIds = getFavoriteIds();
 
       if (favoriteIds.has(linkItem.id)) {
         favoriteIds.delete(linkItem.id);
@@ -599,7 +605,7 @@
         favoriteIds.add(linkItem.id);
       }
 
-      writeFavoriteIds(targetDocument, favoriteIds);
+      writeFavoriteIds(favoriteIds);
 
       if (typeof onFavoritesChange === "function") {
         onFavoritesChange();
@@ -703,50 +709,75 @@
     return icon;
   }
 
-  function getFavoriteIds(targetDocument) {
-    const storage = getFavoriteStorage(targetDocument);
-    if (!storage) {
-      return new Set();
-    }
-
-    try {
-      const parsed = JSON.parse(storage.getItem(FAVORITES_STORAGE_KEY) || "[]");
-      return new Set(Array.isArray(parsed) ? parsed.map((value) => String(value || "")).filter(Boolean) : []);
-    } catch (_error) {
-      return new Set();
-    }
+  function getFavoriteIds() {
+    return new Set(favoriteState.ids);
   }
 
-  function writeFavoriteIds(targetDocument, favoriteIds) {
-    const storage = getFavoriteStorage(targetDocument);
-    if (!storage) {
+  function ensureFavoriteIdsLoaded(onReady) {
+    if (favoriteState.hasLoaded) {
+      if (typeof onReady === "function") {
+        onReady();
+      }
       return;
     }
 
-    storage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(Array.from(favoriteIds)));
+    if (favoriteState.pendingLoad) {
+      if (typeof onReady === "function") {
+        favoriteState.pendingLoad.then(onReady);
+      }
+      return;
+    }
+
+    favoriteState.pendingLoad = readFavoritesFromStorage()
+      .then((favoriteIds) => {
+        favoriteState.ids = favoriteIds;
+        favoriteState.hasLoaded = true;
+      })
+      .catch(() => {
+        favoriteState.ids = new Set();
+        favoriteState.hasLoaded = true;
+      })
+      .finally(() => {
+        favoriteState.pendingLoad = null;
+      });
+
+    if (typeof onReady === "function") {
+      favoriteState.pendingLoad.then(onReady);
+    }
   }
 
-  function getFavoriteStorage(targetDocument) {
-    const candidateWindows = [];
+  function writeFavoriteIds(favoriteIds) {
+    favoriteState.ids = new Set(favoriteIds);
+    favoriteState.hasLoaded = true;
 
-    if (targetDocument && targetDocument.defaultView) {
-      candidateWindows.push(targetDocument.defaultView);
-      if (targetDocument.defaultView.top) {
-        candidateWindows.push(targetDocument.defaultView.top);
-      }
+    const storageApi = typeof chrome !== "undefined" && chrome.storage ? chrome.storage.local : null;
+    if (!storageApi) {
+      return;
     }
 
-    for (const candidateWindow of candidateWindows) {
-      try {
-        if (candidateWindow && candidateWindow.localStorage) {
-          return candidateWindow.localStorage;
+    storageApi.set({
+      [FAVORITES_STORAGE_KEY]: Array.from(favoriteIds)
+    });
+  }
+
+  function readFavoritesFromStorage() {
+    return new Promise((resolve) => {
+      const storageApi = typeof chrome !== "undefined" && chrome.storage ? chrome.storage.local : null;
+      if (!storageApi) {
+        resolve(new Set());
+        return;
+      }
+
+      storageApi.get([FAVORITES_STORAGE_KEY], (result) => {
+        if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.lastError) {
+          resolve(new Set());
+          return;
         }
-      } catch (_error) {
-        // Ignore inaccessible storage and continue with the next candidate.
-      }
-    }
 
-    return null;
+        const storedValue = result ? result[FAVORITES_STORAGE_KEY] : [];
+        resolve(new Set(Array.isArray(storedValue) ? storedValue.map((value) => String(value || "")).filter(Boolean) : []));
+      });
+    });
   }
 
   function collectFavoriteLinks(item, favoriteIds, favoriteLinks) {
