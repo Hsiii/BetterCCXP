@@ -10,6 +10,7 @@ export default [
       "dist/**",
       "fixtures/ccxp-snapshot/**",
       "node_modules/**",
+      "release-it*.config.cjs",
     ],
   },
 

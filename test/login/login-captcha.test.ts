@@ -137,11 +137,12 @@ describe("login captcha", () => {
     loadModules(window, loginCaptchaModulePaths);
     const loginCaptcha = requireValue(window.CCXP_LITE.loginCaptcha, "loginCaptcha");
 
-    window.fetch = vi.fn(async () =>
-      await Promise.resolve({
-        ok: true,
-        arrayBuffer: async () => await Promise.resolve(new ArrayBuffer(8)),
-      }),
+    window.fetch = vi.fn(
+      async () =>
+        await Promise.resolve({
+          ok: true,
+          arrayBuffer: async () => await Promise.resolve(new ArrayBuffer(8)),
+        }),
     ) as unknown as typeof window.fetch;
 
     const image = requireElement(

@@ -1,18 +1,19 @@
 # ccxpLite
+
 <img src="demo/sidebar/login.png" alt="ccxpLite demo image" >
-A lightweight browser extension that improves the usability and navigation experience of the NTHU Academic Information System (CCXP). 
+A lightweight browser extension that improves the usability and navigation experience of the NTHU Academic Information System (CCXP).
 
 ## Features
 
-* Redesigned login page for improved usability and better announcement readability
-* Automatic CAPTCHA solving for both CCXP login and OAuth verification (used in [eLearn](https://elearn.nthu.edu.tw/) and [eeclass](https://eeclass.nthu.edu.tw/)) with 99.95% and 98.79% accuracy respectively
-* Faster access to frequently used functions with support for pinned functions and folders
-* Two navigation layouts available: redesigned sidebar or full-screen menu
-* Reduced visual clutter through saturation and texture suppression
+- Redesigned login page for improved usability and better announcement readability
+- Automatic CAPTCHA solving for both CCXP login and OAuth verification (used in [eLearn](https://elearn.nthu.edu.tw/) and [eeclass](https://eeclass.nthu.edu.tw/)) with 99.95% and 98.79% accuracy respectively
+- Faster access to frequently used functions with support for pinned functions and folders
+- Two navigation layouts available: redesigned sidebar or full-screen menu
+- Reduced visual clutter through saturation and texture suppression
 
 ## Installation
 
-- [Google Web Store](https://chromewebstore.google.com/detail/glcnfmnbmknbphfgjgbokbbchahmiakk?utm_source=item-share-cb) 
+- [Google Web Store](https://chromewebstore.google.com/detail/glcnfmnbmknbphfgjgbokbbchahmiakk?utm_source=item-share-cb)
 - [Firebox Add-ons](https://addons.mozilla.org/zh-TW/firefox/addon/ccxplite/)
 
 ## Demo
