@@ -41,6 +41,54 @@ html[data-ccxp-lite-scope="main"]
   background-color: transparent !important;
 }
 
+/* CCXP draws its listings with ridged table borders and cellspacing, so a
+   listing reads as a grid of boxes rather than as rows of data. Collapse that
+   frame down to horizontal rules.
+
+   Only a table carrying CCXP's listing header rows is treated this way. The
+   same markup builds forms and page layout elsewhere, and those tables lean on
+   the original frame to stay legible. Widths are left alone for the same
+   reason. */
+html[data-ccxp-lite-scope="main"] table:has(tr.class1, tr.class2) {
+  max-width: 100%;
+  border-collapse: collapse;
+  border: 0;
+  border-spacing: 0;
+}
+
+/* Listings carry a dozen columns, so the cells stay tight and wrap instead of
+   pushing the page into a sideways scroll. */
+html[data-ccxp-lite-scope="main"] table:has(tr.class1, tr.class2) td,
+html[data-ccxp-lite-scope="main"] table:has(tr.class1, tr.class2) th {
+  padding: var(--ccxp-lite-spacing-xs);
+  border: 0;
+  border-bottom: 1px solid var(--ccxp-lite-border);
+  vertical-align: top;
+}
+
+/* .class2 marks the column header row of a listing. */
+html[data-ccxp-lite-scope="main"] tr.class2 td,
+html[data-ccxp-lite-scope="main"] tr.class2 th {
+  border-bottom: 2px solid var(--ccxp-lite-border);
+  color: var(--ccxp-lite-type-body-strong-color) !important;
+  font-weight: var(--ccxp-lite-font-weight-strong);
+  vertical-align: bottom;
+}
+
+html[data-ccxp-lite-scope="main"]
+  table:has(tr.class1, tr.class2)
+  tr:nth-child(even):not(.class1, .class2)
+  td {
+  background-color: var(--ccxp-lite-surface-muted) !important;
+}
+
+html[data-ccxp-lite-scope="main"]
+  table:has(tr.class1, tr.class2)
+  tr:hover:not(.class1, .class2)
+  td {
+  background-color: var(--ccxp-lite-primary-hover-surface) !important;
+}
+
 /* CCXP paints section header rows with .class1 (white text on a blue band) in
    its own stylesheet, so neither the colour attribute nor the inline style
    rules below can reach them. Clearing the band above would leave white text on
