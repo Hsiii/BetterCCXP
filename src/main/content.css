@@ -56,6 +56,71 @@ html[data-ccxp-lite-scope="main"] th.class1 {
   font-weight: var(--ccxp-lite-font-weight-strong);
 }
 
+html[data-ccxp-lite-scope="main"] [data-ccxp-lite-section-hidden="true"] {
+  display: none !important;
+}
+
+/* A row that became a toggle reads as a heading with a rule under it rather
+   than as a filled band, so the band restored above is dropped again here. */
+html[data-ccxp-lite-scope="main"] tr[data-ccxp-lite-section-toggle="true"],
+html[data-ccxp-lite-scope="main"] tr[data-ccxp-lite-section-toggle="true"] td {
+  background-color: transparent !important;
+}
+
+html[data-ccxp-lite-scope="main"] tr[data-ccxp-lite-section-toggle="true"] td {
+  padding: 0;
+  border-bottom: 1px solid var(--ccxp-lite-border);
+}
+
+html[data-ccxp-lite-scope="main"] .ccxp-lite-section-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ccxp-lite-spacing-md);
+  width: 100%;
+  padding: var(--ccxp-lite-spacing-md) var(--ccxp-lite-spacing-xs);
+  border: 0;
+  background: none;
+  color: var(--ccxp-lite-type-body-strong-color);
+  font: var(--ccxp-lite-type-body-strong);
+  text-align: start;
+  cursor: pointer;
+}
+
+html[data-ccxp-lite-scope="main"] .ccxp-lite-section-toggle:hover {
+  color: var(--ccxp-lite-primary);
+}
+
+html[data-ccxp-lite-scope="main"] .ccxp-lite-section-toggle:focus-visible {
+  outline: 2px solid var(--ccxp-lite-primary-focus-border);
+  outline-offset: 2px;
+}
+
+/* Chevron drawn from two borders so it needs no icon font. */
+html[data-ccxp-lite-scope="main"] .ccxp-lite-section-toggle-marker {
+  flex: none;
+  width: 9px;
+  height: 9px;
+  margin-block-start: -4px;
+  border-right: 2px solid currentcolor;
+  border-bottom: 2px solid currentcolor;
+  transform: rotate(45deg);
+  transition: transform 150ms ease;
+}
+
+html[data-ccxp-lite-scope="main"]
+  .ccxp-lite-section-toggle[aria-expanded="true"]
+  .ccxp-lite-section-toggle-marker {
+  margin-block-start: 4px;
+  transform: rotate(-135deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-ccxp-lite-scope="main"] .ccxp-lite-section-toggle-marker {
+    transition: none;
+  }
+}
+
 html[data-ccxp-lite-scope="main"] body,
 html[data-ccxp-lite-scope="main"] table,
 html[data-ccxp-lite-scope="main"] tbody,

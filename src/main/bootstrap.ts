@@ -378,6 +378,7 @@
     mainBody.classList.add(TOKENS.mainClass);
     mainBody.style.setProperty("background-image", "none", "important");
     mainBody.style.setProperty("background-color", "var(--ccxp-lite-bg)", "important");
+    globalThis.CCXP_LITE?.mainSections?.enhanceCollapsibleSections(mainDocument);
     const { sidebarState } = globalThis.CCXP_LITE ?? {};
     if (sidebarState) {
       const state = sidebarState.getSidebarUiState(mainDocument);

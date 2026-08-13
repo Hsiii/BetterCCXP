@@ -74,6 +74,7 @@
         "login/pipeline/rewrite.js",
         "login/pipeline/style.js",
         "login/pipeline/bootstrap.js",
+        "main/sections.js",
         "main/bootstrap.js"
       ]
     },

@@ -645,6 +645,10 @@ declare global {
     };
   }
 
+  interface CcxpLiteMainSections {
+    enhanceCollapsibleSections: (targetDocument: Document) => void;
+  }
+
   interface CcxpLiteNamespace {
     shared?: CcxpLiteShared;
     sharedConstants?: CcxpLiteSharedConstants;
@@ -669,6 +673,7 @@ declare global {
     sidebarData?: CcxpLiteSidebarData;
     sidebarUi?: CcxpLiteSidebarUi;
     sidebarRuntime?: CcxpLiteSidebarRuntime;
+    mainSections?: CcxpLiteMainSections;
     menuData?: Record<string, unknown>;
     menuFavorites?: Record<string, unknown>;
     menuRuntime?: Record<string, unknown>;
