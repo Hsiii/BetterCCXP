@@ -27,4 +27,4 @@ A lightweight browser extension that improves the usability and navigation exper
 
 ## Decaptcha
 
-The extension bundles decaptcha models from [ccxpDecaptcha](https://github.com/orangesago/ccxp-decaptcha) and runs inference locally in the content script.
+The extension bundles decaptcha models from [ccxpDecaptcha](https://github.com/sago-cream/ccxp-decaptcha) and runs inference locally in the content script.
