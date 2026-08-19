@@ -1,0 +1,71 @@
+name: Bug report
+description: Report something that is not working as expected
+title: "bug: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for taking the time to report a problem.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: Describe what you saw and what you expected instead.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open ...
+        2. Select ...
+        3. See ...
+    validations:
+      required: true
+
+  - type: input
+    id: page
+    attributes:
+      label: Affected CCXP page
+      description: Include the path after the hostname. Remove session IDs or other sensitive values.
+      placeholder: /ccxp/INQUIRE/...
+
+  - type: input
+    id: version
+    attributes:
+      label: ccxpLite version
+      placeholder: 1.9.0
+    validations:
+      required: true
+
+  - type: dropdown
+    id: browser
+    attributes:
+      label: Browser
+      options:
+        - Chrome
+        - Firefox
+        - Other Chromium browser
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Screenshots or additional context
+      description: Do not include passwords, session IDs, student records, or other personal information.
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues for the same problem.
+          required: true
+        - label: I removed credentials, session IDs, and personal information from this report.
+          required: true

@@ -28,3 +28,7 @@ A lightweight browser extension that improves the usability and navigation exper
 ## Decaptcha
 
 The extension bundles decaptcha models from [ccxpDecaptcha](https://github.com/sago-cream/ccxp-decaptcha) and runs inference locally in the content script.
+
+## Contributing
+
+Contributions are welcome. Please read the [contribution guide](CONTRIBUTING.md) before opening a pull request. Report security and privacy issues according to our [security policy](.github/SECURITY.md).
