@@ -92,22 +92,28 @@ describe("inquire captcha", () => {
       document.querySelector<HTMLImageElement>("img[src*='auth_img.php?ACIXSTORE=']"),
       "inquire captcha image",
     );
+    let imageComplete = false;
+    let imageWidth = 0;
+    let imageHeight = 0;
     Object.defineProperty(image, "complete", {
       configurable: true,
-      get: () => false,
+      get: () => imageComplete,
     });
     Object.defineProperty(image, "naturalWidth", {
       configurable: true,
-      get: () => 0,
+      get: () => imageWidth,
     });
     Object.defineProperty(image, "naturalHeight", {
       configurable: true,
-      get: () => 0,
+      get: () => imageHeight,
     });
 
     loadModules(window, inquireCaptchaModulePaths);
 
     const EventConstructor = requireValue(document.defaultView?.Event, "event constructor");
+    imageComplete = true;
+    imageWidth = 42;
+    imageHeight = 30;
     image.dispatchEvent(new EventConstructor("load"));
 
     await flushPromises();
