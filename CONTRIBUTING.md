@@ -22,6 +22,15 @@ bun run build
 
 Keep tests focused on the behavior you changed. Do not commit generated build output from `dist/`.
 
+### Manual Browser Testing
+
+Build and load the extension locally before submitting changes to browser behavior or CCXP pages:
+
+- Chrome: run `bun run build:crx`, open `chrome://extensions`, enable Developer mode, choose **Load unpacked**, and select `dist/crx/unpacked`.
+- Firefox: run `bun run build:firefox`, open `about:debugging#/runtime/this-firefox`, choose **Load Temporary Add-on**, and select `dist/firefox/unpacked/manifest.json`.
+
+Rebuild after changing TypeScript. Test the affected CCXP pages with your own account, and remove personal information from screenshots.
+
 ## Pull Requests
 
 - Create your branch from the latest `main`.
@@ -33,6 +42,6 @@ Keep tests focused on the behavior you changed. Do not commit generated build ou
 - For changes to CCXP pages, list the affected page paths and browsers you tested.
 - Add or update focused tests for behavior changes.
 
-AI-assisted contributions are welcome, but you must review, understand, and take responsibility for every submitted line. Remove generated placeholders, irrelevant commentary, and unrelated changes before opening the pull request.
+AI-assisted contributions are welcome, but disclose what the tools helped with in the pull request. Write the pull request description in your own words, and review, understand, test, and take responsibility for every submitted line. Remove generated placeholders, irrelevant commentary, and unrelated changes before opening the pull request. Be prepared to explain your changes and respond to review feedback.
 
 By contributing, you agree that your contribution will be licensed under the [MIT License](LICENSE) and that you will follow our [Code of Conduct](CODE_OF_CONDUCT.md).

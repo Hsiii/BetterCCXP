@@ -1,21 +1,18 @@
-## What and why
+## Purpose
 
-<!-- Describe the user-visible problem and the intended result. Link an issue when applicable. -->
+<!-- What problem does this solve? Link an issue when applicable. -->
+
+## Solution
+
+<!-- Explain the approach and relevant trade-offs. -->
 
 ## Verification
 
-<!-- List the commands, CCXP pages, and browsers you tested. Explain any failures that also occur on main. -->
+<!-- List commands run and manual testing. Include matching before and after screenshots for visual changes. -->
 
-- [ ] `bun run check`
-- [ ] `bun run build`
+Tested browsers:
+Affected CCXP pages:
 
-## Visual changes
+## AI assistance
 
-<!-- Add matching before and after screenshots, or write "None". -->
-
-## Checklist
-
-- [ ] This pull request addresses one focused concern.
-- [ ] This branch is based on the latest `main`, or its dependency is linked above.
-- [ ] I added or updated focused tests where appropriate.
-- [ ] I reviewed and understand all submitted code, including AI-assisted work.
+<!-- Write "None," or describe what AI tools helped with. Write the PR description in your own words. -->

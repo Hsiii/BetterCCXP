@@ -6,6 +6,6 @@ This project adopts the [Contributor Covenant, version 3.0](https://www.contribu
 
 ## Reporting
 
-Report conduct concerns privately through the contact options on the [maintainer's website](https://links.hsichen.dev). Include relevant links or context, but do not share another person's private information unnecessarily.
+Report conduct concerns privately by emailing [its.hsichen@gmail.com](mailto:its.hsichen@gmail.com). Include relevant links or context, but do not share another person's private information unnecessarily.
 
 Reports will be reviewed as promptly and confidentially as practical. The maintainer may remove content, limit participation, or ban participants when necessary to protect the community.
