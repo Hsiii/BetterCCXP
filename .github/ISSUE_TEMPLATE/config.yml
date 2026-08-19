@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Report a security vulnerability
+    url: https://github.com/sago-cream/ccxp-lite/security/advisories/new
+    about: Please report security and privacy issues privately.
