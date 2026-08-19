@@ -42,6 +42,6 @@ Rebuild after changing TypeScript. Test the affected CCXP pages with your own ac
 - For changes to CCXP pages, list the affected page paths and browsers you tested.
 - Add or update focused tests for behavior changes.
 
-AI-assisted contributions are welcome, but disclose what the tools helped with in the pull request. Write the pull request description in your own words, and review, understand, test, and take responsibility for every submitted line. Remove generated placeholders, irrelevant commentary, and unrelated changes before opening the pull request. Be prepared to explain your changes and respond to review feedback.
+AI-assisted contributions are welcome, but write the pull request description in your own words, and review, understand, test, and take responsibility for every submitted line. Remove generated placeholders, irrelevant commentary, and unrelated changes before opening the pull request. Be prepared to explain your changes and respond to review feedback.
 
 By contributing, you agree that your contribution will be licensed under the [MIT License](LICENSE) and that you will follow our [Code of Conduct](CODE_OF_CONDUCT.md).

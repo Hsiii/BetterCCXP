@@ -12,7 +12,3 @@
 
 Tested browsers:
 Affected CCXP pages:
-
-## AI assistance
-
-<!-- Write "None," or describe what AI tools helped with. Write the PR description in your own words. -->
