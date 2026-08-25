@@ -48,9 +48,7 @@ html[data-ccxp-lite-scope="main"]
    education listing, so restore a readable band here. */
 html[data-ccxp-lite-scope="main"] tr.class1,
 html[data-ccxp-lite-scope="main"] tr.class1 td,
-html[data-ccxp-lite-scope="main"] tr.class1 th,
-html[data-ccxp-lite-scope="main"] td.class1,
-html[data-ccxp-lite-scope="main"] th.class1 {
+html[data-ccxp-lite-scope="main"] tr.class1 th {
   background-color: var(--ccxp-lite-surface-muted) !important;
   color: var(--ccxp-lite-type-body-strong-color) !important;
   font-weight: var(--ccxp-lite-font-weight-strong);
