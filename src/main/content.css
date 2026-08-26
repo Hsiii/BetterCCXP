@@ -41,6 +41,19 @@ html[data-ccxp-lite-scope="main"]
   background-color: transparent !important;
 }
 
+/* CCXP paints section header rows with .class1 (white text on a blue band) in
+   its own stylesheet, so neither the colour attribute nor the inline style
+   rules below can reach them. Clearing the band above would leave white text on
+   the white page, hiding headings such as the 向度 groupings on the general
+   education listing, so restore a readable band here. */
+html[data-ccxp-lite-scope="main"] tr.class1,
+html[data-ccxp-lite-scope="main"] tr.class1 td,
+html[data-ccxp-lite-scope="main"] tr.class1 th {
+  background-color: var(--ccxp-lite-surface-muted) !important;
+  color: var(--ccxp-lite-type-body-strong-color) !important;
+  font-weight: var(--ccxp-lite-font-weight-strong);
+}
+
 html[data-ccxp-lite-scope="main"] body,
 html[data-ccxp-lite-scope="main"] table,
 html[data-ccxp-lite-scope="main"] tbody,
