@@ -62,7 +62,6 @@ describe("sidebar runtime", () => {
     const document = window.document as Document;
     loadModules(window, menuModulePaths);
     const sidebarRuntime = requireValue(window.CCXP_LITE.sidebarRuntime, "sidebarRuntime");
-    const sidebarFavorites = requireValue(window.CCXP_LITE.sidebarFavorites, "sidebarFavorites");
     const destinationFrame = document.createElement("iframe");
     sidebarRuntime.activateLegacyLink(
       {
@@ -77,7 +76,7 @@ describe("sidebar runtime", () => {
     expect(destinationFrame.src).toBe("https://www.ccxp.nthu.edu.tw/grades");
     sidebarRuntime.captureInitialMainFrameUrl();
     sidebarRuntime.captureInitialMainFrameUrl();
-    expect(window.sessionStorage.getItem(sidebarFavorites.INITIAL_MAIN_URL_STORAGE_KEY)).toBe(
+    expect(window.sessionStorage.getItem(sidebarRuntime.INITIAL_MAIN_URL_STORAGE_KEY)).toBe(
       "https://www.ccxp.nthu.edu.tw/start",
     );
   });

@@ -17,13 +17,11 @@
     setPersistedSidebarVariant,
   } = sidebarState;
   const {
-    favoriteState,
-    getFavoriteIds,
-    getMatchingFavoriteBlockIds,
-    getMatchingFavoriteIds,
+    areFavoritesLoaded,
     isFavoriteLink,
     isFavoriteBlock,
-    writeFavoriteIds,
+    toggleFavoriteLink,
+    toggleFavoriteBlock,
   } = sidebarFavorites;
   const { filterCategories, filterCategoryTree } = sidebarData;
   const {
@@ -259,7 +257,7 @@
     const items = createClassicSidebarItems(model, state.searchQuery);
     const expandedItemIds = new Set<string>(state.classicExpandedItemIds);
     if (
-      !favoriteState.hasLoaded &&
+      !areFavoritesLoaded() &&
       state.searchQuery === "" &&
       !expandedItemIds.has("category-favorites")
     ) {
@@ -415,11 +413,7 @@
     const children = targetDocument.createElement("div");
     children.className = "ccxp-lite-link-list ccxp-lite-link-list-layer";
     children.style.setProperty("--ccxp-lite-tree-depth", String(depth + 1));
-    if (
-      !favoriteState.hasLoaded &&
-      group.kind === "category" &&
-      group.id === "category-favorites"
-    ) {
+    if (!areFavoritesLoaded() && group.kind === "category" && group.id === "category-favorites") {
       children.append(
         createSkeletonStack(
           targetDocument,
@@ -719,7 +713,7 @@
     body.className = "ccxp-lite-pane-body ccxp-lite-pinned-list";
     const pinnedBlocks = favorites?.blocks ?? [];
     const pinnedLinks = favorites?.links ?? [];
-    if (!favoriteState.hasLoaded) {
+    if (!areFavoritesLoaded()) {
       body.append(createSkeletonStack(targetDocument, 3, "ccxp-lite-skeleton-card"));
     } else if (pinnedBlocks.length === 0 && pinnedLinks.length === 0) {
       body.append(createEmptyState(targetDocument, strings.sidebarFavoritesEmpty));
@@ -1141,6 +1135,11 @@
     return labelWrap;
   }
 
+  function applyBlockFavoriteChange(block: CcxpLiteSidebarBlock, onFavoritesChange: () => void) {
+    toggleFavoriteBlock(block);
+    onFavoritesChange();
+  }
+
   function createFavoriteToggle(
     targetDocument: Document,
     linkItem: CcxpLiteSidebarLinkItem,
@@ -1150,7 +1149,7 @@
     const favoriteButton = targetDocument.createElement("button");
     favoriteButton.type = "button";
     favoriteButton.className = "ccxp-lite-favorite-toggle";
-    const isFavorite = isFavoriteLink(linkItem, getFavoriteIds());
+    const isFavorite = isFavoriteLink(linkItem);
     favoriteButton.setAttribute("aria-pressed", isFavorite ? "true" : "false");
     favoriteButton.setAttribute(
       "aria-label",
@@ -1167,23 +1166,12 @@
       event.preventDefault();
       event.stopPropagation();
       const applyFavoriteChange = () => {
-        const favoriteIds = new Set(getFavoriteIds());
-        const matchingIds = getMatchingFavoriteIds(linkItem, favoriteIds);
-        if (matchingIds.length > 0) {
-          for (const favoriteId of matchingIds) {
-            favoriteIds.delete(favoriteId);
-          }
-        } else {
-          favoriteIds.add(linkItem.id);
-        }
-        writeFavoriteIds(favoriteIds);
+        toggleFavoriteLink(linkItem);
         if (typeof onFavoritesChange === "function") {
           onFavoritesChange();
         }
       };
-      const favoriteIds = getFavoriteIds();
-      const matchingIds = getMatchingFavoriteIds(linkItem, favoriteIds);
-      if (matchingIds.length > 0) {
+      if (isFavoriteLink(linkItem)) {
         showRemovePinnedDialog(targetDocument, linkItem.label, strings).then(
           (shouldRemove) => {
             if (!shouldRemove) {
@@ -1209,7 +1197,7 @@
     const favoriteButton = targetDocument.createElement("button");
     favoriteButton.type = "button";
     favoriteButton.className = "ccxp-lite-favorite-toggle ccxp-lite-favorite-toggle-block";
-    const blockIsFavorite = isFavoriteBlock(block, getFavoriteIds());
+    const blockIsFavorite = isFavoriteBlock(block);
     favoriteButton.dataset.ccxpLiteFavoriteState = blockIsFavorite ? "all" : "none";
     favoriteButton.setAttribute("aria-pressed", blockIsFavorite ? "true" : "false");
     favoriteButton.setAttribute(
@@ -1226,34 +1214,19 @@
     favoriteButton.addEventListener("click", (event) => {
       event.preventDefault();
       event.stopPropagation();
-      const applyFavoriteChange = () => {
-        const favoriteIds = new Set(getFavoriteIds());
-        if (blockIsFavorite) {
-          const matchingIds = getMatchingFavoriteBlockIds(block, favoriteIds);
-          for (const favoriteId of matchingIds) {
-            favoriteIds.delete(favoriteId);
-          }
-        } else {
-          favoriteIds.add(block.favoriteId ?? block.id);
-        }
-        writeFavoriteIds(favoriteIds);
-        if (typeof onFavoritesChange === "function") {
-          onFavoritesChange();
-        }
-      };
       if (blockIsFavorite) {
         showRemovePinnedDialog(targetDocument, block.label, strings).then(
           (shouldRemove) => {
             if (!shouldRemove) {
               return;
             }
-            applyFavoriteChange();
+            applyBlockFavoriteChange(block, onFavoritesChange);
           },
           () => undefined,
         );
         return;
       }
-      applyFavoriteChange();
+      applyBlockFavoriteChange(block, onFavoritesChange);
     });
     return favoriteButton;
   }

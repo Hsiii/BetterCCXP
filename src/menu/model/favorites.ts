@@ -3,7 +3,6 @@
   const namespace = runtimeScope.CCXP_LITE ?? {};
   const FAVORITES_STORAGE_SCOPE_PATH = "/ccxp/INQUIRE/select_entry.php";
   const FAVORITES_STORAGE_KEY = `ccxp-lite-sidebar-favorites::${FAVORITES_STORAGE_SCOPE_PATH}`;
-  const INITIAL_MAIN_URL_STORAGE_KEY = `ccxp-lite-sidebar-initial-main-url::${FAVORITES_STORAGE_SCOPE_PATH}`;
   const LEGACY_FAVORITES_STORAGE_KEY = "ccxp-lite-sidebar-favorites";
   const favoriteState: {
     ids: Set<string>;
@@ -42,8 +41,15 @@
     );
   }
 
-  function getFavoriteIds(): ReadonlySet<string> {
-    return new Set(favoriteState.ids);
+  function areFavoritesLoaded() {
+    return favoriteState.hasLoaded;
+  }
+
+  function initializeFavorites(onChange: () => void) {
+    ensureFavoriteStorageSync();
+    const unsubscribe = subscribeToFavoriteChanges(onChange);
+    ensureFavoriteIdsLoaded(onChange);
+    return unsubscribe;
   }
 
   function ensureFavoriteIdsLoaded(onReady?: () => void) {
@@ -347,15 +353,6 @@
     }
   }
 
-  function getScopedSessionStorage() {
-    const scopeWindow = getFavoriteScopeWindow();
-    try {
-      return scopeWindow.sessionStorage;
-    } catch {
-      return undefined;
-    }
-  }
-
   function getFavoriteScopeWindow() {
     try {
       return window.top ?? globalThis;
@@ -372,7 +369,7 @@
       return [];
     }
     if (item.kind === "link") {
-      return isFavoriteLink(item.linkItem, favoriteIds) ? [item.linkItem] : [];
+      return getMatchingFavoriteIds(item.linkItem, favoriteIds).length > 0 ? [item.linkItem] : [];
     }
     const favoriteLinks: CcxpLiteSidebarLinkItem[] = [];
     const links =
@@ -380,7 +377,7 @@
         ? item.links
         : [...(item.links ?? []), ...item.blocks.flatMap((block) => block.links)];
     for (const linkItem of links) {
-      if (isFavoriteLink(linkItem, favoriteIds)) {
+      if (getMatchingFavoriteIds(linkItem, favoriteIds).length > 0) {
         favoriteLinks.push(linkItem);
       }
     }
@@ -395,10 +392,12 @@
       return [];
     }
     if (item.kind === "block") {
-      return isFavoriteBlock(item, favoriteIds) ? [item] : [];
+      return getMatchingFavoriteBlockIds(item, favoriteIds).length > 0 ? [item] : [];
     }
     if (item.kind === "category") {
-      return item.blocks.filter((block) => isFavoriteBlock(block, favoriteIds));
+      return item.blocks.filter(
+        (block) => getMatchingFavoriteBlockIds(block, favoriteIds).length > 0,
+      );
     }
     return [];
   }
@@ -412,6 +411,48 @@
         return false;
       }
       seen.add(linkItem.id);
+      return true;
+    });
+  }
+
+  function buildFavoriteCategory(
+    categories: readonly CcxpLiteSidebarCategoryNode[],
+    strings: Readonly<Record<string, string>>,
+  ): CcxpLiteSidebarCategoryNode {
+    const favoriteIds = favoriteState.ids;
+    const favoriteLinks = dedupeLinkItems(
+      categories.flatMap((category) => collectFavoriteLinks(category, favoriteIds)),
+    );
+    const favoriteBlocks = dedupeBlockItems(
+      categories.flatMap((category) => collectFavoriteBlocks(category, favoriteIds)),
+    );
+    return {
+      id: "category-favorites",
+      label:
+        strings.sidebarCategoryFavorites === ""
+          ? "\u5E38\u7528\u529F\u80FD"
+          : strings.sidebarCategoryFavorites,
+      icon: "star",
+      blocks: favoriteBlocks,
+      links: favoriteLinks,
+      emptyMessage:
+        strings.sidebarFavoritesEmpty === ""
+          ? "Press star at any function to save it here"
+          : strings.sidebarFavoritesEmpty,
+      kind: "category",
+    };
+  }
+
+  function dedupeBlockItems(
+    blocks: readonly CcxpLiteSidebarBlock[],
+  ): readonly CcxpLiteSidebarBlock[] {
+    const seen = new Set<string>();
+    return blocks.filter((block) => {
+      const dedupeKey = block.favoriteId ?? block.id;
+      if (seen.has(dedupeKey)) {
+        return false;
+      }
+      seen.add(dedupeKey);
       return true;
     });
   }
@@ -531,18 +572,38 @@
     return normalizedParentSegments;
   }
 
-  function isFavoriteLink(
-    linkItem: CcxpLiteSidebarLinkItem | undefined,
-    favoriteIds: ReadonlySet<string>,
-  ) {
-    return getMatchingFavoriteIds(linkItem, favoriteIds).length > 0;
+  function isFavoriteLink(linkItem: CcxpLiteSidebarLinkItem | undefined) {
+    return getMatchingFavoriteIds(linkItem, favoriteState.ids).length > 0;
   }
 
-  function isFavoriteBlock(
-    blockItem: CcxpLiteSidebarBlock | undefined,
-    favoriteIds: ReadonlySet<string>,
-  ) {
-    return getMatchingFavoriteBlockIds(blockItem, favoriteIds).length > 0;
+  function isFavoriteBlock(blockItem: CcxpLiteSidebarBlock | undefined) {
+    return getMatchingFavoriteBlockIds(blockItem, favoriteState.ids).length > 0;
+  }
+
+  function toggleFavoriteLink(linkItem: CcxpLiteSidebarLinkItem) {
+    const favoriteIds = new Set(favoriteState.ids);
+    const matchingIds = getMatchingFavoriteIds(linkItem, favoriteIds);
+    if (matchingIds.length > 0) {
+      for (const favoriteId of matchingIds) {
+        favoriteIds.delete(favoriteId);
+      }
+    } else {
+      favoriteIds.add(linkItem.id);
+    }
+    writeFavoriteIds(favoriteIds);
+  }
+
+  function toggleFavoriteBlock(blockItem: CcxpLiteSidebarBlock) {
+    const favoriteIds = new Set(favoriteState.ids);
+    const matchingIds = getMatchingFavoriteBlockIds(blockItem, favoriteIds);
+    if (matchingIds.length > 0) {
+      for (const favoriteId of matchingIds) {
+        favoriteIds.delete(favoriteId);
+      }
+    } else {
+      favoriteIds.add(blockItem.favoriteId ?? blockItem.id);
+    }
+    writeFavoriteIds(favoriteIds);
   }
 
   function getMatchingFavoriteIds(
@@ -789,24 +850,16 @@
   namespace.sidebarFavorites = {
     FAVORITES_STORAGE_SCOPE_PATH,
     FAVORITES_STORAGE_KEY,
-    INITIAL_MAIN_URL_STORAGE_KEY,
-    favoriteState,
-    getFavoriteIds,
-    ensureFavoriteIdsLoaded,
-    writeFavoriteIds,
-    ensureFavoriteStorageSync,
-    subscribeToFavoriteChanges,
-    collectFavoriteLinks,
-    collectFavoriteBlocks,
-    dedupeLinkItems,
+    areFavoritesLoaded,
+    initializeFavorites,
+    buildFavoriteCategory,
     createLinkId,
     createBlockId,
     createLegacyLinkId,
     buildFavoritePathSegments,
     isFavoriteLink,
     isFavoriteBlock,
-    getMatchingFavoriteIds,
-    getMatchingFavoriteBlockIds,
-    getScopedSessionStorage,
+    toggleFavoriteLink,
+    toggleFavoriteBlock,
   };
 })(globalThis);
