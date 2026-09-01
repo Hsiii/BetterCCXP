@@ -7,10 +7,7 @@
   }
   const { STRINGS, SIDEBAR_CATEGORIES } = shared;
   const {
-    collectFavoriteBlocks,
-    collectFavoriteLinks,
-    dedupeLinkItems,
-    getFavoriteIds,
+    buildFavoriteCategory,
     buildFavoritePathSegments,
     createBlockId,
     createLinkId,
@@ -52,13 +49,11 @@
     const normalizedItems = root.children.flatMap((entry, index) =>
       normalizeRootEntry(entry, index, navDocument, locale),
     );
-    const favoriteIds = getFavoriteIds();
-    return buildCategorizedSidebarItems(normalizedItems, favoriteIds, strings);
+    return buildCategorizedSidebarItems(normalizedItems, strings);
   }
 
   function buildCategorizedSidebarItems(
     items: readonly CcxpLiteSidebarTreeNode[],
-    favoriteIds: ReadonlySet<string>,
     strings: Readonly<Record<string, string>> = STRINGS,
   ): CcxpLiteSidebarModel {
     const buckets = new Map<string, CcxpLiteSidebarTreeNode[]>(
@@ -85,28 +80,8 @@
     if (unmatchedItems.length > 0) {
       categories.push(buildSidebarCategoryNode(UNCATEGORIZED_CATEGORY, unmatchedItems, strings));
     }
-    const favoriteLinks = categories.flatMap((category) =>
-      collectFavoriteLinks(category, favoriteIds),
-    );
-    const favoriteBlocks = dedupeBlockItems(
-      categories.flatMap((category) => collectFavoriteBlocks(category, favoriteIds)),
-    );
     return {
-      favorites: {
-        id: "category-favorites",
-        label:
-          strings.sidebarCategoryFavorites === ""
-            ? "\u5E38\u7528\u529F\u80FD"
-            : strings.sidebarCategoryFavorites,
-        icon: "star",
-        blocks: favoriteBlocks,
-        links: dedupeLinkItems(favoriteLinks),
-        emptyMessage:
-          strings.sidebarFavoritesEmpty === ""
-            ? "Press star at any function to save it here"
-            : strings.sidebarFavoritesEmpty,
-        kind: "category",
-      },
+      favorites: buildFavoriteCategory(categories, strings),
       categories,
     };
   }

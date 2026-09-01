@@ -27,8 +27,7 @@
     isDocumentComplete,
     cleanLegacyAttributes,
   } = shared;
-  const { ensureFavoriteStorageSync, ensureFavoriteIdsLoaded, subscribeToFavoriteChanges } =
-    sidebarFavorites;
+  const { initializeFavorites } = sidebarFavorites;
   const { buildSidebarModel } = sidebarData;
   const { getSidebarUiState } = sidebarState;
   const { renderSidebar, createSidebarSearch, syncTopLevelFramesetLayout } = sidebarUi;
@@ -168,12 +167,8 @@
         strings,
       );
     };
-    ensureFavoriteStorageSync();
     rerenderBinding.unsubscribeFavorites?.();
-    rerenderBinding.unsubscribeFavorites = subscribeToFavoriteChanges(
-      rerenderBinding.boundRerender,
-    );
-    ensureFavoriteIdsLoaded(rerenderBinding.boundRerender);
+    rerenderBinding.unsubscribeFavorites = initializeFavorites(rerenderBinding.boundRerender);
     rerenderBinding.boundRerender();
   }
 

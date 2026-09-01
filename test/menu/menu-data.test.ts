@@ -322,7 +322,7 @@ describe("sidebar data", () => {
     ]);
   });
 
-  test("keeps favorites visible when a nested menu gains an intermediate layer", () => {
+  test("keeps favorites visible when a nested menu gains an intermediate layer", async () => {
     const { window } = createTestWindow(`
       <!doctype html>
       <html>
@@ -343,15 +343,19 @@ describe("sidebar data", () => {
     const shared = requireValue(window.CCXP_LITE.shared, "shared");
     const strings = shared.getLocalizedStrings("en");
 
-    sidebarFavorites.favoriteState.ids = new Set([
-      sidebarFavorites.createLinkId({
-        label: "Apply now",
-        href: "/courses/apply",
-        pathSegments: ["Student services", "Apply now"],
-        target: "main",
-      }),
-    ]);
-    sidebarFavorites.favoriteState.hasLoaded = true;
+    const favoriteId = sidebarFavorites.createLinkId({
+      label: "Apply now",
+      href: "/courses/apply",
+      pathSegments: ["Student services", "Apply now"],
+      target: "main",
+    });
+    window.localStorage.setItem(
+      sidebarFavorites.FAVORITES_STORAGE_KEY,
+      JSON.stringify({ version: 1, updatedAt: 1, ids: [favoriteId] }),
+    );
+    await new Promise<void>((resolve) => {
+      sidebarFavorites.initializeFavorites(resolve);
+    });
 
     const model = requireValue(
       sidebarData.buildSidebarModel(window.document, strings),
@@ -368,7 +372,7 @@ describe("sidebar data", () => {
     ]);
   });
 
-  test("adds pinned folders to the favorites blocks instead of pinning their child links", () => {
+  test("adds pinned folders to the favorites blocks instead of pinning their child links", async () => {
     const { window } = createTestWindow(`
       <!doctype html>
       <html>
@@ -389,14 +393,18 @@ describe("sidebar data", () => {
     const shared = requireValue(window.CCXP_LITE.shared, "shared");
     const strings = shared.getLocalizedStrings("en");
 
-    sidebarFavorites.favoriteState.ids = new Set([
-      sidebarFavorites.createBlockId({
-        label: "Select courses",
-        pathSegments: ["Student services", "Select courses"],
-        parentCategoryId: "category-planning-and-enrollment",
-      }),
-    ]);
-    sidebarFavorites.favoriteState.hasLoaded = true;
+    const favoriteId = sidebarFavorites.createBlockId({
+      label: "Select courses",
+      pathSegments: ["Student services", "Select courses"],
+      parentCategoryId: "category-planning-and-enrollment",
+    });
+    window.localStorage.setItem(
+      sidebarFavorites.FAVORITES_STORAGE_KEY,
+      JSON.stringify({ version: 1, updatedAt: 1, ids: [favoriteId] }),
+    );
+    await new Promise<void>((resolve) => {
+      sidebarFavorites.initializeFavorites(resolve);
+    });
 
     const model = requireValue(
       sidebarData.buildSidebarModel(window.document, strings),

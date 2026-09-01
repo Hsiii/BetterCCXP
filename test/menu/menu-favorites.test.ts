@@ -7,6 +7,23 @@ import {
   requireValue,
 } from "../helpers/module-loader.js";
 
+async function initializeFavorites(api: CcxpLiteSidebarFavorites) {
+  await new Promise<void>((resolve) => {
+    api.initializeFavorites(resolve);
+  });
+}
+
+function storeFavoriteIds(
+  window: { localStorage: Storage },
+  api: CcxpLiteSidebarFavorites,
+  ids: readonly string[],
+) {
+  window.localStorage.setItem(
+    api.FAVORITES_STORAGE_KEY,
+    JSON.stringify({ version: 1, updatedAt: 1, ids }),
+  );
+}
+
 describe("sidebar favorites", () => {
   test("migrates scoped localStorage favorites into canonical extension storage", async () => {
     const { window } = createTestWindow();
@@ -21,22 +38,22 @@ describe("sidebar favorites", () => {
       persistedFavorites = message.key === api.FAVORITES_STORAGE_KEY ? message.value : undefined;
       done?.();
     }) as typeof window.chrome.runtime.sendMessage;
-    window.localStorage.setItem(
-      api.FAVORITES_STORAGE_KEY,
-      JSON.stringify(["legacy|Academic>Grades|Semester Grades|main|"]),
-    );
+    const linkItem: CcxpLiteSidebarLinkItem = {
+      id: api.createLinkId({ label: "Semester Grades", href: "/grades", target: "main" }),
+      label: "Semester Grades",
+      href: "/grades",
+      target: "main",
+    };
+    storeFavoriteIds(window, api, [linkItem.id]);
 
-    await new Promise<void>((resolve) => {
-      api.ensureFavoriteIdsLoaded(resolve);
-    });
-    const loadedIds = api.getFavoriteIds();
+    await initializeFavorites(api);
 
-    expect(loadedIds.size).toBe(1);
+    expect(api.isFavoriteLink(linkItem)).toBe(true);
 
-    api.writeFavoriteIds(new Set(["external", "grades"]));
+    api.toggleFavoriteLink(linkItem);
     expect(persistedFavorites).toMatchObject({
       version: 1,
-      ids: ["external", "grades"],
+      ids: [],
     });
   });
 
@@ -46,10 +63,6 @@ describe("sidebar favorites", () => {
 
     const api = requireValue(window.CCXP_LITE.sidebarFavorites, "sidebarFavorites");
     const callback = vi.fn();
-    api.subscribeToFavoriteChanges(() => {
-      callback(undefined);
-    });
-
     const localStorageGetItem = vi.spyOn(window.localStorage, "getItem").mockImplementation(() => {
       throw new Error("blocked");
     });
@@ -69,24 +82,27 @@ describe("sidebar favorites", () => {
         [api.FAVORITES_STORAGE_KEY]: {
           version: 1,
           updatedAt: 1,
-          ids: ["legacy|Academic>Grades|Semester Grades|main|"],
+          ids: [api.createLinkId({ label: "Grades", href: "/grades", target: "main" })],
         },
       });
     }) as typeof window.chrome.storage.local.get;
 
-    api.favoriteState.hasLoaded = false;
     await new Promise<void>((resolve) => {
-      api.ensureFavoriteIdsLoaded(resolve);
+      api.initializeFavorites(() => {
+        callback(undefined);
+        resolve();
+      });
     });
 
-    expect(api.favoriteState.hasLoaded).toBe(true);
+    expect(api.areFavoritesLoaded()).toBe(true);
 
-    api.writeFavoriteIds(new Set(["grades"]));
+    callback.mockClear();
+    api.toggleFavoriteLink({ id: "grades", label: "Grades", href: "/grades", target: "main" });
     expect(callback).toHaveBeenCalled();
     localStorageGetItem.mockRestore();
   });
 
-  test("syncs across extension storage changes without crashing on invalid payloads", () => {
+  test("syncs across extension storage changes without crashing on invalid payloads", async () => {
     const { window } = createTestWindow();
     loadModules(window, menuModulePaths);
 
@@ -109,8 +125,14 @@ describe("sidebar favorites", () => {
           storageListener = callback;
         },
       );
-    api.ensureFavoriteStorageSync();
+    await initializeFavorites(api);
     const listener = requireValue(storageListener, "storage listener");
+    const linkItem: CcxpLiteSidebarLinkItem = {
+      id: api.createLinkId({ label: "Grades", href: "/grades", target: "main" }),
+      label: "Grades",
+      href: "/grades",
+      target: "main",
+    };
 
     listener(
       {
@@ -119,13 +141,13 @@ describe("sidebar favorites", () => {
           newValue: {
             version: 1,
             updatedAt: 1,
-            ids: ["grades"],
+            ids: [linkItem.id],
           },
         },
       },
       "local",
     );
-    expect([...api.getFavoriteIds()]).toEqual(["grades"]);
+    expect(api.isFavoriteLink(linkItem)).toBe(true);
 
     listener(
       {
@@ -136,11 +158,11 @@ describe("sidebar favorites", () => {
       },
       "local",
     );
-    expect([...api.getFavoriteIds()]).toEqual([]);
+    expect(api.isFavoriteLink(linkItem)).toBe(false);
     addListener.mockRestore();
   });
 
-  test("matches versioned favorites even when menu depth changes", () => {
+  test("matches versioned favorites even when menu depth changes", async () => {
     const { window } = createTestWindow();
     loadModules(window, menuModulePaths);
 
@@ -167,9 +189,10 @@ describe("sidebar favorites", () => {
       target: "main",
     });
 
-    expect(api.getMatchingFavoriteIds(currentLink, new Set([savedFavoriteId]))).toEqual([
-      savedFavoriteId,
-    ]);
+    storeFavoriteIds(window, api, [savedFavoriteId]);
+    await initializeFavorites(api);
+
+    expect(api.isFavoriteLink(currentLink)).toBe(true);
   });
 
   test("creates the same favorite id regardless of tree depth for the same route", () => {
@@ -195,7 +218,7 @@ describe("sidebar favorites", () => {
     );
   });
 
-  test("matches pinned folders even when a menu gains an intermediate layer", () => {
+  test("matches pinned folders even when a menu gains an intermediate layer", async () => {
     const { window } = createTestWindow();
     loadModules(window, menuModulePaths);
 
@@ -219,12 +242,13 @@ describe("sidebar favorites", () => {
       parentCategoryId: "category-planning-and-enrollment",
     });
 
-    expect(api.getMatchingFavoriteBlockIds(currentBlock, new Set([savedFavoriteId]))).toEqual([
-      savedFavoriteId,
-    ]);
+    storeFavoriteIds(window, api, [savedFavoriteId]);
+    await initializeFavorites(api);
+
+    expect(api.isFavoriteBlock(currentBlock)).toBe(true);
   });
 
-  test("matches stored v3 favorites across login sessions when volatile route values change", () => {
+  test("matches stored v3 favorites across login sessions when volatile route values change", async () => {
     const { window } = createTestWindow();
     loadModules(window, menuModulePaths);
 
@@ -259,9 +283,10 @@ describe("sidebar favorites", () => {
     const savedFavoriteId =
       "v3||Transcript||/JH/8/R/6.3/JH8R63001.php?ACIXSTORE=old-session||main||%A6%A8%C1Z%ACd%B8%DF::/JH%2F8%2FR%2F6.3%2FJH8R63001.php";
 
-    expect(api.getMatchingFavoriteIds(currentLink, new Set([savedFavoriteId]))).toEqual([
-      savedFavoriteId,
-    ]);
+    storeFavoriteIds(window, api, [savedFavoriteId]);
+    await initializeFavorites(api);
+
+    expect(api.isFavoriteLink(currentLink)).toBe(true);
   });
 
   test("writes canonical v3 favorite ids without volatile session parameters", () => {

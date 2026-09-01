@@ -1,13 +1,14 @@
 (function registerCcxpLiteSidebarRuntime(globalScope: typeof globalThis) {
   const runtimeScope = globalScope;
   const namespace = runtimeScope.CCXP_LITE ?? {};
-  const { shared, sidebarState, sidebarFavorites } = namespace;
-  if (!shared || !sidebarState || !sidebarFavorites) {
+  const { shared, sidebarState } = namespace;
+  if (!shared || !sidebarState) {
     return;
   }
   const { TOKENS, ensureThemeDocument, cleanLegacyAttributes } = shared;
   const { getSidebarUiState, persistSidebarScroll } = sidebarState;
-  const { getScopedSessionStorage, INITIAL_MAIN_URL_STORAGE_KEY } = sidebarFavorites;
+  const INITIAL_MAIN_URL_STORAGE_KEY =
+    "ccxp-lite-sidebar-initial-main-url::/ccxp/INQUIRE/select_entry.php";
   const DESTINATION_LOAD_TIMEOUT_MS = 8000;
   const EXTERNAL_LINK_PATH_PREFIXES = ["/ccxp/INQUIRE/PE/1/14D/"] as const;
   function shouldOpenLeafInDestination(linkItem: CcxpLiteSidebarLinkItem, navDocument: Document) {
@@ -83,6 +84,14 @@
       storage.setItem(INITIAL_MAIN_URL_STORAGE_KEY, currentUrl);
     } catch {
       // Ignore session storage failures.
+    }
+  }
+
+  function getScopedSessionStorage() {
+    try {
+      return (window.top ?? globalThis).sessionStorage;
+    } catch {
+      return undefined;
     }
   }
 
@@ -193,6 +202,7 @@
   }
   namespace.sidebarRuntime = {
     DESTINATION_LOAD_TIMEOUT_MS,
+    INITIAL_MAIN_URL_STORAGE_KEY,
     shouldOpenLeafInDestination,
     openLeafDestination,
     simplifyEmbeddedFrame,

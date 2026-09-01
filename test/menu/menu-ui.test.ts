@@ -10,7 +10,7 @@ import {
 } from "../helpers/module-loader.js";
 
 describe("sidebar ui", () => {
-  test("keeps chevrons right aligned while reserving the slot to their left for nested rows", () => {
+  test("keeps chevrons right aligned while reserving the slot to their left for nested rows", async () => {
     const { window } = createTestWindow(createSidebarShellHtml());
     loadModules(window, menuModulePaths);
 
@@ -72,8 +72,9 @@ describe("sidebar ui", () => {
 
     state.sidebarVariant = "classic";
     state.classicExpandedItemIds = ["category-courses", "section-academic"];
-    sidebarFavorites.favoriteState.ids = new Set();
-    sidebarFavorites.favoriteState.hasLoaded = true;
+    await new Promise<void>((resolve) => {
+      sidebarFavorites.initializeFavorites(resolve);
+    });
 
     sidebarUi.renderSidebar(document, document, model, strings);
 
@@ -106,7 +107,7 @@ describe("sidebar ui", () => {
     const clickEvent = new Event("click", { bubbles: true });
     favoriteToggle.dispatchEvent(clickEvent);
 
-    expect([...sidebarFavorites.getFavoriteIds()]).toEqual([blockFavoriteId]);
+    expect(sidebarFavorites.isFavoriteBlock(model.categories[0]?.blocks[0])).toBe(true);
 
     const nestedLinkRow = requireElement(
       document.querySelector('button[title="Semester Grades"]'),

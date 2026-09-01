@@ -523,23 +523,12 @@ declare global {
   interface CcxpLiteSidebarFavorites {
     FAVORITES_STORAGE_SCOPE_PATH: string;
     FAVORITES_STORAGE_KEY: string;
-    INITIAL_MAIN_URL_STORAGE_KEY: string;
-    getFavoriteIds: () => ReadonlySet<string>;
-    ensureFavoriteIdsLoaded: (onReady?: () => void) => void;
-    writeFavoriteIds: (favoriteIds: ReadonlySet<string>) => void;
-    ensureFavoriteStorageSync: () => void;
-    subscribeToFavoriteChanges: (callback: () => void) => () => void;
-    collectFavoriteLinks: (
-      item: CcxpLiteSidebarTreeNode | undefined,
-      favoriteIds: ReadonlySet<string>,
-    ) => readonly CcxpLiteSidebarLinkItem[];
-    collectFavoriteBlocks: (
-      item: CcxpLiteSidebarTreeNode | undefined,
-      favoriteIds: ReadonlySet<string>,
-    ) => readonly CcxpLiteSidebarBlock[];
-    dedupeLinkItems: (
-      linkItems: readonly CcxpLiteSidebarLinkItem[],
-    ) => readonly CcxpLiteSidebarLinkItem[];
+    areFavoritesLoaded: () => boolean;
+    initializeFavorites: (onChange: () => void) => () => void;
+    buildFavoriteCategory: (
+      categories: readonly CcxpLiteSidebarCategoryNode[],
+      strings: Readonly<Record<string, string>>,
+    ) => CcxpLiteSidebarCategoryNode;
     createLinkId: (linkItem: Partial<CcxpLiteSidebarLinkItem>) => string;
     createBlockId: (blockItem: Partial<CcxpLiteSidebarBlock>) => string;
     createLegacyLinkId: (linkItem: Partial<CcxpLiteSidebarLinkItem>) => string;
@@ -548,23 +537,10 @@ declare global {
       label: unknown,
       fallbackSegment?: string,
     ) => readonly string[];
-    isFavoriteLink: (
-      linkItem: CcxpLiteSidebarLinkItem | undefined,
-      favoriteIds: ReadonlySet<string>,
-    ) => boolean;
-    isFavoriteBlock: (
-      blockItem: CcxpLiteSidebarBlock | undefined,
-      favoriteIds: ReadonlySet<string>,
-    ) => boolean;
-    getMatchingFavoriteIds: (
-      linkItem: CcxpLiteSidebarLinkItem | undefined,
-      favoriteIds: ReadonlySet<string>,
-    ) => readonly string[];
-    getMatchingFavoriteBlockIds: (
-      blockItem: CcxpLiteSidebarBlock | undefined,
-      favoriteIds: ReadonlySet<string>,
-    ) => readonly string[];
-    getScopedSessionStorage: () => Storage | undefined;
+    isFavoriteLink: (linkItem: CcxpLiteSidebarLinkItem | undefined) => boolean;
+    isFavoriteBlock: (blockItem: CcxpLiteSidebarBlock | undefined) => boolean;
+    toggleFavoriteLink: (linkItem: CcxpLiteSidebarLinkItem) => void;
+    toggleFavoriteBlock: (blockItem: CcxpLiteSidebarBlock) => void;
   }
 
   interface CcxpLiteSidebarData {
@@ -610,6 +586,7 @@ declare global {
 
   interface CcxpLiteSidebarRuntime {
     DESTINATION_LOAD_TIMEOUT_MS: number;
+    INITIAL_MAIN_URL_STORAGE_KEY: string;
     shouldOpenLeafInDestination: (
       linkItem: CcxpLiteSidebarLinkItem,
       navDocument: Document,
@@ -633,14 +610,6 @@ declare global {
       linkItem: CcxpLiteSidebarLinkItem | string,
       navDocument: Document,
     ) => boolean;
-  }
-
-  interface CcxpLiteSidebarFavorites {
-    favoriteState: {
-      ids: Set<string>;
-      hasLoaded: boolean;
-      pendingLoad: Promise<void> | undefined;
-    };
   }
 
   interface CcxpLiteNamespace {
