@@ -32,10 +32,11 @@ describe("sidebar data", () => {
 
     const sidebarData = requireValue(window.CCXP_LITE.sidebarData, "sidebarData");
     const shared = requireValue(window.CCXP_LITE.shared, "shared");
-    const root = requireValue(sidebarData.parseSidebarTree(window.document), "parsed sidebar tree");
-    const model = sidebarData.buildSidebarModel(root, window.document, shared.STRINGS);
+    const model = requireValue(
+      sidebarData.buildSidebarModel(window.document, shared.STRINGS),
+      "sidebar model",
+    );
 
-    expect(root.children).toHaveLength(3);
     expect(model.categories.map((category: { label: string }) => category.label)).toContain(
       "\u8AB2\u7A0B\u6210\u7E3E",
     );
@@ -100,8 +101,10 @@ describe("sidebar data", () => {
 
     const sidebarData = requireValue(window.CCXP_LITE.sidebarData, "sidebarData");
     const shared = requireValue(window.CCXP_LITE.shared, "shared");
-    const root = requireValue(sidebarData.parseSidebarTree(window.document), "parsed sidebar tree");
-    const model = sidebarData.buildSidebarModel(root, window.document, shared.STRINGS);
+    const model = requireValue(
+      sidebarData.buildSidebarModel(window.document, shared.STRINGS),
+      "sidebar model",
+    );
 
     expect(model.categories).toHaveLength(1);
     expect(model.categories[0].label).toBe("\u65B0\u589E\u8207\u672A\u5206\u985E");
@@ -133,8 +136,10 @@ describe("sidebar data", () => {
 
     const sidebarData = requireValue(window.CCXP_LITE.sidebarData, "sidebarData");
     const shared = requireValue(window.CCXP_LITE.shared, "shared");
-    const root = requireValue(sidebarData.parseSidebarTree(window.document), "parsed sidebar tree");
-    const model = sidebarData.buildSidebarModel(root, window.document, shared.STRINGS);
+    const model = requireValue(
+      sidebarData.buildSidebarModel(window.document, shared.STRINGS),
+      "sidebar model",
+    );
     const allLabels = model.categories.flatMap((category: CcxpLiteSidebarCategoryNode) =>
       category.blocks.flatMap((block) => block.links.map((link) => link.label)),
     );
@@ -165,8 +170,10 @@ describe("sidebar data", () => {
 
     const sidebarData = requireValue(window.CCXP_LITE.sidebarData, "sidebarData");
     const shared = requireValue(window.CCXP_LITE.shared, "shared");
-    const root = requireValue(sidebarData.parseSidebarTree(window.document), "parsed sidebar tree");
-    const model = sidebarData.buildSidebarModel(root, window.document, shared.STRINGS);
+    const model = requireValue(
+      sidebarData.buildSidebarModel(window.document, shared.STRINGS),
+      "sidebar model",
+    );
     const categoryByLabel = new Map(
       model.categories.map((category: CcxpLiteSidebarCategoryNode) => [category.label, category]),
     );
@@ -225,8 +232,10 @@ describe("sidebar data", () => {
 
     const sidebarData = requireValue(window.CCXP_LITE.sidebarData, "sidebarData");
     const shared = requireValue(window.CCXP_LITE.shared, "shared");
-    const root = requireValue(sidebarData.parseSidebarTree(window.document), "parsed sidebar tree");
-    const model = sidebarData.buildSidebarModel(root, window.document, shared.STRINGS);
+    const model = requireValue(
+      sidebarData.buildSidebarModel(window.document, shared.STRINGS),
+      "sidebar model",
+    );
     const category = model.categories.find(
       (entry: CcxpLiteSidebarCategoryNode) => entry.label === "\u9810\u6392\u8207\u9078\u8AB2",
     );
@@ -259,9 +268,11 @@ describe("sidebar data", () => {
 
     const sidebarData = requireValue(window.CCXP_LITE.sidebarData, "sidebarData");
     const shared = requireValue(window.CCXP_LITE.shared, "shared");
-    const root = requireValue(sidebarData.parseSidebarTree(window.document), "parsed sidebar tree");
     const strings = shared.getLocalizedStrings("en");
-    const model = sidebarData.buildSidebarModel(root, window.document, strings);
+    const model = requireValue(
+      sidebarData.buildSidebarModel(window.document, strings),
+      "sidebar model",
+    );
 
     expect(model.categories.map((category: { label: string }) => category.label)).toContain(
       "Planning & Enrollment",
@@ -295,9 +306,11 @@ describe("sidebar data", () => {
 
     const sidebarData = requireValue(window.CCXP_LITE.sidebarData, "sidebarData");
     const shared = requireValue(window.CCXP_LITE.shared, "shared");
-    const root = requireValue(sidebarData.parseSidebarTree(window.document), "parsed sidebar tree");
     const strings = shared.getLocalizedStrings("en");
-    const model = sidebarData.buildSidebarModel(root, window.document, strings);
+    const model = requireValue(
+      sidebarData.buildSidebarModel(window.document, strings),
+      "sidebar model",
+    );
 
     expect(model.categories).toHaveLength(1);
     expect(model.categories[0].label).toBe("Planning & Enrollment");
@@ -328,7 +341,6 @@ describe("sidebar data", () => {
     const sidebarFavorites = requireValue(window.CCXP_LITE.sidebarFavorites, "sidebarFavorites");
     const sidebarData = requireValue(window.CCXP_LITE.sidebarData, "sidebarData");
     const shared = requireValue(window.CCXP_LITE.shared, "shared");
-    const root = requireValue(sidebarData.parseSidebarTree(window.document), "parsed sidebar tree");
     const strings = shared.getLocalizedStrings("en");
 
     sidebarFavorites.favoriteState.ids = new Set([
@@ -341,7 +353,10 @@ describe("sidebar data", () => {
     ]);
     sidebarFavorites.favoriteState.hasLoaded = true;
 
-    const model = sidebarData.buildSidebarModel(root, window.document, strings);
+    const model = requireValue(
+      sidebarData.buildSidebarModel(window.document, strings),
+      "sidebar model",
+    );
 
     expect(model.favorites.blocks).toHaveLength(0);
     expect(model.favorites.links).toHaveLength(1);
@@ -372,7 +387,6 @@ describe("sidebar data", () => {
     const sidebarFavorites = requireValue(window.CCXP_LITE.sidebarFavorites, "sidebarFavorites");
     const sidebarData = requireValue(window.CCXP_LITE.sidebarData, "sidebarData");
     const shared = requireValue(window.CCXP_LITE.shared, "shared");
-    const root = requireValue(sidebarData.parseSidebarTree(window.document), "parsed sidebar tree");
     const strings = shared.getLocalizedStrings("en");
 
     sidebarFavorites.favoriteState.ids = new Set([
@@ -384,7 +398,10 @@ describe("sidebar data", () => {
     ]);
     sidebarFavorites.favoriteState.hasLoaded = true;
 
-    const model = sidebarData.buildSidebarModel(root, window.document, strings);
+    const model = requireValue(
+      sidebarData.buildSidebarModel(window.document, strings),
+      "sidebar model",
+    );
 
     expect(model.favorites.blocks).toHaveLength(1);
     expect(model.favorites.blocks[0]?.label).toBe("Select courses");
@@ -412,9 +429,11 @@ describe("sidebar data", () => {
 
     const sidebarData = requireValue(window.CCXP_LITE.sidebarData, "sidebarData");
     const shared = requireValue(window.CCXP_LITE.shared, "shared");
-    const root = requireValue(sidebarData.parseSidebarTree(window.document), "parsed sidebar tree");
     const strings = shared.getLocalizedStrings("en");
-    const model = sidebarData.buildSidebarModel(root, window.document, strings);
+    const model = requireValue(
+      sidebarData.buildSidebarModel(window.document, strings),
+      "sidebar model",
+    );
     const category = model.categories.find(
       (entry: CcxpLiteSidebarCategoryNode) => entry.label === "Planning & Enrollment",
     );
@@ -458,8 +477,10 @@ describe("sidebar data", () => {
 
     const sidebarData = requireValue(window.CCXP_LITE.sidebarData, "sidebarData");
     const shared = requireValue(window.CCXP_LITE.shared, "shared");
-    const root = requireValue(sidebarData.parseSidebarTree(window.document), "parsed sidebar tree");
-    const model = sidebarData.buildSidebarModel(root, window.document, shared.STRINGS);
+    const model = requireValue(
+      sidebarData.buildSidebarModel(window.document, shared.STRINGS),
+      "sidebar model",
+    );
     const category = model.categories.find(
       (entry: CcxpLiteSidebarCategoryNode) => entry.label === "\u9810\u6392\u8207\u9078\u8AB2",
     );
@@ -499,9 +520,11 @@ describe("sidebar data", () => {
 
     const sidebarData = requireValue(window.CCXP_LITE.sidebarData, "sidebarData");
     const shared = requireValue(window.CCXP_LITE.shared, "shared");
-    const root = requireValue(sidebarData.parseSidebarTree(window.document), "parsed sidebar tree");
     const strings = shared.getLocalizedStrings("en");
-    const model = sidebarData.buildSidebarModel(root, window.document, strings);
+    const model = requireValue(
+      sidebarData.buildSidebarModel(window.document, strings),
+      "sidebar model",
+    );
 
     expect(model.categories).toHaveLength(1);
     expect(model.categories[0].label).toBe("New & Unsorted");

@@ -569,11 +569,9 @@ declare global {
 
   interface CcxpLiteSidebarData {
     buildSidebarModel: (
-      root: CcxpLiteLegacySidebarFolderNode,
       navDocument: Document,
       strings: Readonly<Record<string, string>>,
-    ) => CcxpLiteSidebarModel;
-    parseSidebarTree: (navDocument: Document) => CcxpLiteLegacySidebarFolderNode | undefined;
+    ) => CcxpLiteSidebarModel | undefined;
     filterFavoriteLinks: (
       links: readonly CcxpLiteSidebarLinkItem[],
       query: string,

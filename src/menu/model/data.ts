@@ -16,6 +16,7 @@
     createLinkId,
     createLegacyLinkId,
   } = sidebarFavorites;
+  const sidebarTreeByDocument = new WeakMap<Document, CcxpLiteLegacySidebarFolderNode>();
 
   function isArray<T>(value: unknown): value is T[] {
     const prototype =
@@ -31,6 +32,18 @@
   }
 
   function buildSidebarModel(
+    navDocument: Document,
+    strings: Readonly<Record<string, string>>,
+  ): CcxpLiteSidebarModel | undefined {
+    const root = sidebarTreeByDocument.get(navDocument) ?? parseSidebarTree(navDocument);
+    if (!root) {
+      return undefined;
+    }
+    sidebarTreeByDocument.set(navDocument, root);
+    return buildSidebarModelFromTree(root, navDocument, strings);
+  }
+
+  function buildSidebarModelFromTree(
     root: CcxpLiteLegacySidebarFolderNode,
     navDocument: Document,
     strings: Readonly<Record<string, string>>,
@@ -1376,7 +1389,6 @@
   }
   namespace.sidebarData = {
     buildSidebarModel,
-    parseSidebarTree,
     filterFavoriteLinks,
     filterCategories,
     filterCategoryTree,
