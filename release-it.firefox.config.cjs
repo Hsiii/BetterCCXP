@@ -17,5 +17,7 @@ module.exports = {
     "before:bump": "bun run typecheck && bun run lint && bun run format:check",
     "before:github:release": "bun run build:firefox",
   },
-  npm: false,
+  npm: {
+    publish: false,
+  },
 };
