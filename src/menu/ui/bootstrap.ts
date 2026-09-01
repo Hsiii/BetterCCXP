@@ -29,7 +29,7 @@
   } = shared;
   const { ensureFavoriteStorageSync, ensureFavoriteIdsLoaded, subscribeToFavoriteChanges } =
     sidebarFavorites;
-  const { buildSidebarModel, parseSidebarTree } = sidebarData;
+  const { buildSidebarModel } = sidebarData;
   const { getSidebarUiState } = sidebarState;
   const { renderSidebar, createSidebarSearch, syncTopLevelFramesetLayout } = sidebarUi;
   const { captureInitialMainFrameUrl } = sidebarRuntime;
@@ -41,10 +41,6 @@
       unsubscribeFavorites: (() => void) | undefined;
     }
   >();
-
-  function isArray<T>(value: unknown): value is T[] {
-    return value !== null && typeof value === "object" && value.constructor === Array;
-  }
 
   function simplifySidebar(
     navFrame: HTMLIFrameElement,
@@ -71,15 +67,14 @@
       return;
     }
 
-    const rawTree = parseSidebarTree(navDocument);
-    if (!rawTree || !isArray(rawTree.children)) {
-      retry();
-      return;
-    }
-
     ensureThemeDocument(navDocument, "nav");
     ensureThemeDocument(hostDocument, "nav");
     const strings = getLocalizedStrings(resolveLocaleFromDocument(navDocument));
+    const model = buildSidebarModel(navDocument, strings);
+    if (!model) {
+      retry();
+      return;
+    }
     const state = getSidebarUiState(hostDocument);
     const rerenderBinding = getOrCreateRerenderBinding(hostDocument);
     captureInitialMainFrameUrl();
@@ -169,7 +164,7 @@
       renderSidebar(
         hostDocument,
         navDocument,
-        () => buildSidebarModel(rawTree, navDocument, strings),
+        () => buildSidebarModel(navDocument, strings) ?? model,
         strings,
       );
     };
