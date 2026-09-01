@@ -355,6 +355,10 @@ declare global {
 
   interface CcxpLiteLoginCaptcha {
     CAPTCHA_AUTOFILL_TIMEOUT_MS: number;
+    attachCaptchaAutofill: (
+      targetDocument: Document,
+      expectedKind: CcxpLiteCaptchaField["kind"],
+    ) => () => void;
     enableCaptchaAutofill: (
       targetDocument: Document,
       rootNode: ParentNode,
