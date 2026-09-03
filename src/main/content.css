@@ -41,6 +41,10 @@ html[data-ccxp-lite-scope="main"]
   background-color: transparent !important;
 }
 
+html[data-ccxp-lite-scope="main"] th {
+  color: var(--ccxp-lite-type-body-strong-color) !important;
+}
+
 /* CCXP paints section header rows with .class1 (white text on a blue band) in
    its own stylesheet, so neither the colour attribute nor the inline style
    rules below can reach them. Clearing the band above would leave white text on
