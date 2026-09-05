@@ -337,18 +337,3 @@ html[data-ccxp-lite-scope="main"]
   > table {
   min-width: var(--ccxp-lite-staff-grid-min-width);
 }
-
-html[data-ccxp-lite-scope="main"]
-  body:has(#A_HEAD):has(#B_HEAD)
-  :is(#grid, #grid_pre)
-  > .k-grid-header
-  th:not(.k-hierarchy-cell),
-html[data-ccxp-lite-scope="main"]
-  body:has(#A_HEAD):has(#B_HEAD)
-  :is(#grid, #grid_pre)
-  > .k-grid-header
-  th:not(.k-hierarchy-cell)
-  > .k-link {
-  white-space: normal;
-  overflow-wrap: anywhere;
-}
