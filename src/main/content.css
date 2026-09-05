@@ -45,6 +45,16 @@ html[data-ccxp-lite-scope="main"] th {
   color: var(--ccxp-lite-type-body-strong-color) !important;
 }
 
+/* Kendo selections retain white text after the table background reset above. */
+html[data-ccxp-lite-scope="main"] .k-grid tr.k-state-selected {
+  background-color: var(--ccxp-lite-surface-muted) !important;
+  color: var(--ccxp-lite-type-body-color) !important;
+}
+
+html[data-ccxp-lite-scope="main"] .k-grid tr.k-state-selected > td {
+  color: var(--ccxp-lite-type-body-color) !important;
+}
+
 /* CCXP paints section header rows with .class1 (white text on a blue band) in
    its own stylesheet, so neither the colour attribute nor the inline style
    rules below can reach them. Clearing the band above would leave white text on
