@@ -68,22 +68,23 @@ html[data-ccxp-lite-scope="main"] tr.class1 th {
   font-weight: var(--ccxp-lite-font-weight-strong);
 }
 
-html[data-ccxp-lite-scope="main"] body,
-html[data-ccxp-lite-scope="main"] table,
-html[data-ccxp-lite-scope="main"] tbody,
-html[data-ccxp-lite-scope="main"] tr,
-html[data-ccxp-lite-scope="main"] td,
-html[data-ccxp-lite-scope="main"] th,
-html[data-ccxp-lite-scope="main"] input,
-html[data-ccxp-lite-scope="main"] select,
-html[data-ccxp-lite-scope="main"] textarea,
-html[data-ccxp-lite-scope="main"] button,
-html[data-ccxp-lite-scope="main"] a,
-html[data-ccxp-lite-scope="main"] font,
-html[data-ccxp-lite-scope="main"] div,
-html[data-ccxp-lite-scope="main"] span,
-html[data-ccxp-lite-scope="main"] p,
-html[data-ccxp-lite-scope="main"] li {
+/* Preserve Kendo icon fonts on spans and pager links. */
+html[data-ccxp-lite-scope="main"] body:where(:not(.k-icon)),
+html[data-ccxp-lite-scope="main"] table:where(:not(.k-icon)),
+html[data-ccxp-lite-scope="main"] tbody:where(:not(.k-icon)),
+html[data-ccxp-lite-scope="main"] tr:where(:not(.k-icon)),
+html[data-ccxp-lite-scope="main"] td:where(:not(.k-icon)),
+html[data-ccxp-lite-scope="main"] th:where(:not(.k-icon)),
+html[data-ccxp-lite-scope="main"] input:where(:not(.k-icon)),
+html[data-ccxp-lite-scope="main"] select:where(:not(.k-icon)),
+html[data-ccxp-lite-scope="main"] textarea:where(:not(.k-icon)),
+html[data-ccxp-lite-scope="main"] button:where(:not(.k-icon)),
+html[data-ccxp-lite-scope="main"] a:where(:not(.k-icon)),
+html[data-ccxp-lite-scope="main"] font:where(:not(.k-icon)),
+html[data-ccxp-lite-scope="main"] div:where(:not(.k-icon)),
+html[data-ccxp-lite-scope="main"] span:where(:not(.k-icon)),
+html[data-ccxp-lite-scope="main"] p:where(:not(.k-icon)),
+html[data-ccxp-lite-scope="main"] li:where(:not(.k-icon)) {
   font-family: var(--ccxp-lite-font-sans) !important;
 }
 
@@ -92,13 +93,14 @@ html[data-ccxp-lite-scope="main"] body {
   font: var(--ccxp-lite-type-body);
 }
 
-html[data-ccxp-lite-scope="main"] a:not(.button):not([class*="button" i]) {
+html[data-ccxp-lite-scope="main"] a:not(.button):not([class*="button" i]):where(:not(.k-icon)) {
   color: var(--ccxp-lite-type-primary-link-color);
   font: var(--ccxp-lite-type-primary-link);
   text-decoration: none;
 }
 
-html[data-ccxp-lite-scope="main"] a:not(.button):not([class*="button" i]):hover {
+html[data-ccxp-lite-scope="main"]
+  a:not(.button):not([class*="button" i]):where(:not(.k-icon)):hover {
   color: var(--ccxp-lite-type-primary-link-color);
   transform: none !important;
   text-decoration: underline;
