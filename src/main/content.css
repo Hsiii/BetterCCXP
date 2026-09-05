@@ -55,6 +55,15 @@ html[data-ccxp-lite-scope="main"] .k-grid tr.k-state-selected > td {
   color: var(--ccxp-lite-type-body-color) !important;
 }
 
+/* Keep calendar selection visible after the table background reset. */
+html[data-ccxp-lite-scope="main"] .k-calendar td.k-state-selected {
+  background-color: var(--ccxp-lite-primary) !important;
+}
+
+html[data-ccxp-lite-scope="main"] .k-calendar td.k-state-selected > .k-link {
+  color: var(--ccxp-lite-surface) !important;
+}
+
 /* CCXP paints section header rows with .class1 (white text on a blue band) in
    its own stylesheet, so neither the colour attribute nor the inline style
    rules below can reach them. Clearing the band above would leave white text on
@@ -93,14 +102,16 @@ html[data-ccxp-lite-scope="main"] body {
   font: var(--ccxp-lite-type-body);
 }
 
-html[data-ccxp-lite-scope="main"] a:not(.button):not([class*="button" i]):where(:not(.k-icon)) {
+/* Calendar links use Kendo's date, disabled, and adjacent-month styles. */
+html[data-ccxp-lite-scope="main"]
+  a:not(.button):not([class*="button" i]):where(:not(.k-icon, .k-calendar *)) {
   color: var(--ccxp-lite-type-primary-link-color);
   font: var(--ccxp-lite-type-primary-link);
   text-decoration: none;
 }
 
 html[data-ccxp-lite-scope="main"]
-  a:not(.button):not([class*="button" i]):where(:not(.k-icon)):hover {
+  a:not(.button):not([class*="button" i]):where(:not(.k-icon, .k-calendar *)):hover {
   color: var(--ccxp-lite-type-primary-link-color);
   transform: none !important;
   text-decoration: underline;
