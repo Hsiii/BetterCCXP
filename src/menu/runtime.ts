@@ -11,6 +11,96 @@
     "ccxp-lite-sidebar-initial-main-url::/ccxp/INQUIRE/select_entry.php";
   const DESTINATION_LOAD_TIMEOUT_MS = 8000;
   const EXTERNAL_LINK_PATH_PREFIXES = ["/ccxp/INQUIRE/PE/1/14D/"] as const;
+  const destinationDisposers = new Map<Document, () => void>();
+  shared.addCleanupTask(() => {
+    for (const dispose of destinationDisposers.values()) {
+      dispose();
+    }
+    destinationDisposers.clear();
+  });
+
+  function disposeDestination(targetDocument: Document) {
+    destinationDisposers.get(targetDocument)?.();
+    destinationDisposers.delete(targetDocument);
+  }
+
+  function createDestinationFrame(
+    targetDocument: Document,
+    navDocument: Document,
+    linkItem: CcxpLiteSidebarLinkItem,
+    onStatus: (status: "loading" | "ready" | "error") => void,
+  ) {
+    disposeDestination(targetDocument);
+    const frame = targetDocument.createElement("iframe");
+    frame.className = "ccxp-lite-destination-frame";
+    frame.setAttribute("frameborder", "0");
+    frame.setAttribute("scrolling", "auto");
+    frame.setAttribute("allowTransparency", "true");
+    frame.title = linkItem.label;
+    const legacyMainFrame = getLegacyMainFrame();
+    let disposed = false;
+    let status: "loading" | "ready" | "error" = "loading";
+    const stopWaiting = () => {
+      globalThis.clearTimeout(timeoutId);
+      legacyMainFrame?.removeEventListener("load", syncFromLegacyMainFrame);
+    };
+    const settle = (nextStatus: "ready" | "error") => {
+      if (disposed || status !== "loading") {
+        return;
+      }
+      status = nextStatus;
+      stopWaiting();
+      frame.hidden = nextStatus !== "ready";
+      onStatus(nextStatus);
+    };
+    const onLoad = () => {
+      if (disposed || status === "error") {
+        return;
+      }
+      try {
+        simplifyEmbeddedFrame(frame);
+      } catch {
+        // Cross-origin destinations can load without allowing theme access.
+      }
+      settle("ready");
+    };
+    const syncFromLegacyMainFrame = () => {
+      if (disposed || status !== "loading" || !legacyMainFrame) {
+        return;
+      }
+      try {
+        const legacyHref = legacyMainFrame.contentWindow?.location.href ?? "";
+        if (legacyHref !== "" && legacyHref !== "about:blank" && frame.src !== legacyHref) {
+          frame.src = legacyHref;
+          return;
+        }
+        if (frame.contentDocument?.readyState === "complete") {
+          onLoad();
+        }
+      } catch {
+        // Rely on the destination load event when frame access is unavailable.
+      }
+    };
+    const timeoutId = globalThis.setTimeout(
+      () => {
+        settle("error");
+      },
+      DESTINATION_LOAD_TIMEOUT_MS,
+      undefined,
+    );
+    frame.addEventListener("load", onLoad);
+    legacyMainFrame?.addEventListener("load", syncFromLegacyMainFrame, { once: true });
+    destinationDisposers.set(targetDocument, () => {
+      disposed = true;
+      stopWaiting();
+      frame.removeEventListener("load", onLoad);
+    });
+    frame.hidden = true;
+    onStatus("loading");
+    activateLegacyLink(linkItem, navDocument, frame);
+    return frame;
+  }
+
   function shouldOpenLeafInDestination(linkItem: CcxpLiteSidebarLinkItem, navDocument: Document) {
     if ((linkItem.target ?? "main").toLowerCase() !== "main") {
       return false;
@@ -201,11 +291,11 @@
     return url.searchParams.get("ACIXSTORE") ?? "";
   }
   namespace.sidebarRuntime = {
-    DESTINATION_LOAD_TIMEOUT_MS,
     INITIAL_MAIN_URL_STORAGE_KEY,
     shouldOpenLeafInDestination,
     openLeafDestination,
-    simplifyEmbeddedFrame,
+    createDestinationFrame,
+    disposeDestination,
     getLegacyMainFrame,
     captureInitialMainFrameUrl,
     openLeafInNewTab,

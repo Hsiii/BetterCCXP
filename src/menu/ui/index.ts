@@ -25,9 +25,9 @@
   } = sidebarFavorites;
   const { filterCategories, filterCategoryTree } = sidebarData;
   const {
-    DESTINATION_LOAD_TIMEOUT_MS,
     openLeafDestination,
-    simplifyEmbeddedFrame,
+    createDestinationFrame,
+    disposeDestination,
     getLegacyMainFrame,
     openLeafInNewTab,
     activateLegacyLink,
@@ -76,6 +76,7 @@
       state.currentCategoryId = "";
     }
     footer.textContent = "";
+    disposeDestination(hostDocument);
     content.textContent = "";
     shell.dataset.ccxpLiteSidebarVariant = state.sidebarVariant;
     mountSidebarVariantSwitch(
@@ -1503,15 +1504,7 @@
     retryButton.className = "ccxp-lite-destination-action";
     retryButton.textContent = strings.sidebarRetry;
     retryButton.addEventListener("click", () => {
-      const state = getSidebarUiState(targetDocument);
-      if (!state.activeLeaf) {
-        return;
-      }
-      state.activeLeaf = {
-        ...state.activeLeaf,
-        nonce: Date.now(),
-      };
-      rerender();
+      openLeafDestination(targetDocument, navDocument, activeLeaf, rerender);
     });
     const openButton = targetDocument.createElement("button");
     openButton.type = "button";
@@ -1527,66 +1520,12 @@
     actions.append(retryButton);
     actions.append(openButton);
     error.append(actions);
-    const frame = targetDocument.createElement("iframe");
-    frame.className = "ccxp-lite-destination-frame";
-    frame.setAttribute("frameborder", "0");
-    frame.setAttribute("scrolling", "auto");
-    frame.setAttribute("allowTransparency", "true");
-    frame.title = activeLeaf.label;
-    frame.hidden = true;
-    const legacyMainFrame = getLegacyMainFrame();
-    let hasSettled = false;
-    const settleSuccess = () => {
-      if (hasSettled) {
-        return;
-      }
-      hasSettled = true;
-      globalThis.clearTimeout(timeoutId);
-      loading.hidden = true;
-      error.hidden = true;
-      frame.hidden = false;
-    };
-    const settleError = () => {
-      if (hasSettled) {
-        return;
-      }
-      hasSettled = true;
-      loading.hidden = true;
-      frame.hidden = true;
-      error.hidden = false;
-    };
-    const syncFromLegacyMainFrame = () => {
-      if (hasSettled || !legacyMainFrame) {
-        return;
-      }
-      try {
-        const legacyWindow = legacyMainFrame.contentWindow;
-        const legacyHref = legacyWindow ? legacyWindow.location.href : "";
-        if (legacyHref !== "" && legacyHref !== "about:blank" && frame.src !== legacyHref) {
-          frame.src = legacyHref;
-          return;
-        }
-      } catch {
-        // Ignore cross-frame location reads and rely on the destination frame event.
-      }
-      if (frame.contentDocument && frame.contentDocument.readyState === "complete") {
-        simplifyEmbeddedFrame(frame);
-        settleSuccess();
-      }
-    };
-    const timeoutId = globalThis.setTimeout(settleError, DESTINATION_LOAD_TIMEOUT_MS, undefined);
-    frame.addEventListener("load", () => {
-      simplifyEmbeddedFrame(frame);
-      settleSuccess();
+    const frame = createDestinationFrame(targetDocument, navDocument, activeLeaf, (status) => {
+      loading.hidden = status !== "loading";
+      error.hidden = status !== "error";
     });
-    frameWrap.append(loading);
-    frameWrap.append(error);
-    frameWrap.append(frame);
-    if (legacyMainFrame) {
-      legacyMainFrame.addEventListener("load", syncFromLegacyMainFrame, { once: true });
-    }
+    frameWrap.append(loading, error, frame);
     section.append(frameWrap);
-    activateLegacyLink(activeLeaf, navDocument, frame);
     return section;
   }
 

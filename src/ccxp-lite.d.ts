@@ -589,7 +589,6 @@ declare global {
   }
 
   interface CcxpLiteSidebarRuntime {
-    DESTINATION_LOAD_TIMEOUT_MS: number;
     INITIAL_MAIN_URL_STORAGE_KEY: string;
     shouldOpenLeafInDestination: (
       linkItem: CcxpLiteSidebarLinkItem,
@@ -601,7 +600,13 @@ declare global {
       linkItem: CcxpLiteSidebarLinkItem,
       rerender: () => void,
     ) => void;
-    simplifyEmbeddedFrame: (frame: HTMLIFrameElement) => void;
+    createDestinationFrame: (
+      targetDocument: Document,
+      navDocument: Document,
+      linkItem: CcxpLiteSidebarLinkItem,
+      onStatus: (status: "loading" | "ready" | "error") => void,
+    ) => HTMLIFrameElement;
+    disposeDestination: (targetDocument: Document) => void;
     getLegacyMainFrame: () => HTMLIFrameElement | undefined;
     captureInitialMainFrameUrl: () => void;
     openLeafInNewTab: (activeLeaf: CcxpLiteSidebarLinkItem, navDocument: Document) => void;
