@@ -55,6 +55,18 @@ html[data-ccxp-lite-scope="main"] .k-grid tr.k-state-selected > td {
   color: var(--ccxp-lite-type-body-color) !important;
 }
 
+/* Align weekday headings and date links within the same calendar columns. */
+html[data-ccxp-lite-scope="main"] .k-calendar th,
+html[data-ccxp-lite-scope="main"] .k-calendar td > .k-link {
+  padding-inline: 0;
+  text-align: center;
+}
+
+html[data-ccxp-lite-scope="main"] .k-calendar td > .k-link {
+  width: 100%;
+  box-sizing: border-box;
+}
+
 /* Keep calendar selection visible after the table background reset. */
 html[data-ccxp-lite-scope="main"] .k-calendar td.k-state-selected {
   background-color: var(--ccxp-lite-primary) !important;
