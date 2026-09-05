@@ -312,3 +312,43 @@ html[data-ccxp-lite-scope="main"][data-ccxp-lite-sidebar-variant="classic"] {
 body.ccxp-lite-main-skin[data-ccxp-lite-sidebar-variant="classic"] {
   scrollbar-gutter: stable both-edges;
 }
+
+/* Staff History has separate, synchronized header and body tables. Keep both
+   wide enough for its IDs, dates, and labels instead of squeezing every column
+   into the viewport. Kendo's existing scroll containers handle the overflow. */
+html[data-ccxp-lite-scope="main"] body:has(#A_HEAD):has(#B_HEAD) #grid {
+  --ccxp-lite-staff-grid-min-width: 1900px;
+}
+
+html[data-ccxp-lite-scope="main"] body:has(#A_HEAD):has(#B_HEAD) #grid_pre {
+  --ccxp-lite-staff-grid-min-width: 2500px;
+}
+
+html[data-ccxp-lite-scope="main"]
+  body:has(#A_HEAD):has(#B_HEAD)
+  :is(#grid, #grid_pre)
+  > .k-grid-header
+  > .k-grid-header-wrap
+  > table,
+html[data-ccxp-lite-scope="main"]
+  body:has(#A_HEAD):has(#B_HEAD)
+  :is(#grid, #grid_pre)
+  > .k-grid-content
+  > table {
+  min-width: var(--ccxp-lite-staff-grid-min-width);
+}
+
+html[data-ccxp-lite-scope="main"]
+  body:has(#A_HEAD):has(#B_HEAD)
+  :is(#grid, #grid_pre)
+  > .k-grid-header
+  th:not(.k-hierarchy-cell),
+html[data-ccxp-lite-scope="main"]
+  body:has(#A_HEAD):has(#B_HEAD)
+  :is(#grid, #grid_pre)
+  > .k-grid-header
+  th:not(.k-hierarchy-cell)
+  > .k-link {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
