@@ -37,6 +37,10 @@
         "pe14d/page.js"
       ],
       "matches": ["https://www.ccxp.nthu.edu.tw/*", "https://ccxp.nthu.edu.tw/*"]
+    },
+    {
+      "resources": ["staff-history/page.js"],
+      "matches": ["https://www.ccxp.nthu.edu.tw/*", "https://ccxp.nthu.edu.tw/*"]
     }
   ],
   "content_scripts": [
@@ -97,6 +101,14 @@
         "login/auth/captcha.js",
         "oauth/captcha.js"
       ]
+    },
+    {
+      "matches": [
+        "https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/PE/3/3000/PE30003.php*",
+        "https://ccxp.nthu.edu.tw/ccxp/INQUIRE/PE/3/3000/PE30003.php*"
+      ],
+      "run_at": "document_idle",
+      "js": ["staff-history/content.js"]
     }
   ]
 }
