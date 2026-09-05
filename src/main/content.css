@@ -69,11 +69,21 @@ html[data-ccxp-lite-scope="main"] .k-calendar td > .k-link {
 
 /* Keep calendar selection visible after the table background reset. */
 html[data-ccxp-lite-scope="main"] .k-calendar td.k-state-selected {
-  background-color: var(--ccxp-lite-primary) !important;
+  background-color: color-mix(
+    in srgb,
+    var(--ccxp-lite-primary) 16%,
+    var(--ccxp-lite-surface)
+  ) !important;
 }
 
 html[data-ccxp-lite-scope="main"] .k-calendar td.k-state-selected > .k-link {
-  color: var(--ccxp-lite-surface) !important;
+  color: var(--ccxp-lite-type-body-color) !important;
+}
+
+html[data-ccxp-lite-scope="main"] .k-calendar td.k-state-focused {
+  box-shadow: none;
+  outline: 1px solid var(--ccxp-lite-primary);
+  outline-offset: -1px;
 }
 
 /* CCXP paints section header rows with .class1 (white text on a blue band) in
