@@ -24,6 +24,58 @@ const loginBootstrapModulePaths = [
 ];
 
 describe("main bootstrap login path", () => {
+  test("keeps legacy frames hidden until the sidebar is applied", async () => {
+    const { window } = createTestWindow(
+      undefined,
+      "https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/select_entry.php",
+    );
+    const document = window.document as unknown as Document;
+    // The production shell uses deprecated frames; Happy DOM cannot parse their markup.
+    /* eslint-disable @typescript-eslint/no-deprecated */
+    const frameset = document.createElement("frameset");
+    const navFrame = document.createElement("frame");
+    const mainFrame = document.createElement("frame");
+    /* eslint-enable @typescript-eslint/no-deprecated */
+    frameset.setAttribute("cols", "200,*");
+    navFrame.setAttribute("name", "nav");
+    mainFrame.setAttribute("name", "main");
+    frameset.append(navFrame, mainFrame);
+    document.body.replaceWith(frameset);
+    const FrameEvent = window.Event as unknown as typeof Event;
+
+    const { window: navWindow } = createTestWindow("<body>Legacy navigation</body>");
+    const { window: mainWindow } = createTestWindow("<body>Legacy main content</body>");
+    const navDocument = navWindow.document as unknown as Document;
+    Object.defineProperty(navFrame, "contentDocument", { value: navDocument });
+    Object.defineProperty(mainFrame, "contentDocument", { value: mainWindow.document });
+    window.requestAnimationFrame = vi.fn(() => 1) as unknown as typeof window.requestAnimationFrame;
+    let sidebarReady = false;
+    window.CCXP_LITE.sidebar = {
+      simplifySidebar: () => {
+        if (sidebarReady) {
+          navDocument.body.dataset.ccxpLiteSidebarApplied = "true";
+        }
+      },
+    };
+
+    loadModules(window, loginBootstrapModulePaths);
+
+    expect(document.querySelector("body")).toBeNull();
+    expect(window.getComputedStyle(navFrame).visibility).toBe("hidden");
+    expect(window.getComputedStyle(mainFrame).visibility).toBe("hidden");
+    mainFrame.dispatchEvent(new FrameEvent("load"));
+    expect(window.getComputedStyle(navFrame).visibility).toBe("hidden");
+
+    sidebarReady = true;
+    navFrame.dispatchEvent(new FrameEvent("load"));
+    expect(document.documentElement.dataset.ccxpLiteLoadingReady).toBe("true");
+    await new Promise<void>((resolve) => {
+      setTimeout(resolve, 200);
+    });
+    expect(window.getComputedStyle(navFrame).visibility).not.toBe("hidden");
+    expect(window.getComputedStyle(mainFrame).visibility).not.toBe("hidden");
+  });
+
   test("rewrites the login page without requiring sidebar registration", async () => {
     const { window } = createTestWindow(
       createLoginHtml(),
