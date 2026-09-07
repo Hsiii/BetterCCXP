@@ -104,7 +104,10 @@
   }
 
   function initializeLoadingSprite(targetDocument: Document) {
-    if (!isSupportedInquirePath(targetDocument)) {
+    const isFramesetPage = /\/ccxp\/inquire\/select_entry\.php\/?$/i.test(
+      targetDocument.location.pathname,
+    );
+    if (!isSupportedInquirePath(targetDocument) && !isFramesetPage) {
       return undefined;
     }
     ensureLoadingSprite(targetDocument);
@@ -142,6 +145,13 @@
 
         html:not([data-ccxp-lite-loading-ready="true"]) body {
           opacity: 0 !important;
+        }
+
+        /* A frameset document has no body, and its child frames can paint
+           above the loading sprite. Hide the frames themselves until ready. */
+        html:not([data-ccxp-lite-loading-ready="true"]) frameset,
+        html:not([data-ccxp-lite-loading-ready="true"]) frame {
+          visibility: hidden !important;
         }
 
         html[data-ccxp-lite-loading-ready="true"] body,
